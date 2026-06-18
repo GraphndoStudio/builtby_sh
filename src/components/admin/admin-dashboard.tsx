@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import type { PortfolioContent } from "@/types/portfolio";
 
 interface AdminDashboardProps {
@@ -19,7 +19,8 @@ type SectionId =
   | "why"
   | "numbers"
   | "contact"
-  | "footer";
+  | "footer"
+  | "settings";
 
 const sidebarSections: Array<{ id: SectionId; label: string }> = [
   { id: "brand", label: "Brand & Navigation" },
@@ -34,6 +35,7 @@ const sidebarSections: Array<{ id: SectionId; label: string }> = [
   { id: "numbers", label: "Numbers" },
   { id: "contact", label: "Contact & Social" },
   { id: "footer", label: "Footer" },
+  { id: "settings", label: "Settings" },
 ];
 
 const fieldClass =
@@ -61,6 +63,54 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
   const [activeSection, setActiveSection] = useState<SectionId>("brand");
   const [saveState, setSaveState] = useState("");
   const [uploadState, setUploadState] = useState("");
+  const [passwordState, setPasswordState] = useState("");
+  const [emailChangeState, setEmailChangeState] = useState("");
+  const [accountEmail, setAccountEmail] = useState("");
+  const [emailLocked, setEmailLocked] = useState(true);
+  const [otpConfigured, setOtpConfigured] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newLoginPassword, setNewLoginPassword] = useState("");
+  const [confirmNewLoginPassword, setConfirmNewLoginPassword] = useState("");
+  const [emailChangeCurrentPassword, setEmailChangeCurrentPassword] = useState("");
+  const [pendingNewEmail, setPendingNewEmail] = useState("");
+  const [emailOtpCode, setEmailOtpCode] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadSettings() {
+      try {
+        const response = await fetch("/api/admin/settings/credentials", {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as {
+          email?: string;
+          emailLocked?: boolean;
+          otpConfigured?: boolean;
+        };
+        if (!active) {
+          return;
+        }
+
+        setAccountEmail(data.email ?? "");
+        setEmailLocked(data.emailLocked ?? true);
+        setOtpConfigured(Boolean(data.otpConfigured));
+      } catch {
+        if (active) {
+          setPasswordState("Could not load admin settings.");
+        }
+      }
+    }
+
+    void loadSettings();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function editContent(mutator: (draft: PortfolioContent) => void) {
     const next = structuredClone(content);
@@ -138,6 +188,63 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     window.location.href = "/admin/login";
+  }
+
+  async function resetCredentials(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPasswordState("Updating password...");
+
+    const response = await fetch("/api/admin/settings/credentials", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        currentPassword,
+        password: newLoginPassword,
+        confirmPassword: confirmNewLoginPassword,
+      }),
+    });
+
+    const data = (await response.json()) as { message?: string };
+    if (!response.ok) {
+      setPasswordState(data.message ?? "Could not update password.");
+      return;
+    }
+
+    setCurrentPassword("");
+    setNewLoginPassword("");
+    setConfirmNewLoginPassword("");
+    setPasswordState(data.message ?? "Password updated successfully.");
+  }
+
+  async function changeEmailWithOtp(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setEmailChangeState("Processing email change...");
+
+    const response = await fetch("/api/admin/settings/email", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        currentPassword: emailChangeCurrentPassword,
+        nextEmail: pendingNewEmail,
+        otpCode: emailOtpCode,
+      }),
+    });
+
+    const data = (await response.json()) as { message?: string };
+    if (!response.ok) {
+      setEmailChangeState(data.message ?? "Could not change email.");
+      return;
+    }
+
+    setAccountEmail(pendingNewEmail.trim().toLowerCase());
+    setEmailChangeCurrentPassword("");
+    setPendingNewEmail("");
+    setEmailOtpCode("");
+    setEmailChangeState(data.message ?? "Admin email updated.");
   }
 
   return (
@@ -1413,6 +1520,113 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                     placeholder="Credit"
                   />
                 </div>
+              </div>
+            ) : null}
+
+            {activeSection === "settings" ? (
+              <div className="space-y-4">
+                <SectionTitle
+                  title="Admin Settings"
+                  subtitle="Email is locked after first login. Use OTP verification to change it."
+                />
+                <div className={cardClass}>
+                  <p className="text-xs uppercase tracking-[0.16em] text-[#A1A1AA]">
+                    Current Admin Email
+                  </p>
+                  <p className="text-sm text-[#F8FAFC]">
+                    {accountEmail || "Not available"}
+                  </p>
+                  <p className="text-xs text-[#A1A1AA]">
+                    {emailLocked
+                      ? "Email is locked for direct editing."
+                      : "Email can be edited directly."}
+                  </p>
+                </div>
+
+                <form onSubmit={resetCredentials} className={`${cardClass} space-y-3`}>
+                  <p className="text-xs uppercase tracking-[0.16em] text-[#A1A1AA]">
+                    Reset Password
+                  </p>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                    className={fieldClass}
+                    placeholder="Current password"
+                    required
+                  />
+                  <input
+                    type="password"
+                    value={newLoginPassword}
+                    onChange={(event) => setNewLoginPassword(event.target.value)}
+                    className={fieldClass}
+                    placeholder="New password"
+                    required
+                  />
+                  <input
+                    type="password"
+                    value={confirmNewLoginPassword}
+                    onChange={(event) => setConfirmNewLoginPassword(event.target.value)}
+                    className={fieldClass}
+                    placeholder="Confirm new password"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-full bg-gradient-to-b from-[#2AFADF] to-[#4C83FF] px-4 py-2 text-sm font-semibold text-black"
+                  >
+                    Update Password
+                  </button>
+                  <p className="text-sm text-[#2AFADF]">{passwordState}</p>
+                </form>
+
+                <form
+                  onSubmit={changeEmailWithOtp}
+                  className={`${cardClass} space-y-3`}
+                >
+                  <p className="text-xs uppercase tracking-[0.16em] text-[#A1A1AA]">
+                    Change Email (OTP Verification)
+                  </p>
+                  <input
+                    type="password"
+                    value={emailChangeCurrentPassword}
+                    onChange={(event) =>
+                      setEmailChangeCurrentPassword(event.target.value)
+                    }
+                    className={fieldClass}
+                    placeholder="Current password"
+                    required
+                  />
+                  <input
+                    type="email"
+                    value={pendingNewEmail}
+                    onChange={(event) => setPendingNewEmail(event.target.value)}
+                    className={fieldClass}
+                    placeholder="New admin email"
+                    required
+                  />
+                  <input
+                    type="text"
+                    value={emailOtpCode}
+                    onChange={(event) => setEmailOtpCode(event.target.value)}
+                    className={fieldClass}
+                    placeholder="OTP code"
+                    required
+                  />
+                  <p className="text-xs text-[#A1A1AA]">
+                    {otpConfigured
+                      ? "OTP verification is enabled."
+                      : "OTP is not configured yet. Set it in env and restart."}
+                  </p>
+                  <button
+                    type="submit"
+                    disabled={!otpConfigured}
+                    className="rounded-full bg-gradient-to-b from-[#2AFADF] to-[#4C83FF] px-4 py-2 text-sm font-semibold text-black disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Verify OTP & Change Email
+                  </button>
+                  <p className="text-sm text-[#2AFADF]">{emailChangeState}</p>
+                </form>
               </div>
             ) : null}
           </section>

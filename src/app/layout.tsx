@@ -13,7 +13,7 @@ const numberFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Sharun | Portfolio",
+  title: "builtby_sh | Portfolio",
   description: "Graphic designer and frontend developer portfolio",
 };
 
