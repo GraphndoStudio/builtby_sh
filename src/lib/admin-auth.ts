@@ -67,6 +67,10 @@ function hasBlobToken() {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
+function shouldWriteLocalBackup() {
+  return process.env.VERCEL !== "1";
+}
+
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
@@ -236,7 +240,9 @@ async function saveStoredAdminCredentials(credentials: StoredAdminCredentials) {
     await writeBlobCredentials(credentials);
   }
 
-  await writeLocalCredentials(credentials);
+  if (!hasBlobToken() || shouldWriteLocalBackup()) {
+    await writeLocalCredentials(credentials);
+  }
 }
 
 function sign(payload: string) {

@@ -15,6 +15,10 @@ function hasBlobToken() {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
+function shouldWriteLocalBackup() {
+  return process.env.VERCEL !== "1";
+}
+
 async function ensureLocalFile() {
   await mkdir(path.dirname(LOCAL_CONTENT_PATH), { recursive: true });
 }
@@ -79,7 +83,9 @@ export async function getPortfolioContent() {
   }
 
   const localContent = await readLocalContent();
-  await writeLocalContent(localContent);
+  if (!hasBlobToken() || shouldWriteLocalBackup()) {
+    await writeLocalContent(localContent);
+  }
   return localContent;
 }
 
@@ -88,6 +94,8 @@ export async function savePortfolioContent(content: unknown) {
   if (hasBlobToken()) {
     await writeBlobContent(parsed);
   }
-  await writeLocalContent(parsed);
+  if (!hasBlobToken() || shouldWriteLocalBackup()) {
+    await writeLocalContent(parsed);
+  }
   return parsed;
 }

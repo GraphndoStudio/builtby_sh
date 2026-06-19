@@ -1,28 +1,53 @@
 "use client";
 
-import Image from "next/image";
+import Image, { type ImageProps } from "next/image";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useInView, useMotionValue, useSpring, useTransform } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import type { PortfolioContent } from "@/types/portfolio";
 
 interface PortfolioPageProps {
   content: PortfolioContent;
 }
 
+type AmbientObject = {
+  id: number;
+  left: string;
+  top: string;
+  size: number;
+  shape: "rounded" | "diamond";
+  duration: number;
+  delay: number;
+};
+
 function MediaThumb({
   kind,
   url,
   alt,
   className,
-  priority,
+  sizes = "100vw",
+  quality = 75,
+  loading,
+  priority = false,
 }: {
   kind: "image" | "video";
   url: string;
   alt: string;
   className?: string;
+  sizes?: string;
+  quality?: number;
+  loading?: ImageProps["loading"];
   priority?: boolean;
 }) {
   if (kind === "video") {
@@ -39,6 +64,8 @@ function MediaThumb({
     );
   }
 
+  const resolvedLoading = priority ? undefined : (loading ?? "lazy");
+
   return (
     <Image
       className={className}
@@ -46,8 +73,11 @@ function MediaThumb({
       alt={alt}
       width={1800}
       height={1200}
-      unoptimized
+      sizes={sizes}
+      quality={quality}
+      loading={resolvedLoading}
       priority={priority}
+      decoding="async"
     />
   );
 }
@@ -107,6 +137,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [cursorActive, setCursorActive] = useState(false);
   const [activeExperienceId, setActiveExperienceId] = useState<string | null>(null);
   const [activeExperienceMediaIndex, setActiveExperienceMediaIndex] = useState(0);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [hasFinePointer, setHasFinePointer] = useState(false);
+  const experienceTimelineRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
@@ -121,20 +156,86 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const orbAY = useTransform(smoothY, [0, 1], [-26, 26]);
   const orbBX = useTransform(smoothX, [0, 1], [36, -32]);
   const orbBY = useTransform(smoothY, [0, 1], [20, -22]);
+  const { scrollYProgress: experienceScrollYProgress } = useScroll({
+    target: experienceTimelineRef,
+    offset: ["start 85%", "end 20%"],
+  });
+  const experienceGlowTop = useTransform(
+    experienceScrollYProgress,
+    [0, 1],
+    ["0%", "92%"],
+  );
+  const experienceGlowOpacity = useTransform(
+    experienceScrollYProgress,
+    [0, 0.08, 0.92, 1],
+    [0.75, 1, 1, 0.45],
+  );
 
   const roleText =
     currentRole % 2 === 0 ? content.hero.roleSecondary : content.hero.roleMorph;
+  const enableInteractiveMotion = hasFinePointer && !prefersReducedMotion;
 
   const particles = useMemo(
     () =>
-      Array.from({ length: 28 }, (_, index) => ({
-        id: index,
-        left: `${(index * 37) % 100}%`,
-        top: `${(index * 53) % 100}%`,
-        delay: `${(index % 9) * 0.45}s`,
-        duration: `${5 + (index % 7)}s`,
-      })),
-    [],
+      Array.from(
+        {
+          length: prefersReducedMotion ? 10 : isMobileViewport ? 16 : 28,
+        },
+        (_, index) => ({
+          id: index,
+          left: `${(index * 37) % 100}%`,
+          top: `${(index * 53) % 100}%`,
+          delay: `${(index % 9) * 0.45}s`,
+          duration: `${5 + (index % 7)}s`,
+        }),
+      ),
+    [isMobileViewport, prefersReducedMotion],
+  );
+
+  const ambientObjects = useMemo<AmbientObject[]>(
+    () => {
+      const objects: AmbientObject[] = [
+        {
+          id: 1,
+          left: "6%",
+          top: "24%",
+          size: isMobileViewport ? 96 : 130,
+          shape: "diamond",
+          duration: 16,
+          delay: 0,
+        },
+        {
+          id: 2,
+          left: "84%",
+          top: "16%",
+          size: isMobileViewport ? 110 : 170,
+          shape: "rounded",
+          duration: 19,
+          delay: 0.7,
+        },
+        {
+          id: 3,
+          left: "12%",
+          top: "68%",
+          size: isMobileViewport ? 104 : 150,
+          shape: "rounded",
+          duration: 17,
+          delay: 1.1,
+        },
+        {
+          id: 4,
+          left: "80%",
+          top: "76%",
+          size: isMobileViewport ? 100 : 140,
+          shape: "diamond",
+          duration: 18,
+          delay: 0.35,
+        },
+      ];
+
+      return objects.filter((_, index) => !isMobileViewport || index < 2);
+    },
+    [isMobileViewport],
   );
 
   const activeExperience =
@@ -181,6 +282,17 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   }, [content.experience, content.featuredWorks]);
 
   useEffect(() => {
+    const updateViewportState = () => {
+      setIsMobileViewport(window.innerWidth < 768);
+      setHasFinePointer(window.matchMedia("(pointer:fine)").matches);
+    };
+
+    updateViewportState();
+    window.addEventListener("resize", updateViewportState);
+    return () => window.removeEventListener("resize", updateViewportState);
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setLoadingProgress((prev) => {
         const next = Math.min(100, prev + Math.max(3, 12 - Math.floor(prev / 12)));
@@ -196,22 +308,48 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   }, []);
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     const interval = setInterval(() => {
       setCurrentRole((prev) => prev + 1);
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     const interval = setInterval(() => {
       setMockupIndex((prev) => (prev + 1) % Math.max(content.hero.mockupMedia.length, 1));
     }, 3200);
 
     return () => clearInterval(interval);
-  }, [content.hero.mockupMedia.length]);
+  }, [content.hero.mockupMedia.length, prefersReducedMotion]);
 
   useEffect(() => {
+    content.hero.mockupMedia.forEach((item) => {
+      if (item.mediaKind !== "image") {
+        return;
+      }
+
+      const img = new window.Image();
+      img.decoding = "async";
+      img.fetchPriority = item.id === content.hero.mockupMedia[0]?.id ? "high" : "auto";
+      img.src = item.mediaUrl;
+      void img.decode?.().catch(() => undefined);
+    });
+  }, [content.hero.mockupMedia]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.05,
       smoothWheel: true,
@@ -230,9 +368,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
@@ -259,9 +401,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       ctx.revert();
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
+    if (!hasFinePointer || prefersReducedMotion) {
+      return;
+    }
+
     const onMouseMove = (event: MouseEvent) => {
       cursorX.set(event.clientX);
       cursorY.set(event.clientY);
@@ -275,7 +421,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
     window.addEventListener("mousemove", onMouseMove);
     return () => window.removeEventListener("mousemove", onMouseMove);
-  }, [cursorX, cursorY, mouseX, mouseY]);
+  }, [cursorX, cursorY, mouseX, mouseY, hasFinePointer, prefersReducedMotion]);
 
   useEffect(() => {
     if (!activeExperience) {
@@ -297,6 +443,36 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [activeExperience]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileNavOpen(false);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileNavOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", onResize);
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mobileNavOpen]);
 
   const activeMockup = content.hero.mockupMedia[mockupIndex] ?? content.hero.mockupMedia[0];
   const loadingFilledBlocks = Math.floor(loadingProgress / 10);
@@ -341,8 +517,14 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       ) : null}
 
       {activeExperience ? (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-          <div className="w-full max-w-5xl rounded-3xl border border-brand-border bg-brand-bg-secondary p-4 md:p-6">
+        <div
+          className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-black/80 p-4 py-6 backdrop-blur-md md:items-center md:py-4"
+          onClick={() => setActiveExperienceId(null)}
+        >
+          <div
+            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-5xl overflow-y-auto rounded-3xl border border-brand-border bg-brand-bg-secondary p-4 md:p-6"
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-brand-accent">
@@ -372,6 +554,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     url={activeExperienceMedia.mediaUrl}
                     alt={activeExperienceMedia.caption}
                     className="h-[420px] w-full object-cover"
+                    sizes="(max-width: 1024px) 94vw, 64vw"
                   />
                 ) : null}
                 <p className="border-t border-brand-border px-4 py-3 text-sm text-brand-text/90">
@@ -397,6 +580,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                         url={item.mediaUrl}
                         alt={item.caption}
                         className="h-28 w-full object-cover"
+                        sizes="(max-width: 1024px) 36vw, 220px"
                       />
                       <p className="px-3 py-2 text-xs text-brand-muted">{item.caption}</p>
                     </button>
@@ -428,14 +612,67 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             key={particle.id}
             className="absolute h-1 w-1 rounded-full bg-brand-accent/70"
             style={{ left: particle.left, top: particle.top }}
-            animate={{ y: [0, -20, 0], opacity: [0.3, 1, 0.3] }}
+            animate={
+              prefersReducedMotion
+                ? { opacity: 0.4 }
+                : { y: [0, -20, 0], opacity: [0.3, 1, 0.3] }
+            }
             transition={{
-              duration: Number(particle.duration.replace("s", "")),
-              delay: Number(particle.delay.replace("s", "")),
-              repeat: Infinity,
-              ease: "easeInOut",
+              duration: prefersReducedMotion
+                ? 0
+                : Number(particle.duration.replace("s", "")),
+              delay: prefersReducedMotion ? 0 : Number(particle.delay.replace("s", "")),
+              repeat: prefersReducedMotion ? 0 : Infinity,
+              ease: prefersReducedMotion ? "linear" : "easeInOut",
             }}
           />
+        ))}
+        {ambientObjects.map((object) => (
+          <motion.div
+            key={object.id}
+            className="absolute"
+            style={{
+              left: object.left,
+              top: object.top,
+              width: object.size,
+              height: object.size,
+              perspective: "900px",
+            }}
+            animate={{
+              y: prefersReducedMotion ? 0 : [-12, 18, -10],
+              rotate: prefersReducedMotion ? 0 : [0, 4, -3, 0],
+              opacity: prefersReducedMotion ? 0.58 : [0.5, 0.9, 0.62],
+            }}
+            transition={{
+              duration: prefersReducedMotion ? 0 : object.duration,
+              repeat: prefersReducedMotion ? 0 : Infinity,
+              ease: prefersReducedMotion ? "linear" : "easeInOut",
+              delay: prefersReducedMotion ? 0 : object.delay,
+            }}
+          >
+            <motion.div
+              className={`relative h-full w-full border border-brand-accent/45 bg-[linear-gradient(145deg,rgba(28,44,52,0.55),rgba(8,12,18,0.35))] shadow-[0_20px_42px_rgba(0,0,0,0.45)] backdrop-blur-sm ${
+                object.shape === "diamond"
+                  ? "rotate-45 rounded-[1.5rem]"
+                  : "rounded-[1.8rem]"
+              }`}
+              style={{ transformStyle: "preserve-3d" }}
+              animate={{
+                rotateY: prefersReducedMotion ? 0 : [0, 18, 0, -18, 0],
+                rotateX: prefersReducedMotion ? 0 : [0, 8, 0, -8, 0],
+              }}
+              transition={{
+                duration: prefersReducedMotion ? 0 : object.duration * 0.72,
+                repeat: prefersReducedMotion ? 0 : Infinity,
+                ease: prefersReducedMotion ? "linear" : "easeInOut",
+                delay: prefersReducedMotion ? 0 : object.delay,
+              }}
+            >
+              <div className="absolute -inset-[14%] rounded-[inherit] bg-[radial-gradient(100%_100%_at_50%_50%,rgba(42,250,223,0.28),rgba(76,131,255,0.16)_45%,rgba(0,0,0,0)_75%)] blur-xl" />
+              <div className="absolute inset-[9%] rounded-[inherit] border border-brand-accent/60 shadow-[inset_0_0_24px_rgba(42,250,223,0.22)]" />
+              <div className="absolute inset-0 rounded-[inherit] bg-[radial-gradient(100%_100%_at_20%_20%,rgba(42,250,223,0.26),rgba(76,131,255,0.14)_45%,rgba(0,0,0,0)_82%)]" />
+            </motion.div>
+          </motion.div>
         ))}
         <motion.div
           className="absolute left-[8%] top-[12%] h-72 w-72 rounded-full bg-brand-accent/18 blur-3xl"
@@ -448,7 +685,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </div>
 
       <header className="fixed left-1/2 top-5 z-50 w-[min(920px,92vw)] -translate-x-1/2">
-        <div className="rounded-full border border-brand-border bg-black/45 px-4 py-2 backdrop-blur-xl md:px-6 md:py-2.5">
+        <div className="relative rounded-full border border-brand-border bg-black/45 px-4 py-2 backdrop-blur-xl md:px-6 md:py-2.5">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="font-display text-sm text-brand-text">{content.brand.name}</p>
@@ -456,6 +693,33 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 {content.brand.tagline}
               </p>
             </div>
+
+            <button
+              type="button"
+              aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileNavOpen}
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-brand-accent/45 bg-[linear-gradient(180deg,rgba(22,22,22,0.95),rgba(8,8,8,0.95))] text-brand-text shadow-[0_0_26px_rgba(42,250,223,0.22)] transition hover:border-brand-accent/70 md:hidden"
+              onClick={() => setMobileNavOpen((prev) => !prev)}
+            >
+              <span className="relative block h-3.5 w-[18px]">
+                <span
+                  className={`absolute left-0 top-0 block h-[2px] w-[18px] rounded-full bg-brand-accent transition-transform duration-300 ${
+                    mobileNavOpen ? "translate-y-[6px] rotate-45" : ""
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 top-[6px] block h-[2px] w-[18px] rounded-full bg-brand-text transition-opacity duration-300 ${
+                    mobileNavOpen ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 top-[12px] block h-[2px] w-[18px] rounded-full bg-brand-accent transition-transform duration-300 ${
+                    mobileNavOpen ? "-translate-y-[6px] -rotate-45" : ""
+                  }`}
+                />
+              </span>
+            </button>
+
             <nav className="hidden items-center gap-5 md:flex">
               {content.navigation.map((item) => (
                 <a
@@ -471,16 +735,73 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       </header>
 
+      <AnimatePresence>
+        {mobileNavOpen ? (
+          <div className="fixed inset-0 z-[58] md:hidden">
+            <motion.button
+              type="button"
+              aria-label="Close navigation menu"
+              className="absolute inset-0 bg-black/72 backdrop-blur-sm"
+              onClick={() => setMobileNavOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            <motion.nav
+              initial={{ opacity: 0, y: -18, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -18, scale: 0.96 }}
+              transition={{ duration: 0.22 }}
+              className="absolute inset-x-4 top-24 rounded-[1.8rem] border border-brand-accent/35 bg-[radial-gradient(120%_120%_at_0%_0%,rgba(42,250,223,0.18),rgba(0,0,0,0)_55%),linear-gradient(180deg,rgba(14,14,14,0.96),rgba(7,7,7,0.96))] p-4 shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+            >
+              <div className="mb-2 flex items-center justify-between px-1">
+                <p className="text-[0.65rem] uppercase tracking-[0.24em] text-brand-accent/90">
+                  Navigation
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-brand-border text-xs text-brand-text/90"
+                >
+                  x
+                </button>
+              </div>
+
+              <div className="mt-3 grid gap-2">
+                {content.navigation.map((item) => (
+                  <a
+                    key={`mobile-${item.href}`}
+                    href={item.href}
+                    className="rounded-2xl border border-brand-border/80 bg-black/35 px-4 py-3 font-display text-xl tracking-[0.01em] text-brand-text transition hover:border-brand-accent/70 hover:bg-brand-accent/12 hover:text-brand-accent"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </motion.nav>
+          </div>
+        ) : null}
+      </AnimatePresence>
+
       <main className="w-full px-4 pb-20 pt-32 md:px-6 lg:px-8">
-        <section id="hero" className="noise-overlay grid min-h-screen items-center gap-10 pb-12 pt-10 lg:grid-cols-[1fr_1fr]">
+        <section
+          id="hero"
+          className="noise-overlay grid min-h-screen items-center gap-10 pb-12 pt-10 lg:grid-cols-[0.92fr_1.08fr]"
+        >
           <div className="reveal-up space-y-6">
             <h1 className="font-display text-[3.2rem] leading-[0.95] sm:text-[4.6rem] md:text-[5.4rem] lg:text-[6.5rem]">
               {content.hero.displayName.split("").map((character, index) => (
                 <motion.span
                   key={`${character}-${index}`}
-                  initial={{ opacity: 0, y: 70 }}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 70 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.55, delay: 0.15 + index * 0.03 }}
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0 }
+                      : { duration: 0.55, delay: 0.15 + index * 0.03 }
+                  }
                   className="inline-block"
                 >
                   {character === " " ? "\u00a0" : character}
@@ -491,17 +812,21 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             <div className="flex flex-wrap items-center gap-3 text-xl text-brand-text md:text-2xl">
               <span className="font-display">{content.hero.rolePrimary}</span>
               <motion.span
-                animate={{ rotate: 360 }}
-                transition={{ duration: 3.8, repeat: Infinity, ease: "linear" }}
+                animate={prefersReducedMotion ? undefined : { rotate: 360 }}
+                transition={
+                  prefersReducedMotion
+                    ? undefined
+                    : { duration: 3.8, repeat: Infinity, ease: "linear" }
+                }
                 className="font-display text-gradient-accent"
               >
                 x
               </motion.span>
               <motion.span
                 key={roleText}
-                initial={{ opacity: 0, y: 16 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.45 }}
                 className="font-display text-gradient-accent"
               >
                 {roleText}
@@ -532,30 +857,36 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
 
           <motion.div
-            className="reveal-up relative mx-auto h-[410px] w-full max-w-[560px] rounded-[2rem] border border-brand-border bg-brand-bg-secondary/60 p-4 backdrop-blur-xl"
-            whileHover={{ rotateX: 2.4, rotateY: -2.4 }}
-            transition={{ duration: 0.25 }}
+            className="reveal-up relative mx-auto h-[410px] w-full max-w-[560px] rounded-[2rem] border border-brand-border bg-brand-bg-secondary/60 p-4 backdrop-blur-xl lg:h-auto lg:max-w-[540px] lg:aspect-square xl:max-w-[600px]"
+            whileHover={enableInteractiveMotion ? { rotateX: 2.4, rotateY: -2.4 } : undefined}
+            transition={enableInteractiveMotion ? { duration: 0.25 } : undefined}
             data-cursor="interactive"
           >
             <div className="absolute inset-0 rounded-[2rem] border border-brand-accent/25 shadow-[0_0_80px_rgba(42,250,223,0.18)]" />
             <div className="relative h-full overflow-hidden rounded-[1.55rem] border border-brand-border bg-black">
-              {activeMockup ? (
-                <motion.div
-                  key={activeMockup.id}
-                  initial={{ opacity: 0.2, scale: 1.08 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.7 }}
-                  className="h-full"
-                >
-                  <MediaThumb
-                    kind={activeMockup.mediaKind}
-                    url={activeMockup.mediaUrl}
-                    alt={activeMockup.caption}
-                    className="h-full w-full object-cover"
-                    priority
-                  />
-                </motion.div>
-              ) : null}
+              <AnimatePresence mode="wait" initial={false}>
+                {activeMockup ? (
+                  <motion.div
+                    key={activeMockup.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
+                    className="h-full will-change-[opacity]"
+                  >
+                    <MediaThumb
+                      kind={activeMockup.mediaKind}
+                      url={activeMockup.mediaUrl}
+                      alt={activeMockup.caption}
+                      className="h-full w-full object-contain"
+                      sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 560px"
+                      quality={92}
+                      priority
+                      loading="eager"
+                    />
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5">
                 <p className="text-xs uppercase tracking-[0.16em] text-brand-accent">Live Preview</p>
                 <p className="mt-1 text-sm text-brand-text/90">{activeMockup?.caption}</p>
@@ -568,15 +899,16 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           id="about"
           className="reveal-up mt-14 grid items-start gap-8 lg:grid-cols-[0.85fr_1.15fr]"
         >
-          <div className="overflow-hidden rounded-3xl border border-brand-border bg-brand-bg-secondary/75">
+          <div className="order-2 mx-auto w-full max-w-[460px] overflow-hidden rounded-3xl border border-brand-border bg-brand-bg-secondary/75 lg:order-1 lg:max-w-[540px]">
             <MediaThumb
               kind="image"
               url={content.about.imageUrl}
               alt={content.about.heading}
-              className="aspect-[4/5] min-h-[420px] w-full object-cover"
+              className="h-[360px] w-full object-cover sm:h-[460px] lg:h-[560px] xl:h-[620px]"
+              sizes="(max-width: 768px) 94vw, (max-width: 1280px) 42vw, 540px"
             />
           </div>
-          <div className="h-fit rounded-3xl border border-brand-border bg-brand-bg-secondary/70 p-8 backdrop-blur-xl">
+          <div className="order-1 h-fit rounded-3xl border border-brand-border bg-brand-bg-secondary/70 p-8 backdrop-blur-xl lg:order-2">
             <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">{content.about.title}</p>
             <h2 className="mt-4 max-w-[18ch] font-display text-4xl leading-tight md:text-5xl">
               {content.about.heading}
@@ -589,34 +921,69 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
         <section id="experience" className="mt-24">
           <h2 className="reveal-up font-display text-4xl md:text-5xl">Experience</h2>
-          <div className="mt-8 space-y-4 border-l border-brand-border pl-6 md:pl-10">
-            {content.experience.map((item, index) => (
-              <motion.article
-                key={item.id}
-                initial={{ opacity: 0, x: -35 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.55, delay: index * 0.06 }}
-                className="relative rounded-2xl border border-brand-border bg-brand-bg-secondary/70 p-5"
-              >
-                <span className="absolute -left-[2.15rem] top-8 h-3 w-3 rounded-full bg-brand-accent shadow-[0_0_20px_rgba(42,250,223,0.8)]" />
-                <p className="font-numbers text-xs uppercase tracking-[0.24em] text-brand-accent">{item.year}</p>
-                <h3 className="mt-1 font-display text-2xl">{item.title}</h3>
-                <p className="mt-2 text-sm text-brand-muted">{item.organization}</p>
-                <p className="mt-3 max-w-[65ch] text-sm leading-7 text-brand-muted/95">{item.summary}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    openExperienceGallery(item.id);
-                  }}
-                  data-cursor="interactive"
-                  className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand-border bg-black/25 px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+          <div ref={experienceTimelineRef} className="relative mt-8 pl-8 md:pl-10">
+            <div className="pointer-events-none absolute bottom-8 left-0 top-8">
+              <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-border to-transparent" />
+              <motion.div
+                className="absolute left-0 -translate-x-[1px] w-[3px] rounded-full bg-gradient-to-b from-transparent via-brand-accent to-transparent blur-[0.4px]"
+                style={{
+                  top: experienceGlowTop,
+                  opacity: experienceGlowOpacity,
+                  height: "6.5rem",
+                  boxShadow: "0 0 24px rgba(42,250,223,0.92)",
+                  maskImage:
+                    "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
+                }}
+              />
+            </div>
+
+            <div className="space-y-4">
+              {content.experience.map((item, index) => (
+                <motion.article
+                  key={item.id}
+                  initial={{ opacity: 0, x: -35 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.35 }}
+                  transition={{ duration: 0.55, delay: index * 0.06 }}
+                  className="relative rounded-2xl border border-brand-border bg-brand-bg-secondary/70 p-5"
                 >
-                  Show Work
-                  <span>{"->"}</span>
-                </button>
-              </motion.article>
-            ))}
+                  <motion.span
+                    className="absolute -left-[2.35rem] top-8 h-3 w-3 rounded-full bg-brand-accent md:-left-[2.85rem]"
+                    animate={{
+                      opacity: 0.28,
+                      scale: 0.72,
+                      boxShadow: "0 0 8px rgba(42,250,223,0.35)",
+                    }}
+                    whileInView={{
+                      opacity: 1,
+                      scale: 1,
+                      boxShadow: "0 0 22px rgba(42,250,223,0.95)",
+                    }}
+                    viewport={{ amount: 0.7 }}
+                    transition={{
+                      duration: 0.28,
+                      ease: "easeOut",
+                      delay: index * 0.1,
+                    }}
+                  />
+                  <p className="font-numbers text-xs uppercase tracking-[0.24em] text-brand-accent">{item.year}</p>
+                  <h3 className="mt-1 font-display text-2xl">{item.title}</h3>
+                  <p className="mt-2 text-sm text-brand-muted">{item.organization}</p>
+                  <p className="mt-3 max-w-[65ch] text-sm leading-7 text-brand-muted/95">{item.summary}</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openExperienceGallery(item.id);
+                    }}
+                    data-cursor="interactive"
+                    className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand-border bg-black/25 px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+                  >
+                    Show Work
+                    <span>{"->"}</span>
+                  </button>
+                </motion.article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -625,14 +992,17 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           {content.featuredWorks.map((work, workIndex) => (
             <article
               key={work.id}
-              className="reveal-up group grid min-h-[88vh] gap-6 rounded-[2rem] border border-brand-border bg-brand-bg-secondary/70 p-5 lg:grid-cols-[1.2fr_0.8fr]"
+              className="reveal-up group grid gap-4 rounded-[2rem] border border-brand-border bg-brand-bg-secondary/70 p-4 md:gap-6 md:p-5 lg:min-h-[88vh] lg:grid-cols-[1.2fr_0.8fr]"
             >
               <div className="relative overflow-hidden rounded-[1.45rem] border border-brand-border">
                 <MediaThumb
                   kind={work.mediaKind}
                   url={work.mediaUrl}
                   alt={work.title}
-                  className="h-full min-h-[420px] w-full object-cover transition duration-700 group-hover:scale-105"
+                  className="h-[290px] w-full object-cover transition duration-700 group-hover:scale-105 sm:h-[360px] md:h-[420px] lg:h-full lg:min-h-[420px]"
+                  sizes="(max-width: 768px) 94vw, (max-width: 1280px) 80vw, 58vw"
+                  quality={90}
+                  priority={workIndex === 0}
                 />
                 <div className="absolute inset-0 bg-black/35 opacity-0 transition duration-300 group-hover:opacity-100" />
               </div>
@@ -675,52 +1045,96 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           ))}
         </section>
 
-        <section id="services" className="mt-24">
-          <h2 className="reveal-up font-display text-4xl md:text-5xl">Services</h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {content.services.map((service) => (
+        <section
+          id="services"
+          className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_0%_0%,rgba(42,250,223,0.14),rgba(0,0,0,0)_52%),linear-gradient(180deg,rgba(16,16,16,0.86),rgba(6,6,6,0.92))] p-6 md:p-8"
+        >
+          <div className="reveal-up flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">What I Offer</p>
+              <h2 className="mt-2 font-display text-4xl md:text-5xl">Services</h2>
+            </div>
+            <p className="max-w-[52ch] text-sm leading-7 text-brand-muted">
+              From visual systems to responsive frontends, each service is crafted for clarity,
+              impact, and measurable digital growth.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {content.services.map((service, index) => (
               <motion.article
                 key={service.id}
-                whileHover={{ y: -6, rotateX: 2, rotateY: -2 }}
-                transition={{ duration: 0.22 }}
+                whileHover={
+                  enableInteractiveMotion ? { y: -8, rotateX: 1.5, rotateY: -1.5 } : undefined
+                }
+                transition={enableInteractiveMotion ? { duration: 0.22 } : undefined}
                 data-cursor="interactive"
-                className="reveal-up rounded-3xl border border-brand-border bg-brand-bg-secondary/75 p-6 backdrop-blur-xl"
+                className="reveal-up group relative overflow-hidden rounded-3xl border border-brand-border/90 bg-black/45 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl"
               >
-                <h3 className="font-display text-2xl">{service.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-brand-muted">{service.description}</p>
+                <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-accent opacity-70" />
+                <p className="text-[0.68rem] uppercase tracking-[0.18em] text-brand-accent/90">
+                  Service {String(index + 1).padStart(2, "0")}
+                </p>
+                <h3 className="mt-3 font-display text-[1.9rem] leading-tight">{service.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-brand-text/78">{service.description}</p>
               </motion.article>
             ))}
           </div>
         </section>
 
-        <section id="toolbox" className="mt-24">
-          <h2 className="reveal-up font-display text-4xl md:text-5xl">Toolbox</h2>
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            <div className="reveal-up rounded-3xl border border-brand-border bg-brand-bg-secondary/65 p-6 backdrop-blur-xl">
+        <section
+          id="toolbox"
+          className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(100%_120%_at_100%_0%,rgba(76,131,255,0.18),rgba(0,0,0,0)_50%),linear-gradient(180deg,rgba(16,16,16,0.86),rgba(7,7,7,0.92))] p-6 md:p-8"
+        >
+          <div className="reveal-up flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Stack & Software</p>
+              <h2 className="mt-2 font-display text-4xl md:text-5xl">Toolbox</h2>
+            </div>
+            <p className="max-w-[52ch] text-sm leading-7 text-brand-muted">
+              A practical mix of design, development, and next-step tools that power full
+              creative-to-code execution.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+            <div className="reveal-up rounded-3xl border border-brand-border bg-black/45 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl">
               <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Design</p>
+              <div className="mt-4 h-px bg-gradient-to-r from-brand-accent/70 to-transparent" />
               <div className="mt-4 flex flex-wrap gap-2">
                 {content.toolbox.design.map((item) => (
-                  <span key={item} className="rounded-full border border-brand-border px-3 py-1 text-xs text-brand-text">
+                  <span
+                    key={item}
+                    className="rounded-full border border-brand-accent/30 bg-brand-bg-secondary/80 px-3 py-1 text-xs text-brand-text"
+                  >
                     {item}
                   </span>
                 ))}
               </div>
             </div>
-            <div className="reveal-up rounded-3xl border border-brand-border bg-brand-bg-secondary/65 p-6 backdrop-blur-xl">
+            <div className="reveal-up rounded-3xl border border-brand-border bg-black/45 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl">
               <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Development</p>
+              <div className="mt-4 h-px bg-gradient-to-r from-brand-accent/70 to-transparent" />
               <div className="mt-4 flex flex-wrap gap-2">
                 {content.toolbox.development.map((item) => (
-                  <span key={item} className="rounded-full border border-brand-border px-3 py-1 text-xs text-brand-text">
+                  <span
+                    key={item}
+                    className="rounded-full border border-brand-accent/30 bg-brand-bg-secondary/80 px-3 py-1 text-xs text-brand-text"
+                  >
                     {item}
                   </span>
                 ))}
               </div>
             </div>
-            <div className="reveal-up rounded-3xl border border-brand-border bg-brand-bg-secondary/65 p-6 backdrop-blur-xl">
+            <div className="reveal-up rounded-3xl border border-brand-border bg-black/45 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl">
               <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Learning</p>
+              <div className="mt-4 h-px bg-gradient-to-r from-brand-accent/70 to-transparent" />
               <div className="mt-4 flex flex-wrap gap-2">
                 {content.toolbox.learning.map((item) => (
-                  <span key={item} className="rounded-full border border-brand-border px-3 py-1 text-xs text-brand-text">
+                  <span
+                    key={item}
+                    className="rounded-full border border-brand-accent/30 bg-brand-bg-secondary/80 px-3 py-1 text-xs text-brand-text"
+                  >
                     {item}
                   </span>
                 ))}
@@ -729,17 +1143,29 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
-        <section className="mt-24">
-          <h2 className="reveal-up font-display text-4xl md:text-5xl">Why Work With Me</h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <section className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_50%_0%,rgba(42,250,223,0.12),rgba(0,0,0,0)_56%),linear-gradient(180deg,rgba(15,15,15,0.88),rgba(6,6,6,0.92))] p-6 md:p-8">
+          <div className="reveal-up flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Core Values</p>
+              <h2 className="mt-2 font-display text-4xl md:text-5xl">Why Work With Me</h2>
+            </div>
+            <p className="max-w-[52ch] text-sm leading-7 text-brand-muted">
+              Creative thinking, detail-level precision, and performance-first execution on every
+              deliverable.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
             {content.whyWorkWithMe.map((item) => (
-              <article
+              <motion.article
                 key={item.id}
-                className="reveal-up rounded-3xl border border-brand-border bg-brand-bg-secondary/75 p-6"
+                whileHover={enableInteractiveMotion ? { y: -6 } : undefined}
+                transition={enableInteractiveMotion ? { duration: 0.2 } : undefined}
+                className="reveal-up rounded-3xl border border-brand-border bg-black/45 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.35)]"
               >
-                <h3 className="font-display text-2xl">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-brand-muted">{item.description}</p>
-              </article>
+                <h3 className="font-display text-[1.9rem] leading-tight">{item.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-brand-text/78">{item.description}</p>
+              </motion.article>
             ))}
           </div>
         </section>
@@ -774,8 +1200,12 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           <div className="overflow-hidden rounded-3xl border border-brand-border bg-brand-bg-secondary/65 py-5">
             <motion.div
               className="flex w-max gap-4 px-4 md:px-6"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
+              animate={prefersReducedMotion ? { x: "0%" } : { x: ["0%", "-50%"] }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { duration: 26, repeat: Infinity, ease: "linear" }
+              }
             >
               {[...bottomShowcaseItems, ...bottomShowcaseItems].map((item, index) => (
                 <article
@@ -787,6 +1217,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     url={item.mediaUrl}
                     alt={item.title}
                     className="h-40 w-full object-cover"
+                    sizes="(max-width: 768px) 250px, 300px"
                   />
                   <div className="space-y-1 p-3">
                     <h3 className="text-sm font-semibold text-brand-text">{item.title}</h3>

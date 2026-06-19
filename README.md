@@ -53,6 +53,9 @@ Open:
 Create `.env.local`:
 
 ```bash
+# Recommended for canonical metadata + sitemap/robots host
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+
 ADMIN_SESSION_SECRET=replace-with-long-random-secret
 
 # Optional: force secure admin cookie (recommended in HTTPS environments)
@@ -64,6 +67,10 @@ ADMIN_EMAIL_CHANGE_OTP=123456
 # Optional but recommended for Vercel media/content persistence:
 BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...
 ```
+
+## Launch QA
+
+- Use `docs/production-qa-checklist.md` before final release.
 
 ## Persistence behavior
 
