@@ -21,23 +21,13 @@ interface PortfolioPageProps {
   content: PortfolioContent;
 }
 
-type AmbientObject = {
-  id: number;
-  left: string;
-  top: string;
-  size: number;
-  shape: "rounded" | "diamond";
-  duration: number;
-  delay: number;
-};
-
 function MediaThumb({
   kind,
   url,
   alt,
   className,
   sizes = "100vw",
-  quality = 75,
+  quality = 80,
   loading,
   priority = false,
 }: {
@@ -159,11 +149,7 @@ function NumberCard({
 export function PortfolioPage({ content }: PortfolioPageProps) {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingDone, setLoadingDone] = useState(false);
-  const [currentRole, setCurrentRole] = useState(0);
   const [mockupIndex, setMockupIndex] = useState(0);
-  const [isMockupPaused, setIsMockupPaused] = useState(false);
-  const [carouselProgress, setCarouselProgress] = useState(0);
-  const [copiedEmail, setCopiedEmail] = useState(false);
 
   const [cursorActive, setCursorActive] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(false);
@@ -171,7 +157,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [activeExperienceMediaIndex, setActiveExperienceMediaIndex] = useState(0);
   const [activeFeaturedWork, setActiveFeaturedWork] = useState<FeaturedWorkItem | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [hasFinePointer, setHasFinePointer] = useState(false);
 
   const lenisRef = useRef<Lenis | null>(null);
@@ -189,26 +174,24 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 80, damping: 20, mass: 0.8 });
   const smoothY = useSpring(mouseY, { stiffness: 80, damping: 20, mass: 0.8 });
-  const orbAX = useTransform(smoothX, [0, 1], [-45, 45]);
-  const orbAY = useTransform(smoothY, [0, 1], [-26, 26]);
-  const orbBX = useTransform(smoothX, [0, 1], [36, -32]);
-  const orbBY = useTransform(smoothY, [0, 1], [20, -22]);
+  const orbAX = useTransform(smoothX, [0, 1], [-35, 35]);
+  const orbAY = useTransform(smoothY, [0, 1], [-20, 20]);
+  const orbBX = useTransform(smoothX, [0, 1], [30, -25]);
+  const orbBY = useTransform(smoothY, [0, 1], [15, -18]);
 
-  // 3D Tilt motion values for hero card
+  // Subtle 3D tilt for showcase card
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
-  const smoothTiltX = useSpring(tiltX, { stiffness: 200, damping: 25, mass: 0.5 });
-  const smoothTiltY = useSpring(tiltY, { stiffness: 200, damping: 25, mass: 0.5 });
+  const smoothTiltX = useSpring(tiltX, { stiffness: 180, damping: 24 });
+  const smoothTiltY = useSpring(tiltY, { stiffness: 180, damping: 24 });
 
   const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current || !hasFinePointer || prefersReducedMotion) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
-
-    // Range: -10deg to +10deg
-    tiltX.set((y - 0.5) * -14);
-    tiltY.set((x - 0.5) * 14);
+    tiltX.set((y - 0.5) * -10);
+    tiltY.set((x - 0.5) * 10);
   };
 
   const handleCardMouseLeave = () => {
@@ -216,30 +199,16 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     tiltY.set(0);
   };
 
-  const handleCopyEmail = () => {
-    if (!content.contact.email) return;
-    void navigator.clipboard.writeText(content.contact.email);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2400);
-  };
-
   const handlePrevMockup = () => {
-    setCarouselProgress(0);
     setMockupIndex((prev) =>
       prev > 0 ? prev - 1 : content.hero.mockupMedia.length - 1,
     );
   };
 
   const handleNextMockup = () => {
-    setCarouselProgress(0);
     setMockupIndex((prev) =>
       prev < content.hero.mockupMedia.length - 1 ? prev + 1 : 0,
     );
-  };
-
-  const handleSelectMockup = (idx: number) => {
-    setCarouselProgress(0);
-    setMockupIndex(idx);
   };
 
   const { scrollYProgress: experienceScrollYProgress } = useScroll({
@@ -257,72 +226,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     [0.75, 1, 1, 0.45],
   );
 
-  const roleText =
-    currentRole % 2 === 0 ? content.hero.roleSecondary : content.hero.roleMorph;
   const enableInteractiveMotion = hasFinePointer && !prefersReducedMotion;
-
-  const particles = useMemo(
-    () =>
-      Array.from(
-        {
-          length: prefersReducedMotion ? 10 : isMobileViewport ? 16 : 28,
-        },
-        (_, index) => ({
-          id: index,
-          left: `${(index * 37) % 100}%`,
-          top: `${(index * 53) % 100}%`,
-          delay: `${(index % 9) * 0.45}s`,
-          duration: `${5 + (index % 7)}s`,
-        }),
-      ),
-    [isMobileViewport, prefersReducedMotion],
-  );
-
-  const ambientObjects = useMemo<AmbientObject[]>(
-    () => {
-      const objects: AmbientObject[] = [
-        {
-          id: 1,
-          left: "6%",
-          top: "24%",
-          size: isMobileViewport ? 96 : 130,
-          shape: "diamond",
-          duration: 16,
-          delay: 0,
-        },
-        {
-          id: 2,
-          left: "84%",
-          top: "16%",
-          size: isMobileViewport ? 110 : 170,
-          shape: "rounded",
-          duration: 19,
-          delay: 0.7,
-        },
-        {
-          id: 3,
-          left: "12%",
-          top: "68%",
-          size: isMobileViewport ? 104 : 150,
-          shape: "rounded",
-          duration: 17,
-          delay: 1.1,
-        },
-        {
-          id: 4,
-          left: "80%",
-          top: "76%",
-          size: isMobileViewport ? 100 : 140,
-          shape: "diamond",
-          duration: 18,
-          delay: 0.35,
-        },
-      ];
-
-      return objects.filter((_, index) => !isMobileViewport || index < 2);
-    },
-    [isMobileViewport],
-  );
 
   const activeExperience = useMemo(
     () => content.experience.find((item) => item.id === activeExperienceId) ?? null,
@@ -406,7 +310,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   // Viewport detection
   useEffect(() => {
     const updateViewportState = () => {
-      setIsMobileViewport(window.innerWidth < 768);
       setHasFinePointer(window.matchMedia("(pointer:fine)").matches);
     };
 
@@ -447,43 +350,18 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     };
   }, [loadingDone]);
 
-  // Role morph interval
+  // Smooth carousel auto-cycle
   useEffect(() => {
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || content.hero.mockupMedia.length <= 1) {
       return;
     }
-
-    const interval = setInterval(() => {
-      setCurrentRole((prev) => prev + 1);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [prefersReducedMotion]);
-
-  // Interactive carousel auto-cycle with progress tracking and pause-on-hover
-  useEffect(() => {
-    if (prefersReducedMotion || content.hero.mockupMedia.length <= 1 || isMockupPaused) {
-      return;
-    }
-
-    const duration = 4500;
-    const intervalStep = 60;
-    let elapsed = 0;
 
     const timer = setInterval(() => {
-      elapsed += intervalStep;
-      const progress = Math.min(100, (elapsed / duration) * 100);
-      setCarouselProgress(progress);
-
-      if (elapsed >= duration) {
-        elapsed = 0;
-        setCarouselProgress(0);
-        setMockupIndex((prev) => (prev + 1) % content.hero.mockupMedia.length);
-      }
-    }, intervalStep);
+      setMockupIndex((prev) => (prev + 1) % content.hero.mockupMedia.length);
+    }, 4500);
 
     return () => clearInterval(timer);
-  }, [content.hero.mockupMedia.length, prefersReducedMotion, isMockupPaused, mockupIndex]);
+  }, [content.hero.mockupMedia.length, prefersReducedMotion]);
 
   // Preload hero mockup images
   useEffect(() => {
@@ -529,11 +407,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       blocks.forEach((block) => {
         gsap.fromTo(
           block,
-          { opacity: 0, y: 60 },
+          { opacity: 0, y: 50 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
+            duration: 0.8,
             ease: "power3.out",
             scrollTrigger: {
               trigger: block,
@@ -921,107 +799,40 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       ) : null}
 
-      {/* Background ambient animation layers */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(95%_70%_at_50%_0%,rgba(42,250,223,0.18),transparent_58%),linear-gradient(150deg,#090b12_0%,#050505_52%,#0d1020_100%)]" />
+      {/* Clean, calm background layers (no distracting rotating 3D cubes) */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[#050505]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(42,250,223,0.12),transparent_60%)]" />
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 opacity-40"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
-            backgroundSize: "72px 72px",
-            maskImage: "radial-gradient(circle at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0.15))",
+              "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+            maskImage: "radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%)",
           }}
         />
-        {particles.map((particle) => (
-          <motion.span
-            key={particle.id}
-            className="absolute h-1 w-1 rounded-full bg-brand-accent/70"
-            style={{ left: particle.left, top: particle.top }}
-            animate={
-              prefersReducedMotion
-                ? { opacity: 0.4 }
-                : { y: [0, -20, 0], opacity: [0.3, 1, 0.3] }
-            }
-            transition={{
-              duration: prefersReducedMotion
-                ? 0
-                : Number(particle.duration.replace("s", "")),
-              delay: prefersReducedMotion ? 0 : Number(particle.delay.replace("s", "")),
-              repeat: prefersReducedMotion ? 0 : Infinity,
-              ease: prefersReducedMotion ? "linear" : "easeInOut",
-            }}
-          />
-        ))}
-        {ambientObjects.map((object) => (
-          <motion.div
-            key={object.id}
-            className="absolute"
-            style={{
-              left: object.left,
-              top: object.top,
-              width: object.size,
-              height: object.size,
-              perspective: "900px",
-            }}
-            animate={{
-              y: prefersReducedMotion ? 0 : [-12, 18, -10],
-              rotate: prefersReducedMotion ? 0 : [0, 4, -3, 0],
-              opacity: prefersReducedMotion ? 0.58 : [0.5, 0.9, 0.62],
-            }}
-            transition={{
-              duration: prefersReducedMotion ? 0 : object.duration,
-              repeat: prefersReducedMotion ? 0 : Infinity,
-              ease: prefersReducedMotion ? "linear" : "easeInOut",
-              delay: prefersReducedMotion ? 0 : object.delay,
-            }}
-          >
-            <motion.div
-              className={`relative h-full w-full border border-brand-accent/45 bg-[linear-gradient(145deg,rgba(28,44,52,0.55),rgba(8,12,18,0.35))] shadow-[0_20px_42px_rgba(0,0,0,0.45)] backdrop-blur-sm ${
-                object.shape === "diamond"
-                  ? "rotate-45 rounded-[1.5rem]"
-                  : "rounded-[1.8rem]"
-              }`}
-              style={{ transformStyle: "preserve-3d" }}
-              animate={{
-                rotateY: prefersReducedMotion ? 0 : [0, 18, 0, -18, 0],
-                rotateX: prefersReducedMotion ? 0 : [0, 8, 0, -8, 0],
-              }}
-              transition={{
-                duration: prefersReducedMotion ? 0 : object.duration * 0.72,
-                repeat: prefersReducedMotion ? 0 : Infinity,
-                ease: prefersReducedMotion ? "linear" : "easeInOut",
-                delay: prefersReducedMotion ? 0 : object.delay,
-              }}
-            >
-              <div className="absolute -inset-[14%] rounded-[inherit] bg-[radial-gradient(100%_100%_at_50%_50%,rgba(42,250,223,0.28),rgba(76,131,255,0.16)_45%,rgba(0,0,0,0)_75%)] blur-xl" />
-              <div className="absolute inset-[9%] rounded-[inherit] border border-brand-accent/60 shadow-[inset_0_0_24px_rgba(42,250,223,0.22)]" />
-              <div className="absolute inset-0 rounded-[inherit] bg-[radial-gradient(100%_100%_at_20%_20%,rgba(42,250,223,0.26),rgba(76,131,255,0.14)_45%,rgba(0,0,0,0)_82%)]" />
-            </motion.div>
-          </motion.div>
-        ))}
         <motion.div
-          className="absolute left-[8%] top-[12%] h-72 w-72 rounded-full bg-brand-accent/18 blur-3xl"
+          className="absolute left-[10%] top-[15%] h-80 w-80 rounded-full bg-brand-accent/10 blur-[100px]"
           style={{ x: orbAX, y: orbAY }}
         />
         <motion.div
-          className="absolute right-[10%] top-[34%] h-80 w-80 rounded-full bg-[#4c83ff]/18 blur-3xl"
+          className="absolute right-[12%] top-[25%] h-96 w-96 rounded-full bg-[#4c83ff]/10 blur-[120px]"
           style={{ x: orbBX, y: orbBY }}
         />
       </div>
 
       {/* Floating navigation header */}
-      <header className="fixed left-1/2 top-5 z-50 w-[min(920px,92vw)] -translate-x-1/2">
-        <div className="relative rounded-full border border-brand-border bg-black/55 px-4 py-2 backdrop-blur-xl md:px-6 md:py-2.5 shadow-lg">
+      <header className="fixed left-1/2 top-5 z-50 w-[min(900px,92vw)] -translate-x-1/2">
+        <div className="relative rounded-full border border-white/10 bg-black/60 px-5 py-2.5 backdrop-blur-xl shadow-lg">
           <div className="flex items-center justify-between gap-4">
             <a
               href="#hero"
               onClick={(e) => handleNavClick(e, "#hero")}
               className="text-left transition hover:opacity-85"
             >
-              <p className="font-display text-sm text-brand-text">{content.brand.name}</p>
-              <p className="text-[0.65rem] uppercase tracking-[0.2em] text-brand-muted">
-                {content.brand.tagline}
+              <p className="font-display text-sm font-semibold tracking-wide text-brand-text">
+                {content.brand.name}
               </p>
             </a>
 
@@ -1029,35 +840,35 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               type="button"
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={mobileNavOpen}
-              className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-brand-accent/45 bg-[linear-gradient(180deg,rgba(22,22,22,0.95),rgba(8,8,8,0.95))] text-brand-text shadow-[0_0_26px_rgba(42,250,223,0.22)] transition hover:border-brand-accent/70 md:hidden"
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-brand-text transition hover:border-brand-accent/60 md:hidden"
               onClick={() => setMobileNavOpen((prev) => !prev)}
             >
-              <span className="relative block h-3.5 w-[18px]">
+              <span className="relative block h-3 w-4">
                 <span
-                  className={`absolute left-0 top-0 block h-[2px] w-[18px] rounded-full bg-brand-accent transition-transform duration-300 ${
-                    mobileNavOpen ? "translate-y-[6px] rotate-45" : ""
+                  className={`absolute left-0 top-0 block h-[1.5px] w-4 rounded-full bg-white transition-transform duration-300 ${
+                    mobileNavOpen ? "translate-y-[5px] rotate-45" : ""
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-[6px] block h-[2px] w-[18px] rounded-full bg-brand-text transition-opacity duration-300 ${
+                  className={`absolute left-0 top-[5px] block h-[1.5px] w-4 rounded-full bg-white transition-opacity duration-300 ${
                     mobileNavOpen ? "opacity-0" : "opacity-100"
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-[12px] block h-[2px] w-[18px] rounded-full bg-brand-accent transition-transform duration-300 ${
-                    mobileNavOpen ? "-translate-y-[6px] -rotate-45" : ""
+                  className={`absolute left-0 top-[10px] block h-[1.5px] w-4 rounded-full bg-white transition-transform duration-300 ${
+                    mobileNavOpen ? "-translate-y-[5px] -rotate-45" : ""
                   }`}
                 />
               </span>
             </button>
 
-            <nav className="hidden items-center gap-5 md:flex">
+            <nav className="hidden items-center gap-6 md:flex">
               {content.navigation.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="text-xs font-medium text-brand-text/85 transition hover:text-brand-accent"
+                  className="text-xs font-medium text-zinc-300 transition hover:text-brand-accent"
                 >
                   {item.label}
                 </a>
@@ -1067,14 +878,14 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       </header>
 
-      {/* Mobile nav modal */}
+      {/* Mobile nav drawer */}
       <AnimatePresence>
         {mobileNavOpen ? (
           <div className="fixed inset-0 z-[58] md:hidden">
             <motion.button
               type="button"
               aria-label="Close navigation menu"
-              className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               onClick={() => setMobileNavOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1082,31 +893,31 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             />
 
             <motion.nav
-              initial={{ opacity: 0, y: -18, scale: 0.96 }}
+              initial={{ opacity: 0, y: -16, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -18, scale: 0.96 }}
-              transition={{ duration: 0.22 }}
-              className="absolute inset-x-4 top-24 rounded-[1.8rem] border border-brand-accent/35 bg-[radial-gradient(120%_120%_at_0%_0%,rgba(42,250,223,0.18),rgba(0,0,0,0)_55%),linear-gradient(180deg,rgba(14,14,14,0.96),rgba(7,7,7,0.96))] p-4 shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+              exit={{ opacity: 0, y: -16, scale: 0.97 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-x-4 top-20 rounded-3xl border border-white/10 bg-[#0c0d12] p-5 shadow-2xl"
             >
-              <div className="mb-2 flex items-center justify-between px-1">
-                <p className="text-[0.65rem] uppercase tracking-[0.24em] text-brand-accent/90">
+              <div className="mb-3 flex items-center justify-between px-1">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-brand-accent font-semibold">
                   Navigation
                 </p>
                 <button
                   type="button"
                   onClick={() => setMobileNavOpen(false)}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-brand-border text-xs text-brand-text/90"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 text-xs text-zinc-400"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="mt-3 grid gap-2">
+              <div className="grid gap-1.5">
                 {content.navigation.map((item) => (
                   <a
                     key={`mobile-${item.href}`}
                     href={item.href}
-                    className="rounded-2xl border border-brand-border/80 bg-black/35 px-4 py-3 font-display text-xl tracking-[0.01em] text-brand-text transition hover:border-brand-accent/70 hover:bg-brand-accent/12 hover:text-brand-accent"
+                    className="rounded-xl px-4 py-3 font-display text-lg text-white transition hover:bg-white/5 hover:text-brand-accent"
                     onClick={(e) => handleNavClick(e, item.href)}
                   >
                     {item.label}
@@ -1118,187 +929,92 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         ) : null}
       </AnimatePresence>
 
-      <main className="w-full px-4 pb-20 pt-28 sm:pt-32 md:px-6 lg:px-8">
-        {/* HERO SECTION - CONCEPT 1: MODERN GLASS DEVICE FRAME & INTERACTIVE 3D PERSPECTIVE */}
+      <main className="w-full px-4 pb-20 pt-28 sm:pt-36 md:px-8 lg:px-12 max-w-7xl mx-auto">
+        {/* HERO SECTION - REFINED, CLEAN & PROFESSIONAL */}
         <section
           id="hero"
-          className="noise-overlay grid min-h-[calc(100vh-7rem)] items-center gap-12 pb-14 pt-4 lg:grid-cols-[1fr_1.1fr] lg:gap-14 xl:grid-cols-[1fr_1.15fr]"
+          className="grid min-h-[calc(100vh-10rem)] items-center gap-10 pb-16 pt-2 lg:grid-cols-[1fr_1.05fr] lg:gap-14"
         >
-          {/* Left Column: Brand Statement & CTA Cluster */}
-          <div className="reveal-up space-y-7">
-            {/* Live Available for Work Indicator */}
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1.5 shadow-[0_0_20px_rgba(16,185,129,0.18)] backdrop-blur-md">
+          {/* Left Column: Clear Visual Hierarchy & Direct Actions */}
+          <div className="reveal-up space-y-6">
+            {/* Availability Status Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3.5 py-1.5 text-xs text-emerald-300">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              <span className="text-[11px] font-medium tracking-wide text-emerald-300">
-                Available for New Projects
-              </span>
-              <span className="text-emerald-500/40">•</span>
-              <span className="text-[10px] text-zinc-400 font-sans hidden sm:inline">
-                Freelance & Full-time
-              </span>
+              <span className="font-medium tracking-wide">Available for new opportunities</span>
             </div>
 
-            {/* Display Name Headline */}
-            <div>
-              <h1 className="font-display text-[3.4rem] font-bold tracking-tight leading-[0.92] sm:text-[4.8rem] md:text-[5.6rem] lg:text-[6.2rem] xl:text-[7rem]">
-                {content.hero.displayName.split("").map((character, index) => (
-                  <motion.span
-                    key={`${character}-${index}`}
-                    initial={prefersReducedMotion ? false : { opacity: 0, y: 70 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0 }
-                        : { duration: 0.55, delay: 0.15 + index * 0.03 }
-                    }
-                    className="inline-block"
-                  >
-                    {character === " " ? "\u00a0" : character}
-                  </motion.span>
-                ))}
+            {/* Display Name & Role */}
+            <div className="space-y-2">
+              <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[0.98]">
+                {content.hero.displayName}
               </h1>
+              <p className="font-display text-xl sm:text-2xl font-medium text-zinc-300">
+                {content.hero.rolePrimary} <span className="text-brand-accent mx-1.5">/</span> {content.hero.roleSecondary}
+              </p>
             </div>
 
-            {/* Kinetic Role Switcher */}
-            <div className="flex flex-wrap items-center gap-3 text-xl text-brand-text md:text-2xl">
-              <span className="font-display font-medium text-white/90">
-                {content.hero.rolePrimary}
-              </span>
-              <motion.span
-                animate={prefersReducedMotion ? undefined : { rotate: 360 }}
-                transition={
-                  prefersReducedMotion
-                    ? undefined
-                    : { duration: 4.2, repeat: Infinity, ease: "linear" }
-                }
-                className="font-display text-gradient-accent"
-              >
-                ✕
-              </motion.span>
-              <motion.span
-                key={roleText}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.45 }}
-                className="font-display font-semibold text-gradient-accent"
-              >
-                {roleText}
-              </motion.span>
-            </div>
-
-            {/* Subheadline */}
-            <p className="max-w-[50ch] text-base leading-relaxed text-brand-muted md:text-lg">
+            {/* Subheadline / Bio */}
+            <p className="max-w-[48ch] text-base md:text-lg text-zinc-400 leading-relaxed">
               {content.hero.subheadline}
             </p>
 
-            {/* Modern CTA Cluster: Work + Copy Email + Resume */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-1">
+            {/* Core Tech Stack Pills */}
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-zinc-400">
+              <span className="text-zinc-500 text-[11px] uppercase tracking-wider font-mono">Focus:</span>
+              {["Next.js", "React", "TypeScript", "Tailwind CSS", "UI/UX Design"].map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[11px] text-zinc-300"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Simple, Confident Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
                 href={content.hero.primaryCtaHref}
                 onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
                 data-cursor="interactive"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-accent px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-black shadow-[0_0_32px_rgba(42,250,223,0.38)] transition hover:brightness-110"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 text-xs font-bold uppercase tracking-wider text-black shadow-[0_0_24px_rgba(42,250,223,0.3)] transition hover:brightness-110"
               >
                 <span>{content.hero.primaryCtaLabel}</span>
-                <span className="transition-transform group-hover:translate-x-1">→</span>
+                <span>→</span>
               </a>
 
-              {/* Quick Copy Email Action with instant feedback */}
-              <button
-                type="button"
-                onClick={handleCopyEmail}
+              <a
+                href="#contact"
+                onClick={(e) => handleNavClick(e, "#contact")}
                 data-cursor="interactive"
-                title="Copy email address to clipboard"
-                className={`group relative inline-flex items-center gap-2 rounded-full border px-5 py-3.5 text-xs font-semibold tracking-wide transition ${
-                  copiedEmail
-                    ? "border-emerald-400 bg-emerald-950/60 text-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.3)]"
-                    : "border-white/10 bg-black/40 text-zinc-300 hover:border-brand-accent/50 hover:text-white hover:bg-white/5"
-                }`}
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-xs font-medium text-white transition hover:bg-white/10 hover:border-white/25"
               >
-                {copiedEmail ? (
-                  <>
-                    <span className="text-emerald-400 font-bold">✓</span>
-                    <span>Copied Email!</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="h-3.5 w-3.5 text-brand-muted transition group-hover:text-brand-accent"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <span>Copy Email</span>
-                  </>
-                )}
-              </button>
+                <span>Get in touch</span>
+              </a>
 
-              {content.hero.resumeUrl ? (
+              {content.hero.resumeUrl && content.hero.resumeUrl !== "#contact" ? (
                 <a
                   href={content.hero.resumeUrl}
-                  target={content.hero.resumeUrl.startsWith("#") ? "_self" : "_blank"}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (content.hero.resumeUrl.startsWith("#")) {
-                      handleNavClick(e, content.hero.resumeUrl);
-                    }
-                  }}
                   data-cursor="interactive"
-                  className="rounded-full border border-white/10 bg-black/40 px-5 py-3.5 text-xs text-brand-muted transition hover:border-white/20 hover:text-white"
+                  className="rounded-full px-4 py-3 text-xs text-zinc-400 transition hover:text-brand-accent underline underline-offset-4"
                 >
-                  {content.hero.secondaryCtaLabel}
+                  Resume ↗
                 </a>
               ) : null}
             </div>
-
-            {/* Quick Skills / Highlights pill strip */}
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-[11px] uppercase tracking-wider text-zinc-400 font-mono">
-              <span className="flex items-center gap-1.5 text-brand-accent/90">
-                <span>✦</span> Brand Systems
-              </span>
-              <span className="text-white/20">•</span>
-              <span className="flex items-center gap-1.5 text-brand-accent/90">
-                <span>✦</span> Next.js Engineering
-              </span>
-              <span className="text-white/20">•</span>
-              <span className="flex items-center gap-1.5 text-brand-accent/90">
-                <span>✦</span> Fluid Micro-Interactions
-              </span>
-            </div>
           </div>
 
-          {/* Right Column: Sleek Glassmorphism Device Frame with 3D Tilt */}
-          <div className="relative mx-auto w-full max-w-[580px] lg:max-w-none">
-            {/* Ambient Background Glow Bloom */}
-            <div className="pointer-events-none absolute -inset-4 rounded-[2.5rem] bg-[radial-gradient(ellipse_at_center,rgba(42,250,223,0.18),rgba(76,131,255,0.08)_45%,transparent_70%)] blur-2xl" />
-
-            {/* Floating Contextual Badges with 3D Depth */}
-            <div className="pointer-events-none absolute -top-4 -right-2 z-20 hidden sm:flex items-center gap-2 rounded-full border border-white/15 bg-black/70 px-3.5 py-1.5 text-[11px] font-medium text-white shadow-xl backdrop-blur-xl">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
-              <span>Interactive Showcase</span>
-            </div>
-
-            <div className="pointer-events-none absolute -bottom-4 -left-2 z-20 hidden sm:flex items-center gap-2 rounded-full border border-white/15 bg-black/70 px-3.5 py-1.5 text-[11px] font-medium text-zinc-300 shadow-xl backdrop-blur-xl">
-              <span className="text-brand-accent">✦</span>
-              <span>Design + Frontend</span>
-            </div>
-
-            {/* 3D Tilt Frame */}
+          {/* Right Column: Clean, Elegant Media Showcase */}
+          <div className="relative mx-auto w-full max-w-[540px] lg:max-w-none">
             <motion.div
               ref={cardRef}
               onMouseMove={handleCardMouseMove}
               onMouseLeave={handleCardMouseLeave}
-              onMouseEnter={() => setIsMockupPaused(true)}
               style={
                 enableInteractiveMotion
                   ? {
@@ -1308,121 +1024,83 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     }
                   : undefined
               }
-              className="group relative overflow-hidden rounded-[2.2rem] border border-white/15 bg-[linear-gradient(145deg,rgba(255,255,255,0.08)_0%,rgba(20,20,24,0.75)_50%,rgba(10,10,12,0.92)_100%)] p-2.5 sm:p-3.5 shadow-[0_24px_70px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-shadow duration-500 hover:shadow-[0_30px_90px_rgba(42,250,223,0.22)]"
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/80 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl"
             >
-              {/* Sleek Device Chrome Header */}
-              <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
-                {/* Traffic dots */}
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
-                </div>
-
-                {/* Center caption pill */}
-                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-0.5 text-[11px] text-zinc-300 font-mono">
-                  <span className="text-brand-accent">⚡</span>
-                  <span className="truncate max-w-[180px] sm:max-w-[240px]">
-                    {activeMockup?.caption || "Interactive Showcase"}
-                  </span>
-                </div>
-
-                {/* Live beacon indicator */}
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-brand-accent font-semibold font-mono">
-                  <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-ping" />
-                  <span className="hidden sm:inline">LIVE</span>
-                </div>
-              </div>
-
-              {/* Main Media Showcase Window */}
-              <div className="relative aspect-[16/11] sm:aspect-[16/10] w-full overflow-hidden rounded-[1.6rem] bg-black/90">
+              {/* Media Stage: Versatile aspect ratio with ambient color glow */}
+              <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden bg-black/60">
                 <AnimatePresence mode="wait" initial={false}>
                   {activeMockup ? (
                     <motion.div
                       key={activeMockup.id}
-                      initial={{ opacity: 0, scale: 1.02 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ duration: 0.45, ease: "easeOut" }}
-                      className="h-full w-full will-change-[opacity,transform]"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      className="relative h-full w-full flex items-center justify-center overflow-hidden"
                     >
-                      <MediaThumb
-                        kind={activeMockup.mediaKind}
-                        url={activeMockup.mediaUrl}
-                        alt={activeMockup.caption}
-                        className="h-full w-full object-cover sm:object-contain"
-                        sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 600px"
-                        quality={92}
-                        priority
-                        loading="eager"
-                      />
+                      {/* Ambient color reflection from image */}
+                      {activeMockup.mediaKind === "image" && activeMockup.mediaUrl ? (
+                        <div
+                          className="pointer-events-none absolute inset-0 scale-125 blur-3xl opacity-20"
+                          style={{
+                            backgroundImage: `url(${activeMockup.mediaUrl})`,
+                            backgroundPosition: "center",
+                            backgroundSize: "cover",
+                          }}
+                        />
+                      ) : null}
+
+                      {/* Main artwork - never cropped, padded cleanly */}
+                      <div className="relative z-10 flex h-full w-full items-center justify-center p-3 sm:p-5">
+                        <MediaThumb
+                          kind={activeMockup.mediaKind}
+                          url={activeMockup.mediaUrl}
+                          alt={activeMockup.caption}
+                          className="max-h-full max-w-full rounded-xl object-contain drop-shadow-2xl"
+                          sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 600px"
+                          quality={90}
+                          priority
+                          loading="eager"
+                        />
+                      </div>
                     </motion.div>
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-brand-muted">
-                      No mockup media available
+                    <div className="flex h-full items-center justify-center text-xs text-zinc-500">
+                      No mockup available
                     </div>
                   )}
                 </AnimatePresence>
-
-                {/* Subtle dark gradient overlay at base for readability */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent" />
               </div>
 
-              {/* Interactive Carousel Control Bar at Base */}
-              <div className="flex items-center justify-between px-3 pt-3 pb-1">
-                {/* Slide Number Counter */}
-                <div className="flex items-center gap-1.5 font-numbers text-xs text-brand-muted">
-                  <span className="font-semibold text-brand-accent">
-                    {String(mockupIndex + 1).padStart(2, "0")}
-                  </span>
-                  <span>/</span>
-                  <span>{String(content.hero.mockupMedia.length).padStart(2, "0")}</span>
+              {/* Minimal, High-End Bottom Bar (Clean Separation, No Overlap) */}
+              <div className="flex items-center justify-between border-t border-white/10 bg-zinc-950/95 px-5 py-3.5 backdrop-blur-md">
+                <div className="min-w-0 pr-4">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-accent shadow-[0_0_8px_#2afadf]" />
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                      Showcase {mockupIndex + 1} of {content.hero.mockupMedia.length}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 truncate text-xs sm:text-sm font-medium text-white">
+                    {activeMockup?.caption || "Design Showcase"}
+                  </p>
                 </div>
 
-                {/* Progress bar and Clickable Dot Indicators */}
-                <div className="flex items-center gap-2">
-                  {content.hero.mockupMedia.map((mockup, idx) => {
-                    const isActive = idx === mockupIndex;
-                    return (
-                      <button
-                        key={mockup.id}
-                        type="button"
-                        onClick={() => handleSelectMockup(idx)}
-                        aria-label={`Go to slide ${idx + 1}`}
-                        className={`relative h-2 rounded-full transition-all duration-300 overflow-hidden ${
-                          isActive
-                            ? "w-8 bg-white/20"
-                            : "w-2 bg-white/20 hover:bg-white/40"
-                        }`}
-                      >
-                        {isActive ? (
-                          <div
-                            className="absolute inset-y-0 left-0 bg-brand-accent shadow-[0_0_8px_rgba(42,250,223,0.8)] transition-all ease-linear"
-                            style={{
-                              width: isMockupPaused ? "100%" : `${carouselProgress}%`,
-                            }}
-                          />
-                        ) : null}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Prev / Next Navigation Arrows */}
-                <div className="flex items-center gap-1.5">
+                {/* Slider Controls */}
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={handlePrevMockup}
-                    aria-label="Previous slide"
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xs text-zinc-300 transition hover:border-brand-accent/50 hover:bg-brand-accent/20 hover:text-white"
+                    aria-label="Previous showcase"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-sm text-zinc-300 transition hover:bg-white/15 hover:border-brand-accent/50 hover:text-white"
                   >
                     ←
                   </button>
                   <button
                     type="button"
                     onClick={handleNextMockup}
-                    aria-label="Next slide"
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xs text-zinc-300 transition hover:border-brand-accent/50 hover:bg-brand-accent/20 hover:text-white"
+                    aria-label="Next showcase"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-sm text-zinc-300 transition hover:bg-white/15 hover:border-brand-accent/50 hover:text-white"
                   >
                     →
                   </button>
@@ -1853,7 +1531,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </section>
       </main>
 
-      <footer className="mt-14 border-t border-brand-border px-4 py-10 md:px-6 lg:px-8">
+      <footer className="mt-14 border-t border-brand-border px-4 py-10 md:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
           <p className="font-display text-xl">{content.footer.lineOne}</p>
           <p className="text-sm text-brand-muted">{content.footer.lineTwo}</p>
