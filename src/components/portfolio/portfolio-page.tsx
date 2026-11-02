@@ -4,7 +4,7 @@ import Image, { type ImageProps } from "next/image";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -15,7 +15,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import type { PortfolioContent } from "@/types/portfolio";
+import type { FeaturedWorkItem, PortfolioContent } from "@/types/portfolio";
 
 interface PortfolioPageProps {
   content: PortfolioContent;
@@ -42,7 +42,7 @@ function MediaThumb({
   priority = false,
 }: {
   kind: "image" | "video";
-  url: string;
+  url?: string;
   alt: string;
   className?: string;
   sizes?: string;
@@ -50,6 +50,31 @@ function MediaThumb({
   loading?: ImageProps["loading"];
   priority?: boolean;
 }) {
+  const [hasError, setHasError] = useState(false);
+
+  if (!url || hasError) {
+    return (
+      <div
+        className={`flex flex-col items-center justify-center bg-zinc-900/80 p-4 text-center text-xs text-brand-muted ${className ?? "h-48 w-full"}`}
+      >
+        <svg
+          className="mb-1.5 h-6 w-6 text-brand-muted/60"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+        <span className="line-clamp-1">{alt || "Preview image"}</span>
+      </div>
+    );
+  }
+
   if (kind === "video") {
     return (
       <video
@@ -60,6 +85,7 @@ function MediaThumb({
         loop
         playsInline
         preload="metadata"
+        onError={() => setHasError(true)}
       />
     );
   }
@@ -70,7 +96,7 @@ function MediaThumb({
     <Image
       className={className}
       src={url}
-      alt={alt}
+      alt={alt || "Media thumbnail"}
       width={1800}
       height={1200}
       sizes={sizes}
@@ -78,6 +104,7 @@ function MediaThumb({
       loading={resolvedLoading}
       priority={priority}
       decoding="async"
+      onError={() => setHasError(true)}
     />
   );
 }
@@ -135,11 +162,15 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [currentRole, setCurrentRole] = useState(0);
   const [mockupIndex, setMockupIndex] = useState(0);
   const [cursorActive, setCursorActive] = useState(false);
+  const [cursorVisible, setCursorVisible] = useState(false);
   const [activeExperienceId, setActiveExperienceId] = useState<string | null>(null);
   const [activeExperienceMediaIndex, setActiveExperienceMediaIndex] = useState(0);
+  const [activeFeaturedWork, setActiveFeaturedWork] = useState<FeaturedWorkItem | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [hasFinePointer, setHasFinePointer] = useState(false);
+
+  const lenisRef = useRef<Lenis | null>(null);
   const experienceTimelineRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
@@ -156,6 +187,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const orbAY = useTransform(smoothY, [0, 1], [-26, 26]);
   const orbBX = useTransform(smoothX, [0, 1], [36, -32]);
   const orbBY = useTransform(smoothY, [0, 1], [20, -22]);
+
   const { scrollYProgress: experienceScrollYProgress } = useScroll({
     target: experienceTimelineRef,
     offset: ["start 85%", "end 20%"],
@@ -238,8 +270,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     [isMobileViewport],
   );
 
-  const activeExperience =
-    content.experience.find((item) => item.id === activeExperienceId) ?? null;
+  const activeExperience = useMemo(
+    () => content.experience.find((item) => item.id === activeExperienceId) ?? null,
+    [content.experience, activeExperienceId],
+  );
 
   const activeExperienceMedia =
     activeExperience?.gallery[activeExperienceMediaIndex] ?? activeExperience?.gallery[0];
@@ -249,12 +283,12 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     setActiveExperienceMediaIndex(0);
   }
 
-  function openExperienceGalleryFromWork(workIndex: number) {
-    const match = content.experience[workIndex] ?? content.experience[0];
-    if (!match) {
+  function handleFeaturedWorkClick(work: FeaturedWorkItem) {
+    if (work.caseStudyUrl && work.caseStudyUrl !== "#" && !work.caseStudyUrl.startsWith("#")) {
+      window.open(work.caseStudyUrl, "_blank", "noopener,noreferrer");
       return;
     }
-    openExperienceGallery(match.id);
+    setActiveFeaturedWork(work);
   }
 
   const bottomShowcaseItems = useMemo(() => {
@@ -281,6 +315,42 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     }));
   }, [content.experience, content.featuredWorks]);
 
+  // Ensure marquee items repeat enough times to fill any screen size smoothly
+  const marqueeItems = useMemo(() => {
+    if (bottomShowcaseItems.length === 0) return [];
+    const multiplier = Math.max(3, Math.ceil(12 / bottomShowcaseItems.length));
+    return Array.from({ length: multiplier }).flatMap(() => bottomShowcaseItems);
+  }, [bottomShowcaseItems]);
+
+  const scrollToAnchor = useCallback((href: string) => {
+    if (!href.startsWith("#")) {
+      return;
+    }
+    const target = document.querySelector(href);
+    if (target) {
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(target as HTMLElement, { offset: -50, duration: 1.1 });
+      } else {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, []);
+
+  const handleNavClick = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      if (href.startsWith("#")) {
+        event.preventDefault();
+        setMobileNavOpen(false);
+        // Small delay to let mobile nav close smoothly if open
+        setTimeout(() => {
+          scrollToAnchor(href);
+        }, 80);
+      }
+    },
+    [scrollToAnchor],
+  );
+
+  // Viewport detection
   useEffect(() => {
     const updateViewportState = () => {
       setIsMobileViewport(window.innerWidth < 768);
@@ -292,21 +362,40 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     return () => window.removeEventListener("resize", updateViewportState);
   }, []);
 
+  // Loading screen progression with safe state handling
   useEffect(() => {
+    let progress = 0;
     const timer = setInterval(() => {
-      setLoadingProgress((prev) => {
-        const next = Math.min(100, prev + Math.max(3, 12 - Math.floor(prev / 12)));
-        if (next >= 100) {
-          clearInterval(timer);
-          setTimeout(() => setLoadingDone(true), 420);
-        }
-        return next;
-      });
-    }, 85);
+      progress = Math.min(100, progress + Math.max(4, 15 - Math.floor(progress / 9)));
+      setLoadingProgress(progress);
+      if (progress >= 100) {
+        clearInterval(timer);
+        setTimeout(() => {
+          setLoadingDone(true);
+        }, 360);
+      }
+    }, 70);
 
     return () => clearInterval(timer);
   }, []);
 
+  // Manage body overflow during loading screen
+  useEffect(() => {
+    if (!loadingDone) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      // Refresh ScrollTrigger once page is revealed
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [loadingDone]);
+
+  // Role morph interval
   useEffect(() => {
     if (prefersReducedMotion) {
       return;
@@ -319,21 +408,23 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     return () => clearInterval(interval);
   }, [prefersReducedMotion]);
 
+  // Hero mockup media cycle
   useEffect(() => {
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || content.hero.mockupMedia.length <= 1) {
       return;
     }
 
     const interval = setInterval(() => {
-      setMockupIndex((prev) => (prev + 1) % Math.max(content.hero.mockupMedia.length, 1));
+      setMockupIndex((prev) => (prev + 1) % content.hero.mockupMedia.length);
     }, 3200);
 
     return () => clearInterval(interval);
   }, [content.hero.mockupMedia.length, prefersReducedMotion]);
 
+  // Preload hero mockup images
   useEffect(() => {
     content.hero.mockupMedia.forEach((item) => {
-      if (item.mediaKind !== "image") {
+      if (item.mediaKind !== "image" || !item.mediaUrl) {
         return;
       }
 
@@ -345,31 +436,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     });
   }, [content.hero.mockupMedia]);
 
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      return;
-    }
-
-    const lenis = new Lenis({
-      duration: 1.05,
-      smoothWheel: true,
-      gestureOrientation: "vertical",
-    });
-
-    let rafId = 0;
-    const raf = (time: number) => {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    };
-
-    rafId = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-    };
-  }, [prefersReducedMotion]);
-
+  // Lenis & GSAP ScrollTrigger Integration
   useEffect(() => {
     if (prefersReducedMotion) {
       return;
@@ -377,20 +444,38 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    const lenis = new Lenis({
+      duration: 1.05,
+      smoothWheel: true,
+      gestureOrientation: "vertical",
+    });
+    lenisRef.current = lenis;
+
+    // Connect Lenis to ScrollTrigger
+    lenis.on("scroll", ScrollTrigger.update);
+
+    const tickerCallback = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(tickerCallback);
+    gsap.ticker.lagSmoothing(0);
+
     const ctx = gsap.context(() => {
       const blocks = gsap.utils.toArray<HTMLElement>(".reveal-up");
       blocks.forEach((block) => {
         gsap.fromTo(
           block,
-          { opacity: 0, y: 80 },
+          { opacity: 0, y: 60 },
           {
             opacity: 1,
             y: 0,
-            duration: 1,
+            duration: 0.9,
             ease: "power3.out",
             scrollTrigger: {
               trigger: block,
-              start: "top 86%",
+              start: "top 88%",
+              toggleActions: "play none none none",
             },
           },
         );
@@ -399,30 +484,38 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
     return () => {
       ctx.revert();
+      gsap.ticker.remove(tickerCallback);
+      lenis.destroy();
+      lenisRef.current = null;
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, [prefersReducedMotion]);
 
+  // Custom cursor movement tracking
   useEffect(() => {
     if (!hasFinePointer || prefersReducedMotion) {
       return;
     }
 
     const onMouseMove = (event: MouseEvent) => {
+      if (!cursorVisible) {
+        setCursorVisible(true);
+      }
       cursorX.set(event.clientX);
       cursorY.set(event.clientY);
       mouseX.set(event.clientX / window.innerWidth);
       mouseY.set(event.clientY / window.innerHeight);
 
       const target = event.target as HTMLElement;
-      const interactive = target.closest("a,button,[data-cursor='interactive']");
+      const interactive = target.closest("a,button,[data-cursor='interactive'],input,textarea");
       setCursorActive(Boolean(interactive));
     };
 
     window.addEventListener("mousemove", onMouseMove);
     return () => window.removeEventListener("mousemove", onMouseMove);
-  }, [cursorX, cursorY, mouseX, mouseY, hasFinePointer, prefersReducedMotion]);
+  }, [cursorX, cursorY, mouseX, mouseY, hasFinePointer, prefersReducedMotion, cursorVisible]);
 
+  // Modal keyboard handling and body scroll lock (Experience Modal)
   useEffect(() => {
     if (!activeExperience) {
       return;
@@ -431,6 +524,14 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setActiveExperienceId(null);
+      } else if (event.key === "ArrowLeft") {
+        setActiveExperienceMediaIndex((prev) =>
+          prev > 0 ? prev - 1 : activeExperience.gallery.length - 1,
+        );
+      } else if (event.key === "ArrowRight") {
+        setActiveExperienceMediaIndex((prev) =>
+          prev < activeExperience.gallery.length - 1 ? prev + 1 : 0,
+        );
       }
     };
 
@@ -444,6 +545,29 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     };
   }, [activeExperience]);
 
+  // Case Study modal keyboard and body scroll lock (Featured Works)
+  useEffect(() => {
+    if (!activeFeaturedWork) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActiveFeaturedWork(null);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [activeFeaturedWork]);
+
+  // Mobile nav overflow lock
   useEffect(() => {
     if (!mobileNavOpen) {
       return;
@@ -474,31 +598,38 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     };
   }, [mobileNavOpen]);
 
-  const activeMockup = content.hero.mockupMedia[mockupIndex] ?? content.hero.mockupMedia[0];
+  const activeMockup =
+    content.hero.mockupMedia[mockupIndex] ?? content.hero.mockupMedia[0];
   const loadingFilledBlocks = Math.floor(loadingProgress / 10);
 
   return (
     <div className="relative overflow-x-clip bg-brand-bg text-brand-text">
-      <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[70] hidden h-2 w-2 rounded-full bg-brand-accent md:block"
-        style={{ x: cursorX, y: cursorY, translateX: "-50%", translateY: "-50%" }}
-      />
-      <motion.div
-        className="pointer-events-none fixed left-0 top-0 z-[69] hidden h-9 w-9 rounded-full border border-brand-accent/65 md:block"
-        style={{
-          x: ringX,
-          y: ringY,
-          translateX: "-50%",
-          translateY: "-50%",
-          scale: cursorActive ? 1.45 : 1,
-        }}
-      />
+      {/* Custom interactive cursor */}
+      {cursorVisible && hasFinePointer && !prefersReducedMotion ? (
+        <>
+          <motion.div
+            className="pointer-events-none fixed left-0 top-0 z-[70] hidden h-2 w-2 rounded-full bg-brand-accent md:block"
+            style={{ x: cursorX, y: cursorY, translateX: "-50%", translateY: "-50%" }}
+          />
+          <motion.div
+            className="pointer-events-none fixed left-0 top-0 z-[69] hidden h-9 w-9 rounded-full border border-brand-accent/65 md:block"
+            style={{
+              x: ringX,
+              y: ringY,
+              translateX: "-50%",
+              translateY: "-50%",
+              scale: cursorActive ? 1.45 : 1,
+            }}
+          />
+        </>
+      ) : null}
 
+      {/* Loading Screen */}
       {!loadingDone ? (
         <motion.div
           initial={{ opacity: 1 }}
           animate={{ opacity: loadingProgress >= 100 ? 0 : 1 }}
-          transition={{ duration: 0.45 }}
+          transition={{ duration: 0.35 }}
           className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-black"
         >
           <p className="font-display text-4xl tracking-[0.08em]">{content.loading.displayName}</p>
@@ -507,8 +638,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             {Array.from({ length: 10 }).map((_, index) => (
               <span
                 key={`loading-${index}`}
-                className={`h-4 w-5 border border-brand-border ${
-                  index < loadingFilledBlocks ? "bg-brand-accent" : "bg-transparent"
+                className={`h-4 w-5 border border-brand-border transition-colors duration-150 ${
+                  index < loadingFilledBlocks ? "bg-brand-accent shadow-[0_0_12px_rgba(42,250,223,0.6)]" : "bg-transparent"
                 }`}
               />
             ))}
@@ -516,18 +647,21 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </motion.div>
       ) : null}
 
+      {/* Experience Gallery Modal */}
       {activeExperience ? (
         <div
-          className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-black/80 p-4 py-6 backdrop-blur-md md:items-center md:py-4"
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-black/85 p-4 py-6 backdrop-blur-md md:items-center md:py-4"
           onClick={() => setActiveExperienceId(null)}
         >
           <div
-            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-5xl overflow-y-auto rounded-3xl border border-brand-border bg-brand-bg-secondary p-4 md:p-6"
+            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-5xl overflow-y-auto rounded-3xl border border-brand-border bg-brand-bg-secondary p-4 md:p-6 shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-brand-accent">
+                <p className="font-numbers text-xs uppercase tracking-[0.18em] text-brand-accent">
                   {activeExperience.year}
                 </p>
                 <h3 className="mt-1 font-display text-3xl">{activeExperience.title}</h3>
@@ -547,19 +681,60 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             </p>
 
             <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.35fr]">
-              <div className="overflow-hidden rounded-2xl border border-brand-border bg-black/40">
+              <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-black/40">
                 {activeExperienceMedia ? (
-                  <MediaThumb
-                    kind={activeExperienceMedia.mediaKind}
-                    url={activeExperienceMedia.mediaUrl}
-                    alt={activeExperienceMedia.caption}
-                    className="h-[420px] w-full object-cover"
-                    sizes="(max-width: 1024px) 94vw, 64vw"
-                  />
-                ) : null}
-                <p className="border-t border-brand-border px-4 py-3 text-sm text-brand-text/90">
-                  {activeExperienceMedia?.caption}
-                </p>
+                  <div className="relative">
+                    <MediaThumb
+                      kind={activeExperienceMedia.mediaKind}
+                      url={activeExperienceMedia.mediaUrl}
+                      alt={activeExperienceMedia.caption}
+                      className="h-[420px] w-full object-cover"
+                      sizes="(max-width: 1024px) 94vw, 64vw"
+                    />
+
+                    {/* Left/Right quick nav arrows */}
+                    {activeExperience.gallery.length > 1 ? (
+                      <>
+                        <button
+                          type="button"
+                          aria-label="Previous gallery image"
+                          onClick={() =>
+                            setActiveExperienceMediaIndex((prev) =>
+                              prev > 0 ? prev - 1 : activeExperience.gallery.length - 1,
+                            )
+                          }
+                          className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
+                        >
+                          {"<"}
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Next gallery image"
+                          onClick={() =>
+                            setActiveExperienceMediaIndex((prev) =>
+                              prev < activeExperience.gallery.length - 1 ? prev + 1 : 0,
+                            )
+                          }
+                          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
+                        >
+                          {">"}
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className="flex h-[420px] items-center justify-center p-6 text-sm text-brand-muted">
+                    No preview media available.
+                  </div>
+                )}
+                <div className="flex items-center justify-between border-t border-brand-border px-4 py-3 text-sm text-brand-text/90">
+                  <span>{activeExperienceMedia?.caption}</span>
+                  {activeExperience.gallery.length > 1 ? (
+                    <span className="font-numbers text-xs text-brand-muted">
+                      {activeExperienceMediaIndex + 1} / {activeExperience.gallery.length}
+                    </span>
+                  ) : null}
+                </div>
               </div>
 
               <div className="max-h-[460px] space-y-3 overflow-auto pr-1">
@@ -571,7 +746,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       onClick={() => setActiveExperienceMediaIndex(index)}
                       className={`w-full overflow-hidden rounded-xl border text-left transition ${
                         index === activeExperienceMediaIndex
-                          ? "border-brand-accent"
+                          ? "border-brand-accent shadow-[0_0_12px_rgba(42,250,223,0.3)]"
                           : "border-brand-border hover:border-brand-accent/50"
                       }`}
                     >
@@ -579,10 +754,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                         kind={item.mediaKind}
                         url={item.mediaUrl}
                         alt={item.caption}
-                        className="h-28 w-full object-cover"
+                        className="h-24 w-full object-cover"
                         sizes="(max-width: 1024px) 36vw, 220px"
                       />
-                      <p className="px-3 py-2 text-xs text-brand-muted">{item.caption}</p>
+                      <p className="line-clamp-1 px-3 py-2 text-xs text-brand-muted">{item.caption}</p>
                     </button>
                   ))
                 ) : (
@@ -596,6 +771,95 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       ) : null}
 
+      {/* Featured Works - Dedicated Case Study Modal */}
+      {activeFeaturedWork ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-black/85 p-4 py-6 backdrop-blur-md md:items-center md:py-6"
+          onClick={() => setActiveFeaturedWork(null)}
+        >
+          <div
+            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-4xl overflow-y-auto rounded-3xl border border-brand-border bg-brand-bg-secondary p-5 md:p-8 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">
+                  {activeFeaturedWork.subtitle}
+                </p>
+                <h3 className="mt-1 font-display text-3xl md:text-4xl">{activeFeaturedWork.title}</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveFeaturedWork(null)}
+                className="rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-6 overflow-hidden rounded-2xl border border-brand-border bg-black/50">
+              <MediaThumb
+                kind={activeFeaturedWork.mediaKind}
+                url={activeFeaturedWork.mediaUrl}
+                alt={activeFeaturedWork.title}
+                className="max-h-[460px] w-full object-cover"
+                sizes="(max-width: 1024px) 94vw, 896px"
+              />
+            </div>
+
+            <div className="mt-6 grid gap-4 rounded-2xl border border-brand-border bg-black/40 p-5 text-sm leading-7 text-brand-muted">
+              <div>
+                <span className="font-semibold text-brand-text">The Challenge: </span>
+                {activeFeaturedWork.challenge}
+              </div>
+              <div>
+                <span className="font-semibold text-brand-text">Research & Strategy: </span>
+                {activeFeaturedWork.research}
+              </div>
+              <div>
+                <span className="font-semibold text-brand-text">Design Execution: </span>
+                {activeFeaturedWork.design}
+              </div>
+              <div>
+                <span className="font-semibold text-brand-text">Outcome & Impact: </span>
+                {activeFeaturedWork.result}
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-brand-border pt-5">
+              <div>
+                <p className="text-xs uppercase tracking-[0.16em] text-brand-accent">Tools Applied</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {activeFeaturedWork.tools.map((tool) => (
+                    <span
+                      key={tool}
+                      className="rounded-full border border-brand-border bg-brand-bg px-3 py-1 text-xs text-brand-text"
+                    >
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {activeFeaturedWork.caseStudyUrl && activeFeaturedWork.caseStudyUrl !== "#" ? (
+                <a
+                  href={activeFeaturedWork.caseStudyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-accent px-5 py-2.5 text-xs font-semibold text-black transition hover:brightness-110"
+                >
+                  Visit Project Link
+                  <span>{"->"}</span>
+                </a>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Background ambient animation layers */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(95%_70%_at_50%_0%,rgba(42,250,223,0.18),transparent_58%),linear-gradient(150deg,#090b12_0%,#050505_52%,#0d1020_100%)]" />
         <div
@@ -684,15 +948,20 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         />
       </div>
 
+      {/* Floating navigation header */}
       <header className="fixed left-1/2 top-5 z-50 w-[min(920px,92vw)] -translate-x-1/2">
-        <div className="relative rounded-full border border-brand-border bg-black/45 px-4 py-2 backdrop-blur-xl md:px-6 md:py-2.5">
+        <div className="relative rounded-full border border-brand-border bg-black/55 px-4 py-2 backdrop-blur-xl md:px-6 md:py-2.5 shadow-lg">
           <div className="flex items-center justify-between gap-4">
-            <div>
+            <a
+              href="#hero"
+              onClick={(e) => handleNavClick(e, "#hero")}
+              className="text-left transition hover:opacity-85"
+            >
               <p className="font-display text-sm text-brand-text">{content.brand.name}</p>
               <p className="text-[0.65rem] uppercase tracking-[0.2em] text-brand-muted">
                 {content.brand.tagline}
               </p>
-            </div>
+            </a>
 
             <button
               type="button"
@@ -725,6 +994,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 <a
                   key={item.href}
                   href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className="text-xs font-medium text-brand-text/85 transition hover:text-brand-accent"
                 >
                   {item.label}
@@ -735,13 +1005,14 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       </header>
 
+      {/* Mobile nav modal */}
       <AnimatePresence>
         {mobileNavOpen ? (
           <div className="fixed inset-0 z-[58] md:hidden">
             <motion.button
               type="button"
               aria-label="Close navigation menu"
-              className="absolute inset-0 bg-black/72 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/75 backdrop-blur-sm"
               onClick={() => setMobileNavOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -764,7 +1035,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   onClick={() => setMobileNavOpen(false)}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-brand-border text-xs text-brand-text/90"
                 >
-                  x
+                  ✕
                 </button>
               </div>
 
@@ -774,7 +1045,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     key={`mobile-${item.href}`}
                     href={item.href}
                     className="rounded-2xl border border-brand-border/80 bg-black/35 px-4 py-3 font-display text-xl tracking-[0.01em] text-brand-text transition hover:border-brand-accent/70 hover:bg-brand-accent/12 hover:text-brand-accent"
-                    onClick={() => setMobileNavOpen(false)}
+                    onClick={(e) => handleNavClick(e, item.href)}
                   >
                     {item.label}
                   </a>
@@ -786,9 +1057,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </AnimatePresence>
 
       <main className="w-full px-4 pb-20 pt-32 md:px-6 lg:px-8">
+        {/* HERO SECTION */}
         <section
           id="hero"
-          className="noise-overlay grid min-h-screen items-center gap-10 pb-12 pt-10 lg:grid-cols-[0.92fr_1.08fr]"
+          className="noise-overlay grid min-h-[calc(100vh-8rem)] items-center gap-10 pb-12 pt-8 lg:grid-cols-[0.92fr_1.08fr]"
         >
           <div className="reveal-up space-y-6">
             <h1 className="font-display text-[3.2rem] leading-[0.95] sm:text-[4.6rem] md:text-[5.4rem] lg:text-[6.5rem]">
@@ -820,7 +1092,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 }
                 className="font-display text-gradient-accent"
               >
-                x
+                ✕
               </motion.span>
               <motion.span
                 key={roleText}
@@ -840,24 +1112,34 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             <div className="flex flex-wrap gap-3">
               <a
                 href={content.hero.primaryCtaHref}
+                onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
                 data-cursor="interactive"
                 className="group inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_0_28px_rgba(42,250,223,0.35)] transition hover:brightness-110"
               >
                 {content.hero.primaryCtaLabel}
-                <span className="transition group-hover:translate-x-1">{"->"}</span>
+                <span className="transition group-hover:translate-x-1">→</span>
               </a>
-              <a
-                href={content.hero.resumeUrl}
-                data-cursor="interactive"
-                className="rounded-full border border-brand-border bg-brand-bg-secondary/75 px-6 py-3 text-sm text-brand-text transition hover:border-brand-accent/55 hover:text-brand-accent"
-              >
-                {content.hero.secondaryCtaLabel}
-              </a>
+              {content.hero.resumeUrl ? (
+                <a
+                  href={content.hero.resumeUrl}
+                  target={content.hero.resumeUrl.startsWith("#") ? "_self" : "_blank"}
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (content.hero.resumeUrl.startsWith("#")) {
+                      handleNavClick(e, content.hero.resumeUrl);
+                    }
+                  }}
+                  data-cursor="interactive"
+                  className="rounded-full border border-brand-border bg-brand-bg-secondary/75 px-6 py-3 text-sm text-brand-text transition hover:border-brand-accent/55 hover:text-brand-accent"
+                >
+                  {content.hero.secondaryCtaLabel}
+                </a>
+              ) : null}
             </div>
           </div>
 
           <motion.div
-            className="reveal-up relative mx-auto h-[410px] w-full max-w-[560px] rounded-[2rem] border border-brand-border bg-brand-bg-secondary/60 p-4 backdrop-blur-xl lg:h-auto lg:max-w-[540px] lg:aspect-square xl:max-w-[600px]"
+            className="reveal-up relative mx-auto h-[380px] w-full max-w-[560px] rounded-[2rem] border border-brand-border bg-brand-bg-secondary/60 p-4 backdrop-blur-xl sm:h-[420px] lg:h-auto lg:max-w-[540px] lg:aspect-square xl:max-w-[600px]"
             whileHover={enableInteractiveMotion ? { rotateX: 2.4, rotateY: -2.4 } : undefined}
             transition={enableInteractiveMotion ? { duration: 0.25 } : undefined}
             data-cursor="interactive"
@@ -885,9 +1167,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       loading="eager"
                     />
                   </motion.div>
-                ) : null}
+                ) : (
+                  <div className="flex h-full items-center justify-center text-sm text-brand-muted">
+                    No mockup media available
+                  </div>
+                )}
               </AnimatePresence>
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-5">
                 <p className="text-xs uppercase tracking-[0.16em] text-brand-accent">Live Preview</p>
                 <p className="mt-1 text-sm text-brand-text/90">{activeMockup?.caption}</p>
               </div>
@@ -895,6 +1181,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </motion.div>
         </section>
 
+        {/* ABOUT SECTION */}
         <section
           id="about"
           className="reveal-up mt-14 grid items-start gap-8 lg:grid-cols-[0.85fr_1.15fr]"
@@ -919,6 +1206,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
+        {/* EXPERIENCE SECTION */}
         <section id="experience" className="mt-24">
           <h2 className="reveal-up font-display text-4xl md:text-5xl">Experience</h2>
           <div ref={experienceTimelineRef} className="relative mt-8 pl-8 md:pl-10">
@@ -979,7 +1267,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand-border bg-black/25 px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
                   >
                     Show Work
-                    <span>{"->"}</span>
+                    <span>→</span>
                   </button>
                 </motion.article>
               ))}
@@ -987,12 +1275,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
+        {/* FEATURED WORKS SECTION */}
         <section id="featured-works" className="mt-24 space-y-10">
           <h2 className="reveal-up font-display text-4xl md:text-5xl">Featured Works</h2>
           {content.featuredWorks.map((work, workIndex) => (
             <article
               key={work.id}
-              className="reveal-up group grid gap-4 rounded-[2rem] border border-brand-border bg-brand-bg-secondary/70 p-4 md:gap-6 md:p-5 lg:min-h-[88vh] lg:grid-cols-[1.2fr_0.8fr]"
+              className="reveal-up group grid gap-4 rounded-[2rem] border border-brand-border bg-brand-bg-secondary/70 p-4 md:gap-6 md:p-5 lg:min-h-[82vh] lg:grid-cols-[1.2fr_0.8fr]"
             >
               <div className="relative overflow-hidden rounded-[1.45rem] border border-brand-border">
                 <MediaThumb
@@ -1006,18 +1295,19 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 />
                 <div className="absolute inset-0 bg-black/35 opacity-0 transition duration-300 group-hover:opacity-100" />
               </div>
-              <div className="flex flex-col rounded-[1.45rem] border border-brand-border bg-black/35 p-6">
+              <div className="flex flex-col justify-between rounded-[1.45rem] border border-brand-border bg-black/35 p-6">
                 <div>
                   <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">{work.subtitle}</p>
                   <h3 className="mt-2 font-display text-3xl md:text-4xl">{work.title}</h3>
+                  <div className="mt-5 space-y-3 text-sm leading-7 text-brand-muted">
+                    <p><span className="font-semibold text-brand-text">Challenge:</span> {work.challenge}</p>
+                    <p><span className="font-semibold text-brand-text">Research:</span> {work.research}</p>
+                    <p><span className="font-semibold text-brand-text">Design:</span> {work.design}</p>
+                    <p><span className="font-semibold text-brand-text">Result:</span> {work.result}</p>
+                  </div>
                 </div>
-                <div className="mt-5 space-y-3 text-sm leading-7 text-brand-muted">
-                  <p><span className="text-brand-text">Challenge:</span> {work.challenge}</p>
-                  <p><span className="text-brand-text">Research:</span> {work.research}</p>
-                  <p><span className="text-brand-text">Design:</span> {work.design}</p>
-                  <p><span className="text-brand-text">Result:</span> {work.result}</p>
-                </div>
-                <div className="pt-3">
+
+                <div className="mt-6 border-t border-brand-border/60 pt-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Tools Used</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {work.tools.map((tool) => (
@@ -1029,22 +1319,23 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       </span>
                     ))}
                   </div>
-                </div>
-                <div className="mt-6 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => openExperienceGalleryFromWork(workIndex)}
-                    data-cursor="interactive"
-                    className="rounded-full border border-brand-border bg-black/55 px-4 py-2 text-xs uppercase tracking-[0.16em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
-                  >
-                    View Case Study
-                  </button>
+                  <div className="mt-6 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleFeaturedWorkClick(work)}
+                      data-cursor="interactive"
+                      className="rounded-full border border-brand-border bg-black/55 px-5 py-2.5 text-xs uppercase tracking-[0.16em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+                    >
+                      View Case Study
+                    </button>
+                  </div>
                 </div>
               </div>
             </article>
           ))}
         </section>
 
+        {/* SERVICES SECTION */}
         <section
           id="services"
           className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_0%_0%,rgba(42,250,223,0.14),rgba(0,0,0,0)_52%),linear-gradient(180deg,rgba(16,16,16,0.86),rgba(6,6,6,0.92))] p-6 md:p-8"
@@ -1072,7 +1363,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 className="reveal-up group relative overflow-hidden rounded-3xl border border-brand-border/90 bg-black/45 p-6 shadow-[0_14px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl"
               >
                 <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-accent opacity-70" />
-                <p className="text-[0.68rem] uppercase tracking-[0.18em] text-brand-accent/90">
+                <p className="font-numbers text-[0.68rem] uppercase tracking-[0.18em] text-brand-accent/90">
                   Service {String(index + 1).padStart(2, "0")}
                 </p>
                 <h3 className="mt-3 font-display text-[1.9rem] leading-tight">{service.title}</h3>
@@ -1082,6 +1373,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
+        {/* TOOLBOX SECTION */}
         <section
           id="toolbox"
           className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(100%_120%_at_100%_0%,rgba(76,131,255,0.18),rgba(0,0,0,0)_50%),linear-gradient(180deg,rgba(16,16,16,0.86),rgba(7,7,7,0.92))] p-6 md:p-8"
@@ -1143,6 +1435,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
+        {/* WHY WORK WITH ME */}
         <section className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_50%_0%,rgba(42,250,223,0.12),rgba(0,0,0,0)_56%),linear-gradient(180deg,rgba(15,15,15,0.88),rgba(6,6,6,0.92))] p-6 md:p-8">
           <div className="reveal-up flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
@@ -1170,6 +1463,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
+        {/* NUMBERS SECTION */}
         <section className="mt-24">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {content.numbers.map((stat) => (
@@ -1183,19 +1477,20 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
+        {/* TESTIMONIALS PLACEHOLDER */}
         <section className="mt-24 rounded-[2rem] border border-dashed border-brand-border bg-brand-bg-secondary/45 p-8 text-center">
           <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Testimonials</p>
           <h2 className="mt-3 font-display text-4xl md:text-5xl">Client voices coming soon.</h2>
           <p className="mx-auto mt-4 max-w-[52ch] text-brand-muted">
-            This section is intentionally reserved for testimonials and social proof
-            snapshots in the next content update.
+            This section is reserved for upcoming testimonials and collaborator reviews.
           </p>
         </section>
 
+        {/* QUICK SHOWCASE INFINITE MARQUEE */}
         <section className="mt-24 space-y-6">
           <div className="flex items-center justify-between gap-4">
             <h2 className="font-display text-3xl md:text-4xl">Quick Showcase</h2>
-            <p className="text-sm text-brand-muted">Recent visuals from experience galleries</p>
+            <p className="text-sm text-brand-muted">Visual snapshots across recent projects</p>
           </div>
           <div className="overflow-hidden rounded-3xl border border-brand-border bg-brand-bg-secondary/65 py-5">
             <motion.div
@@ -1204,24 +1499,24 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               transition={
                 prefersReducedMotion
                   ? { duration: 0 }
-                  : { duration: 26, repeat: Infinity, ease: "linear" }
+                  : { duration: 28, repeat: Infinity, ease: "linear" }
               }
             >
-              {[...bottomShowcaseItems, ...bottomShowcaseItems].map((item, index) => (
+              {marqueeItems.map((item, index) => (
                 <article
                   key={`${item.key}-${index}`}
-                  className="w-[250px] shrink-0 overflow-hidden rounded-2xl border border-brand-border bg-black/35 md:w-[300px]"
+                  className="w-[260px] shrink-0 overflow-hidden rounded-2xl border border-brand-border bg-black/35 md:w-[320px]"
                 >
                   <MediaThumb
                     kind={item.mediaKind}
                     url={item.mediaUrl}
                     alt={item.title}
-                    className="h-40 w-full object-cover"
-                    sizes="(max-width: 768px) 250px, 300px"
+                    className="h-44 w-full object-cover"
+                    sizes="(max-width: 768px) 260px, 320px"
                   />
                   <div className="space-y-1 p-3">
-                    <h3 className="text-sm font-semibold text-brand-text">{item.title}</h3>
-                    <p className="text-xs text-brand-muted">{item.subtitle}</p>
+                    <h3 className="line-clamp-1 text-sm font-semibold text-brand-text">{item.title}</h3>
+                    <p className="line-clamp-1 text-xs text-brand-muted">{item.subtitle}</p>
                   </div>
                 </article>
               ))}
@@ -1229,6 +1524,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
+        {/* CONTACT SECTION */}
         <section id="contact" className="mt-24 rounded-[2rem] border border-brand-border bg-brand-bg-secondary/75 p-8 backdrop-blur-xl">
           <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Contact</p>
           <h2 className="mt-3 font-display text-4xl leading-tight md:text-6xl">{content.contact.title}</h2>
@@ -1237,61 +1533,71 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           <div className="mt-8 grid gap-3 text-sm md:grid-cols-3">
             <a
               href={`mailto:${content.contact.email}`}
-              className="rounded-2xl border border-brand-border bg-brand-bg px-4 py-3 text-brand-text"
+              className="rounded-2xl border border-brand-border bg-brand-bg px-4 py-3 text-brand-text transition hover:border-brand-accent/50"
             >
+              <span className="block text-xs uppercase tracking-[0.14em] text-brand-accent mb-1">Email</span>
               {content.contact.email}
             </a>
             <a
               href={`tel:${content.contact.phone}`}
-              className="rounded-2xl border border-brand-border bg-brand-bg px-4 py-3 text-brand-text"
+              className="rounded-2xl border border-brand-border bg-brand-bg px-4 py-3 text-brand-text transition hover:border-brand-accent/50"
             >
+              <span className="block text-xs uppercase tracking-[0.14em] text-brand-accent mb-1">Phone</span>
               {content.contact.phone}
             </a>
-            <p className="rounded-2xl border border-brand-border bg-brand-bg px-4 py-3 text-brand-text">
+            <div className="rounded-2xl border border-brand-border bg-brand-bg px-4 py-3 text-brand-text">
+              <span className="block text-xs uppercase tracking-[0.14em] text-brand-accent mb-1">Location</span>
               {content.contact.location}
-            </p>
+            </div>
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href={content.contact.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="interactive"
-              className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
-            >
-              <span className="font-semibold">IG</span>
-              Instagram
-            </a>
-            <a
-              href={content.contact.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="interactive"
-              className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
-            >
-              <span className="font-semibold">IN</span>
-              LinkedIn
-            </a>
-            <a
-              href={content.contact.whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="interactive"
-              className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
-            >
-              <span className="font-semibold">WA</span>
-              WhatsApp
-            </a>
+            {content.contact.instagramUrl ? (
+              <a
+                href={content.contact.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="interactive"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+              >
+                <span className="font-semibold text-brand-accent">IG</span>
+                Instagram
+              </a>
+            ) : null}
+            {content.contact.linkedinUrl ? (
+              <a
+                href={content.contact.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="interactive"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+              >
+                <span className="font-semibold text-brand-accent">IN</span>
+                LinkedIn
+              </a>
+            ) : null}
+            {content.contact.whatsappUrl ? (
+              <a
+                href={content.contact.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="interactive"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+              >
+                <span className="font-semibold text-brand-accent">WA</span>
+                WhatsApp
+              </a>
+            ) : null}
           </div>
 
           <a
             href={content.contact.projectCtaHref}
+            onClick={(e) => handleNavClick(e, content.contact.projectCtaHref)}
             data-cursor="interactive"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_0_30px_rgba(42,250,223,0.38)]"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_0_30px_rgba(42,250,223,0.38)] transition hover:brightness-110"
           >
             {content.contact.projectCtaLabel}
-            <span>{"->"}</span>
+            <span>→</span>
           </a>
         </section>
       </main>
