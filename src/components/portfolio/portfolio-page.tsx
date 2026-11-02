@@ -161,6 +161,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [loadingDone, setLoadingDone] = useState(false);
   const [currentRole, setCurrentRole] = useState(0);
   const [mockupIndex, setMockupIndex] = useState(0);
+  const [isMockupPaused, setIsMockupPaused] = useState(false);
+  const [carouselProgress, setCarouselProgress] = useState(0);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
   const [cursorActive, setCursorActive] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(false);
   const [activeExperienceId, setActiveExperienceId] = useState<string | null>(null);
@@ -172,8 +176,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
   const lenisRef = useRef<Lenis | null>(null);
   const experienceTimelineRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
+  // Mouse tracking
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
   const ringX = useSpring(cursorX, { stiffness: 240, damping: 30 });
@@ -187,6 +193,54 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const orbAY = useTransform(smoothY, [0, 1], [-26, 26]);
   const orbBX = useTransform(smoothX, [0, 1], [36, -32]);
   const orbBY = useTransform(smoothY, [0, 1], [20, -22]);
+
+  // 3D Tilt motion values for hero card
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const smoothTiltX = useSpring(tiltX, { stiffness: 200, damping: 25, mass: 0.5 });
+  const smoothTiltY = useSpring(tiltY, { stiffness: 200, damping: 25, mass: 0.5 });
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || !hasFinePointer || prefersReducedMotion) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+
+    // Range: -10deg to +10deg
+    tiltX.set((y - 0.5) * -14);
+    tiltY.set((x - 0.5) * 14);
+  };
+
+  const handleCardMouseLeave = () => {
+    tiltX.set(0);
+    tiltY.set(0);
+  };
+
+  const handleCopyEmail = () => {
+    if (!content.contact.email) return;
+    void navigator.clipboard.writeText(content.contact.email);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2400);
+  };
+
+  const handlePrevMockup = () => {
+    setCarouselProgress(0);
+    setMockupIndex((prev) =>
+      prev > 0 ? prev - 1 : content.hero.mockupMedia.length - 1,
+    );
+  };
+
+  const handleNextMockup = () => {
+    setCarouselProgress(0);
+    setMockupIndex((prev) =>
+      prev < content.hero.mockupMedia.length - 1 ? prev + 1 : 0,
+    );
+  };
+
+  const handleSelectMockup = (idx: number) => {
+    setCarouselProgress(0);
+    setMockupIndex(idx);
+  };
 
   const { scrollYProgress: experienceScrollYProgress } = useScroll({
     target: experienceTimelineRef,
@@ -341,7 +395,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       if (href.startsWith("#")) {
         event.preventDefault();
         setMobileNavOpen(false);
-        // Small delay to let mobile nav close smoothly if open
         setTimeout(() => {
           scrollToAnchor(href);
         }, 80);
@@ -362,7 +415,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     return () => window.removeEventListener("resize", updateViewportState);
   }, []);
 
-  // Loading screen progression with safe state handling
+  // Loading screen progression
   useEffect(() => {
     let progress = 0;
     const timer = setInterval(() => {
@@ -385,7 +438,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      // Refresh ScrollTrigger once page is revealed
       requestAnimationFrame(() => {
         ScrollTrigger.refresh();
       });
@@ -408,18 +460,30 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     return () => clearInterval(interval);
   }, [prefersReducedMotion]);
 
-  // Hero mockup media cycle
+  // Interactive carousel auto-cycle with progress tracking and pause-on-hover
   useEffect(() => {
-    if (prefersReducedMotion || content.hero.mockupMedia.length <= 1) {
+    if (prefersReducedMotion || content.hero.mockupMedia.length <= 1 || isMockupPaused) {
       return;
     }
 
-    const interval = setInterval(() => {
-      setMockupIndex((prev) => (prev + 1) % content.hero.mockupMedia.length);
-    }, 3200);
+    const duration = 4500;
+    const intervalStep = 60;
+    let elapsed = 0;
 
-    return () => clearInterval(interval);
-  }, [content.hero.mockupMedia.length, prefersReducedMotion]);
+    const timer = setInterval(() => {
+      elapsed += intervalStep;
+      const progress = Math.min(100, (elapsed / duration) * 100);
+      setCarouselProgress(progress);
+
+      if (elapsed >= duration) {
+        elapsed = 0;
+        setCarouselProgress(0);
+        setMockupIndex((prev) => (prev + 1) % content.hero.mockupMedia.length);
+      }
+    }, intervalStep);
+
+    return () => clearInterval(timer);
+  }, [content.hero.mockupMedia.length, prefersReducedMotion, isMockupPaused, mockupIndex]);
 
   // Preload hero mockup images
   useEffect(() => {
@@ -451,7 +515,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     });
     lenisRef.current = lenis;
 
-    // Connect Lenis to ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
     const tickerCallback = (time: number) => {
@@ -491,7 +554,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     };
   }, [prefersReducedMotion]);
 
-  // Custom cursor movement tracking
+  // Custom cursor tracking
   useEffect(() => {
     if (!hasFinePointer || prefersReducedMotion) {
       return;
@@ -515,7 +578,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     return () => window.removeEventListener("mousemove", onMouseMove);
   }, [cursorX, cursorY, mouseX, mouseY, hasFinePointer, prefersReducedMotion, cursorVisible]);
 
-  // Modal keyboard handling and body scroll lock (Experience Modal)
+  // Modal keyboard handling (Experience)
   useEffect(() => {
     if (!activeExperience) {
       return;
@@ -545,7 +608,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     };
   }, [activeExperience]);
 
-  // Case Study modal keyboard and body scroll lock (Featured Works)
+  // Modal keyboard handling (Featured Work)
   useEffect(() => {
     if (!activeFeaturedWork) {
       return;
@@ -692,7 +755,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       sizes="(max-width: 1024px) 94vw, 64vw"
                     />
 
-                    {/* Left/Right quick nav arrows */}
                     {activeExperience.gallery.length > 1 ? (
                       <>
                         <button
@@ -1056,39 +1118,61 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         ) : null}
       </AnimatePresence>
 
-      <main className="w-full px-4 pb-20 pt-32 md:px-6 lg:px-8">
-        {/* HERO SECTION */}
+      <main className="w-full px-4 pb-20 pt-28 sm:pt-32 md:px-6 lg:px-8">
+        {/* HERO SECTION - CONCEPT 1: MODERN GLASS DEVICE FRAME & INTERACTIVE 3D PERSPECTIVE */}
         <section
           id="hero"
-          className="noise-overlay grid min-h-[calc(100vh-8rem)] items-center gap-10 pb-12 pt-8 lg:grid-cols-[0.92fr_1.08fr]"
+          className="noise-overlay grid min-h-[calc(100vh-7rem)] items-center gap-12 pb-14 pt-4 lg:grid-cols-[1fr_1.1fr] lg:gap-14 xl:grid-cols-[1fr_1.15fr]"
         >
-          <div className="reveal-up space-y-6">
-            <h1 className="font-display text-[3.2rem] leading-[0.95] sm:text-[4.6rem] md:text-[5.4rem] lg:text-[6.5rem]">
-              {content.hero.displayName.split("").map((character, index) => (
-                <motion.span
-                  key={`${character}-${index}`}
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 70 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={
-                    prefersReducedMotion
-                      ? { duration: 0 }
-                      : { duration: 0.55, delay: 0.15 + index * 0.03 }
-                  }
-                  className="inline-block"
-                >
-                  {character === " " ? "\u00a0" : character}
-                </motion.span>
-              ))}
-            </h1>
+          {/* Left Column: Brand Statement & CTA Cluster */}
+          <div className="reveal-up space-y-7">
+            {/* Live Available for Work Indicator */}
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1.5 shadow-[0_0_20px_rgba(16,185,129,0.18)] backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+              </span>
+              <span className="text-[11px] font-medium tracking-wide text-emerald-300">
+                Available for New Projects
+              </span>
+              <span className="text-emerald-500/40">•</span>
+              <span className="text-[10px] text-zinc-400 font-sans hidden sm:inline">
+                Freelance & Full-time
+              </span>
+            </div>
 
+            {/* Display Name Headline */}
+            <div>
+              <h1 className="font-display text-[3.4rem] font-bold tracking-tight leading-[0.92] sm:text-[4.8rem] md:text-[5.6rem] lg:text-[6.2rem] xl:text-[7rem]">
+                {content.hero.displayName.split("").map((character, index) => (
+                  <motion.span
+                    key={`${character}-${index}`}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 70 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0 }
+                        : { duration: 0.55, delay: 0.15 + index * 0.03 }
+                    }
+                    className="inline-block"
+                  >
+                    {character === " " ? "\u00a0" : character}
+                  </motion.span>
+                ))}
+              </h1>
+            </div>
+
+            {/* Kinetic Role Switcher */}
             <div className="flex flex-wrap items-center gap-3 text-xl text-brand-text md:text-2xl">
-              <span className="font-display">{content.hero.rolePrimary}</span>
+              <span className="font-display font-medium text-white/90">
+                {content.hero.rolePrimary}
+              </span>
               <motion.span
                 animate={prefersReducedMotion ? undefined : { rotate: 360 }}
                 transition={
                   prefersReducedMotion
                     ? undefined
-                    : { duration: 3.8, repeat: Infinity, ease: "linear" }
+                    : { duration: 4.2, repeat: Infinity, ease: "linear" }
                 }
                 className="font-display text-gradient-accent"
               >
@@ -1096,29 +1180,69 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </motion.span>
               <motion.span
                 key={roleText}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.45 }}
-                className="font-display text-gradient-accent"
+                className="font-display font-semibold text-gradient-accent"
               >
                 {roleText}
               </motion.span>
             </div>
 
-            <p className="max-w-[52ch] text-base leading-8 text-brand-muted md:text-lg">
+            {/* Subheadline */}
+            <p className="max-w-[50ch] text-base leading-relaxed text-brand-muted md:text-lg">
               {content.hero.subheadline}
             </p>
 
-            <div className="flex flex-wrap gap-3">
+            {/* Modern CTA Cluster: Work + Copy Email + Resume */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-1">
               <a
                 href={content.hero.primaryCtaHref}
                 onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
                 data-cursor="interactive"
-                className="group inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_0_28px_rgba(42,250,223,0.35)] transition hover:brightness-110"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-accent px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-black shadow-[0_0_32px_rgba(42,250,223,0.38)] transition hover:brightness-110"
               >
-                {content.hero.primaryCtaLabel}
-                <span className="transition group-hover:translate-x-1">→</span>
+                <span>{content.hero.primaryCtaLabel}</span>
+                <span className="transition-transform group-hover:translate-x-1">→</span>
               </a>
+
+              {/* Quick Copy Email Action with instant feedback */}
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                data-cursor="interactive"
+                title="Copy email address to clipboard"
+                className={`group relative inline-flex items-center gap-2 rounded-full border px-5 py-3.5 text-xs font-semibold tracking-wide transition ${
+                  copiedEmail
+                    ? "border-emerald-400 bg-emerald-950/60 text-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.3)]"
+                    : "border-white/10 bg-black/40 text-zinc-300 hover:border-brand-accent/50 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {copiedEmail ? (
+                  <>
+                    <span className="text-emerald-400 font-bold">✓</span>
+                    <span>Copied Email!</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="h-3.5 w-3.5 text-brand-muted transition group-hover:text-brand-accent"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span>Copy Email</span>
+                  </>
+                )}
+              </button>
+
               {content.hero.resumeUrl ? (
                 <a
                   href={content.hero.resumeUrl}
@@ -1130,55 +1254,182 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     }
                   }}
                   data-cursor="interactive"
-                  className="rounded-full border border-brand-border bg-brand-bg-secondary/75 px-6 py-3 text-sm text-brand-text transition hover:border-brand-accent/55 hover:text-brand-accent"
+                  className="rounded-full border border-white/10 bg-black/40 px-5 py-3.5 text-xs text-brand-muted transition hover:border-white/20 hover:text-white"
                 >
                   {content.hero.secondaryCtaLabel}
                 </a>
               ) : null}
             </div>
+
+            {/* Quick Skills / Highlights pill strip */}
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-[11px] uppercase tracking-wider text-zinc-400 font-mono">
+              <span className="flex items-center gap-1.5 text-brand-accent/90">
+                <span>✦</span> Brand Systems
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="flex items-center gap-1.5 text-brand-accent/90">
+                <span>✦</span> Next.js Engineering
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="flex items-center gap-1.5 text-brand-accent/90">
+                <span>✦</span> Fluid Micro-Interactions
+              </span>
+            </div>
           </div>
 
-          <motion.div
-            className="reveal-up relative mx-auto h-[380px] w-full max-w-[560px] rounded-[2rem] border border-brand-border bg-brand-bg-secondary/60 p-4 backdrop-blur-xl sm:h-[420px] lg:h-auto lg:max-w-[540px] lg:aspect-square xl:max-w-[600px]"
-            whileHover={enableInteractiveMotion ? { rotateX: 2.4, rotateY: -2.4 } : undefined}
-            transition={enableInteractiveMotion ? { duration: 0.25 } : undefined}
-            data-cursor="interactive"
-          >
-            <div className="absolute inset-0 rounded-[2rem] border border-brand-accent/25 shadow-[0_0_80px_rgba(42,250,223,0.18)]" />
-            <div className="relative h-full overflow-hidden rounded-[1.55rem] border border-brand-border bg-black">
-              <AnimatePresence mode="wait" initial={false}>
-                {activeMockup ? (
-                  <motion.div
-                    key={activeMockup.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.45, ease: "easeOut" }}
-                    className="h-full will-change-[opacity]"
-                  >
-                    <MediaThumb
-                      kind={activeMockup.mediaKind}
-                      url={activeMockup.mediaUrl}
-                      alt={activeMockup.caption}
-                      className="h-full w-full object-contain"
-                      sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 560px"
-                      quality={92}
-                      priority
-                      loading="eager"
-                    />
-                  </motion.div>
-                ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-brand-muted">
-                    No mockup media available
-                  </div>
-                )}
-              </AnimatePresence>
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-brand-accent">Live Preview</p>
-                <p className="mt-1 text-sm text-brand-text/90">{activeMockup?.caption}</p>
-              </div>
+          {/* Right Column: Sleek Glassmorphism Device Frame with 3D Tilt */}
+          <div className="relative mx-auto w-full max-w-[580px] lg:max-w-none">
+            {/* Ambient Background Glow Bloom */}
+            <div className="pointer-events-none absolute -inset-4 rounded-[2.5rem] bg-[radial-gradient(ellipse_at_center,rgba(42,250,223,0.18),rgba(76,131,255,0.08)_45%,transparent_70%)] blur-2xl" />
+
+            {/* Floating Contextual Badges with 3D Depth */}
+            <div className="pointer-events-none absolute -top-4 -right-2 z-20 hidden sm:flex items-center gap-2 rounded-full border border-white/15 bg-black/70 px-3.5 py-1.5 text-[11px] font-medium text-white shadow-xl backdrop-blur-xl">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
+              <span>Interactive Showcase</span>
             </div>
-          </motion.div>
+
+            <div className="pointer-events-none absolute -bottom-4 -left-2 z-20 hidden sm:flex items-center gap-2 rounded-full border border-white/15 bg-black/70 px-3.5 py-1.5 text-[11px] font-medium text-zinc-300 shadow-xl backdrop-blur-xl">
+              <span className="text-brand-accent">✦</span>
+              <span>Design + Frontend</span>
+            </div>
+
+            {/* 3D Tilt Frame */}
+            <motion.div
+              ref={cardRef}
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+              onMouseEnter={() => setIsMockupPaused(true)}
+              style={
+                enableInteractiveMotion
+                  ? {
+                      rotateX: smoothTiltX,
+                      rotateY: smoothTiltY,
+                      transformStyle: "preserve-3d",
+                    }
+                  : undefined
+              }
+              className="group relative overflow-hidden rounded-[2.2rem] border border-white/15 bg-[linear-gradient(145deg,rgba(255,255,255,0.08)_0%,rgba(20,20,24,0.75)_50%,rgba(10,10,12,0.92)_100%)] p-2.5 sm:p-3.5 shadow-[0_24px_70px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-shadow duration-500 hover:shadow-[0_30px_90px_rgba(42,250,223,0.22)]"
+            >
+              {/* Sleek Device Chrome Header */}
+              <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
+                {/* Traffic dots */}
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
+                </div>
+
+                {/* Center caption pill */}
+                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-0.5 text-[11px] text-zinc-300 font-mono">
+                  <span className="text-brand-accent">⚡</span>
+                  <span className="truncate max-w-[180px] sm:max-w-[240px]">
+                    {activeMockup?.caption || "Interactive Showcase"}
+                  </span>
+                </div>
+
+                {/* Live beacon indicator */}
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-brand-accent font-semibold font-mono">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-ping" />
+                  <span className="hidden sm:inline">LIVE</span>
+                </div>
+              </div>
+
+              {/* Main Media Showcase Window */}
+              <div className="relative aspect-[16/11] sm:aspect-[16/10] w-full overflow-hidden rounded-[1.6rem] bg-black/90">
+                <AnimatePresence mode="wait" initial={false}>
+                  {activeMockup ? (
+                    <motion.div
+                      key={activeMockup.id}
+                      initial={{ opacity: 0, scale: 1.02 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      transition={{ duration: 0.45, ease: "easeOut" }}
+                      className="h-full w-full will-change-[opacity,transform]"
+                    >
+                      <MediaThumb
+                        kind={activeMockup.mediaKind}
+                        url={activeMockup.mediaUrl}
+                        alt={activeMockup.caption}
+                        className="h-full w-full object-cover sm:object-contain"
+                        sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 600px"
+                        quality={92}
+                        priority
+                        loading="eager"
+                      />
+                    </motion.div>
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-sm text-brand-muted">
+                      No mockup media available
+                    </div>
+                  )}
+                </AnimatePresence>
+
+                {/* Subtle dark gradient overlay at base for readability */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent" />
+              </div>
+
+              {/* Interactive Carousel Control Bar at Base */}
+              <div className="flex items-center justify-between px-3 pt-3 pb-1">
+                {/* Slide Number Counter */}
+                <div className="flex items-center gap-1.5 font-numbers text-xs text-brand-muted">
+                  <span className="font-semibold text-brand-accent">
+                    {String(mockupIndex + 1).padStart(2, "0")}
+                  </span>
+                  <span>/</span>
+                  <span>{String(content.hero.mockupMedia.length).padStart(2, "0")}</span>
+                </div>
+
+                {/* Progress bar and Clickable Dot Indicators */}
+                <div className="flex items-center gap-2">
+                  {content.hero.mockupMedia.map((mockup, idx) => {
+                    const isActive = idx === mockupIndex;
+                    return (
+                      <button
+                        key={mockup.id}
+                        type="button"
+                        onClick={() => handleSelectMockup(idx)}
+                        aria-label={`Go to slide ${idx + 1}`}
+                        className={`relative h-2 rounded-full transition-all duration-300 overflow-hidden ${
+                          isActive
+                            ? "w-8 bg-white/20"
+                            : "w-2 bg-white/20 hover:bg-white/40"
+                        }`}
+                      >
+                        {isActive ? (
+                          <div
+                            className="absolute inset-y-0 left-0 bg-brand-accent shadow-[0_0_8px_rgba(42,250,223,0.8)] transition-all ease-linear"
+                            style={{
+                              width: isMockupPaused ? "100%" : `${carouselProgress}%`,
+                            }}
+                          />
+                        ) : null}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Prev / Next Navigation Arrows */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handlePrevMockup}
+                    aria-label="Previous slide"
+                    className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xs text-zinc-300 transition hover:border-brand-accent/50 hover:bg-brand-accent/20 hover:text-white"
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextMockup}
+                    aria-label="Next slide"
+                    className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xs text-zinc-300 transition hover:border-brand-accent/50 hover:bg-brand-accent/20 hover:text-white"
+                  >
+                    →
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         {/* ABOUT SECTION */}
