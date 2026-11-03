@@ -162,6 +162,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [hasFinePointer, setHasFinePointer] = useState(false);
 
   const lenisRef = useRef<Lenis | null>(null);
+  const heroRef = useRef<HTMLElement>(null);
   const experienceTimelineRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -219,6 +220,18 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2400);
   };
+
+  const { scrollYProgress: heroScrollProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroImageOpacity = useTransform(
+    heroScrollProgress,
+    [0, 0.75, 1],
+    [0.55, 0.15, 0],
+  );
+  const heroImageY = useTransform(heroScrollProgress, [0, 1], ["0%", "14%"]);
+  const heroImageScale = useTransform(heroScrollProgress, [0, 1], [1, 1.06]);
 
   const { scrollYProgress: experienceScrollYProgress } = useScroll({
     target: experienceTimelineRef,
@@ -958,20 +971,54 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </AnimatePresence>
 
       <main className="w-full px-4 pb-20 pt-28 sm:pt-36 md:px-8 lg:px-12 max-w-7xl mx-auto">
-        {/* HERO SECTION - HUMAN-CENTERED & EDITORIAL (Ref 1 & Ref 3) */}
+        {/* HERO SECTION - CINEMATIC BACKGROUND PORTRAIT WITH SCROLL FADE */}
         <section
           id="hero"
-          className="relative min-h-[calc(100vh-8rem)] flex flex-col justify-center pb-12 pt-4 lg:pt-8"
+          ref={heroRef}
+          className="relative min-h-[calc(100vh-8rem)] flex flex-col justify-between overflow-hidden pb-12 pt-4 lg:pt-8"
         >
+          {/* Dynamic Scroll-Fading Creator Photo in Background (Fades on Scroll Down, Fades in on Scroll Up) */}
+          {content.about.imageUrl ? (
+            <motion.div
+              style={{
+                opacity: heroImageOpacity,
+                y: heroImageY,
+                scale: heroImageScale,
+              }}
+              className="pointer-events-none absolute right-0 top-0 h-full w-full select-none overflow-hidden md:w-[68%] lg:w-[60%]"
+            >
+              <div className="relative h-full w-full">
+                <MediaThumb
+                  kind="image"
+                  url={content.about.imageUrl}
+                  alt={content.hero.displayName}
+                  className="h-full w-full object-cover object-[center_18%]"
+                  priority
+                  loading="eager"
+                />
+
+                {/* Left edge seamless gradient blend into #110C17 */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#110C17] via-[#110C17]/90 to-transparent md:via-[#110C17]/65" />
+
+                {/* Top and Bottom soft vignette */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#110C17]/80 via-transparent to-[#110C17]" />
+
+                {/* Royal Plum & Orchid Color Grading Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#31122E]/80 via-[#9056A2]/25 to-transparent mix-blend-color" />
+                <div className="absolute inset-0 bg-[#110C17]/35" />
+              </div>
+            </motion.div>
+          ) : null}
+
           {/* Subtle Grid Crosshairs & Architectural Watermark */}
           <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
-            <span className="font-display text-[15vw] font-black uppercase tracking-tighter text-[#9056A2]/[0.04] select-none whitespace-nowrap">
+            <span className="font-display text-[15vw] font-black uppercase tracking-tighter text-[#9056A2]/[0.03] select-none whitespace-nowrap">
               {content.hero.displayName || "SHARUKH"}
             </span>
           </div>
 
           {/* Top Quiet Eyebrow Bar */}
-          <div className="reveal-up mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[#9056A2]/15 pb-4 text-xs">
+          <div className="reveal-up relative z-10 mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[#9056A2]/15 pb-4 text-xs">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -990,8 +1037,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             </div>
           </div>
 
-          {/* Main 2-Column Editorial Grid */}
-          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+          {/* Main Hero Content: Left Narrative + Right Ambient Breathing Space */}
+          <div className="relative z-10 grid items-center gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:gap-14 my-auto">
             {/* Left Column: Human Story & Typography */}
             <div className="reveal-up space-y-7">
               <div className="space-y-3">
@@ -1009,7 +1056,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               {/* The Human Value Proposition */}
               <p className="max-w-[48ch] text-base sm:text-lg text-[#A89CB2] leading-relaxed">
                 {content.hero.subheadline ||
-                  "I craft clean, high-performance web applications and thoughtful visual identities. From graphic design precision to modern code, I build digital experiences that feel human, fluid, and memorable."}
+                  "Designing engaging visuals. Building responsive experiences. Combining graphic design precision with modern frontend engineering."}
               </p>
 
               {/* Action Buttons */}
@@ -1028,9 +1075,9 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   href={content.hero.primaryCtaHref}
                   onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
                   data-cursor="interactive"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#9056A2]/30 bg-[#31122E]/40 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition hover:bg-[#9056A2]/20 hover:border-[#9056A2]/60"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#9056A2]/30 bg-[#31122E]/50 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition hover:bg-[#9056A2]/20 hover:border-[#9056A2]/60"
                 >
-                  <span>{content.hero.primaryCtaLabel || "View Work"} ↓</span>
+                  <span>{content.hero.primaryCtaLabel || "View My Work"} ↓</span>
                 </a>
 
                 <button
@@ -1045,7 +1092,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 </button>
               </div>
 
-              {/* Minimal Specialties Strip (Ref 1 - Matteo Backer) */}
+              {/* Minimal Specialties Strip */}
               <div className="border-t border-[#9056A2]/15 pt-5">
                 <p className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] mb-2 font-semibold">
                   Core Specialties
@@ -1063,74 +1110,29 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </div>
             </div>
 
-            {/* Right Column: Cinematic Human Portrait with Floating "Let's Talk" Card (Ref 1 & 3) */}
-            <div className="relative mx-auto w-full max-w-[420px] lg:max-w-none">
-              <motion.div
-                ref={cardRef}
-                onMouseMove={handleCardMouseMove}
-                onMouseLeave={handleCardMouseLeave}
-                style={
-                  enableInteractiveMotion
-                    ? {
-                        rotateX: smoothTiltX,
-                        rotateY: smoothTiltY,
-                        transformStyle: "preserve-3d",
-                      }
-                    : undefined
-                }
-                className="group relative overflow-hidden rounded-3xl border border-[#9056A2]/30 bg-[#1C1326] p-2 sm:p-2.5 shadow-[0_24px_60px_rgba(17,12,23,0.95)] backdrop-blur-2xl"
+            {/* Right Column: Floating Tactical "Let's Connect" Card */}
+            <div className="flex items-end justify-start lg:justify-end pt-6 lg:pt-0">
+              <a
+                href="#contact"
+                onClick={(e) => handleNavClick(e, "#contact")}
+                className="group inline-flex items-center gap-4 rounded-2xl border border-[#9056A2]/30 bg-[#1C1326]/85 p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] transition hover:border-[#9056A2] hover:bg-[#31122E]"
               >
-                {/* Portrait Canvas */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-[#110C17]">
-                  {/* Ambient Glow */}
-                  <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#110C17] via-transparent to-transparent opacity-80" />
-
-                  {/* Creator Photo */}
-                  <MediaThumb
-                    kind="image"
-                    url={content.about.imageUrl}
-                    alt={content.hero.displayName}
-                    className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-105"
-                    sizes="(max-width: 768px) 90vw, (max-width: 1280px) 40vw, 480px"
-                    priority
-                    loading="eager"
-                  />
-
-                  {/* Corner Accent Badge */}
-                  <div className="absolute right-3 top-3 z-20 rounded-full border border-white/15 bg-black/60 px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md">
-                    ©2026
-                  </div>
+                <span className="relative flex h-3 w-3">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
+                </span>
+                <div className="text-left">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
+                    Let&apos;s Connect
+                  </p>
+                  <p className="font-display text-sm font-semibold text-white">
+                    Available for Select Projects
+                  </p>
                 </div>
-
-                {/* Floating "Let's Talk" Card (Reference 3 - Michael) */}
-                <a
-                  href="#contact"
-                  onClick={(e) => handleNavClick(e, "#contact")}
-                  className="mt-2.5 flex items-center justify-between rounded-2xl border border-[#9056A2]/25 bg-[#31122E]/80 p-3.5 backdrop-blur-xl transition hover:border-[#9056A2] hover:bg-[#31122E]"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="relative h-10 w-10 overflow-hidden rounded-full border border-[#9056A2]/40 bg-[#110C17]">
-                      <MediaThumb
-                        kind="image"
-                        url={content.about.imageUrl}
-                        alt={content.hero.displayName}
-                        className="h-full w-full object-cover object-top"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
-                        Let&apos;s Connect
-                      </p>
-                      <p className="font-display text-xs sm:text-sm font-semibold text-white">
-                        {content.hero.displayName}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9056A2]/20 text-white transition group-hover:bg-[#9056A2] group-hover:text-[#110C17]">
-                    ↗
-                  </div>
-                </a>
-              </motion.div>
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9056A2]/20 text-white transition group-hover:bg-[#9056A2] group-hover:text-[#110C17]">
+                  ↗
+                </div>
+              </a>
             </div>
           </div>
 
