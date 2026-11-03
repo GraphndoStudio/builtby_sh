@@ -1089,8 +1089,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </div>
             </div>
 
-            {/* Right Column: Interactive Story Stage (Ref 3: Centerpiece + Polaroid + Floating Cards) */}
-            <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
+            {/* Right Column: Creative Minimalist Kinetic Engine (Interactive & Animated) */}
+            <div className="relative mx-auto flex w-full max-w-[480px] items-center justify-center py-6 lg:py-0">
               <motion.div
                 ref={cardRef}
                 onMouseMove={handleCardMouseMove}
@@ -1104,98 +1104,128 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       }
                     : undefined
                 }
-                className="relative rounded-3xl border border-[#9056A2]/25 bg-[#1C1326]/80 p-3 sm:p-4 shadow-[0_24px_60px_rgba(17,12,23,0.9)] backdrop-blur-2xl"
+                className="relative flex aspect-square w-full max-w-[420px] items-center justify-center select-none"
               >
-                {/* Hairline Grid Crosshairs at corners (Ref 3) */}
-                <div className="pointer-events-none absolute left-2 top-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
-                <div className="pointer-events-none absolute right-2 top-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
-                <div className="pointer-events-none absolute left-2 bottom-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
-                <div className="pointer-events-none absolute right-2 bottom-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
+                {/* Soft Ambient Orchid & Plum Aura */}
+                <div className="pointer-events-none absolute inset-4 rounded-full bg-gradient-to-tr from-[#31122E]/80 via-[#9056A2]/25 to-transparent blur-[80px]" />
 
-                {/* Main Media Showcase Container */}
-                <div className="relative aspect-[4/3.8] sm:aspect-[4/3.4] w-full overflow-hidden rounded-2xl bg-[#110C17]">
-                  <AnimatePresence mode="wait" initial={false}>
-                    {activeMockup ? (
-                      <motion.div
-                        key={activeMockup.id}
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.02 }}
-                        transition={{ duration: 0.35, ease: "easeOut" }}
-                        className="relative h-full w-full flex items-center justify-center overflow-hidden"
-                      >
-                        {/* Ambient Orchid Glow sampled from theme */}
-                        <div
-                          className="pointer-events-none absolute inset-0 scale-125 blur-3xl opacity-25"
-                          style={{
-                            backgroundImage: activeMockup.mediaUrl ? `url(${activeMockup.mediaUrl})` : undefined,
-                            backgroundPosition: "center",
-                            backgroundSize: "cover",
-                          }}
-                        />
+                {/* Outer Concentric Orbit - Rotating Clockwise */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 38, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 rounded-full border border-dashed border-[#9056A2]/30"
+                >
+                  {/* Orbiting Satellite Dot */}
+                  <span className="absolute -top-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[#9056A2] shadow-[0_0_12px_#9056A2]" />
+                </motion.div>
 
-                        {/* Pristine artwork canvas - zero text collision */}
-                        <div className="relative z-10 flex h-full w-full items-center justify-center p-3 sm:p-5">
-                          <MediaThumb
-                            kind={activeMockup.mediaKind}
-                            url={activeMockup.mediaUrl}
-                            alt={activeMockup.caption}
-                            className="max-h-full max-w-full rounded-xl object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.85)]"
-                            sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 560px"
-                            quality={92}
-                            priority
-                            loading="eager"
-                          />
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-xs text-zinc-500">
-                        No showcase media
-                      </div>
-                    )}
-                  </AnimatePresence>
+                {/* Middle Kinetic Ring - Rotating Counter-Clockwise */}
+                <motion.div
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-9 rounded-full border border-[#c084fc]/25"
+                  style={{
+                    borderStyle: "dashed",
+                    strokeDasharray: "8 12",
+                  }}
+                >
+                  {/* Orbiting Secondary Satellite Dot */}
+                  <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-[#c084fc] shadow-[0_0_10px_#c084fc]" />
+                </motion.div>
 
-                  {/* Floating Story Origin Tag (Ref 3: like the ZENTIX polaroid tag) */}
-                  <div className="absolute left-3 top-3 z-20 rounded-full border border-white/15 bg-[#110C17]/80 px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md shadow-lg">
-                    <span className="text-[#c084fc] mr-1.5">✦</span>
-                    Visual Showcase
+                {/* Inner Architectural Ring */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-20 rounded-full border border-dotted border-[#9056A2]/35"
+                />
+
+                {/* Center Core: Glowing Creative Engine Emblem */}
+                <motion.div
+                  animate={{ scale: [1, 1.04, 1] }}
+                  transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative z-10 flex h-32 w-32 flex-col items-center justify-center rounded-full border border-[#9056A2]/45 bg-[#1C1326]/90 shadow-[0_0_50px_rgba(144,86,162,0.45)] backdrop-blur-2xl"
+                >
+                  <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-[#c084fc] font-semibold">
+                    CREATIVE
+                  </span>
+                  <span className="font-display text-3xl font-black tracking-tight text-white">
+                    SH
+                  </span>
+                  <div className="mt-1 flex items-center gap-1.5 rounded-full bg-emerald-950/60 px-2 py-0.5 border border-emerald-500/30">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="font-mono text-[8px] text-emerald-300 uppercase tracking-widest">
+                      ACTIVE
+                    </span>
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Elegant Story Footer Bar */}
-                <div className="mt-3 flex items-center justify-between rounded-xl border border-[#9056A2]/20 bg-[#31122E]/50 px-4 py-3 backdrop-blur-md">
-                  <div className="min-w-0 pr-3">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#9056A2] shadow-[0_0_8px_#9056A2]" />
-                      <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-[#c084fc]">
-                        Archive {String(mockupIndex + 1).padStart(2, "0")} / {String(content.hero.mockupMedia.length).padStart(2, "0")}
-                      </span>
+                {/* Floating Magnetic Story Badges (Minimal, Kinetic, Interactive) */}
+                {/* Badge 1: Top Right - Visual Systems */}
+                <motion.div
+                  animate={{ y: [0, -9, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  whileHover={{ scale: 1.08 }}
+                  className="absolute -top-3 right-2 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#31122E]/80 px-3.5 py-2 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#c084fc] text-xs">✦</span>
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-[#A89CB2]">
+                        Origin
+                      </p>
+                      <p className="font-display text-xs font-semibold text-white">
+                        Visual Systems
+                      </p>
                     </div>
-                    <p className="mt-0.5 truncate text-xs sm:text-sm font-medium text-white">
-                      {activeMockup?.caption || "Design & Code Archive"}
-                    </p>
                   </div>
+                </motion.div>
 
-                  {/* Next / Prev Controls */}
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      type="button"
-                      onClick={handlePrevMockup}
-                      aria-label="Previous archive"
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#9056A2]/30 bg-[#110C17]/80 text-sm text-[#FFFBFC] transition hover:bg-[#9056A2]/30 hover:border-[#9056A2]"
-                    >
-                      ←
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNextMockup}
-                      aria-label="Next archive"
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#9056A2]/30 bg-[#110C17]/80 text-sm text-[#FFFBFC] transition hover:bg-[#9056A2]/30 hover:border-[#9056A2]"
-                    >
-                      →
-                    </button>
+                {/* Badge 2: Bottom Left - Modern Frontend */}
+                <motion.div
+                  animate={{ y: [0, 9, 0] }}
+                  transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+                  whileHover={{ scale: 1.08 }}
+                  className="absolute -bottom-3 left-2 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#1C1326]/90 px-3.5 py-2 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-emerald-400 text-xs">⚡</span>
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-wider text-[#A89CB2]">
+                        Code Craft
+                      </p>
+                      <p className="font-display text-xs font-semibold text-white">
+                        Next.js 16 & React
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
+
+                {/* Badge 3: Top Left - Fluid Motion */}
+                <motion.div
+                  animate={{ x: [0, -8, 0] }}
+                  transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+                  whileHover={{ scale: 1.08 }}
+                  className="absolute top-1/4 -left-6 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#31122E]/80 px-3 py-1.5 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#c084fc] text-xs">✹</span>
+                    <span className="font-mono text-[11px] font-medium text-white">GSAP Motion</span>
+                  </div>
+                </motion.div>
+
+                {/* Badge 4: Bottom Right - Creative Direction */}
+                <motion.div
+                  animate={{ x: [0, 8, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
+                  whileHover={{ scale: 1.08 }}
+                  className="absolute bottom-1/4 -right-6 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#1C1326]/90 px-3 py-1.5 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[#c084fc] text-xs">★</span>
+                    <span className="font-mono text-[11px] font-medium text-white">Pixel Precision</span>
+                  </div>
+                </motion.div>
               </motion.div>
             </div>
           </div>
