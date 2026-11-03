@@ -958,122 +958,79 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </AnimatePresence>
 
       <main className="w-full px-4 pb-20 pt-28 sm:pt-36 md:px-8 lg:px-12 max-w-7xl mx-auto">
-        {/* HERO SECTION - THE STORY EVOLUTION (ORIGIN ➔ PRESENT) */}
+        {/* HERO SECTION - HUMAN-CENTERED & EDITORIAL (Ref 1 & Ref 3) */}
         <section
           id="hero"
           className="relative min-h-[calc(100vh-8rem)] flex flex-col justify-center pb-12 pt-4 lg:pt-8"
         >
-          {/* Subtle Grid Crosshairs & Architectural Watermark (Ref 1 & Ref 3) */}
+          {/* Subtle Grid Crosshairs & Architectural Watermark */}
           <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
-            <span className="font-display text-[14vw] font-black uppercase tracking-tighter text-[#9056A2]/[0.05] select-none whitespace-nowrap">
-              BUILTBY_SH
+            <span className="font-display text-[15vw] font-black uppercase tracking-tighter text-[#9056A2]/[0.04] select-none whitespace-nowrap">
+              {content.hero.displayName || "SHARUKH"}
             </span>
           </div>
 
-          {/* Top Story Meta Bar (Reference 1 & 3: Location, Live Clock, Availability, Year) */}
+          {/* Top Quiet Eyebrow Bar */}
           <div className="reveal-up mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[#9056A2]/15 pb-4 text-xs">
-            <div className="flex items-center gap-3">
-              {/* Availability Beacon */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1 text-[11px] text-emerald-300 backdrop-blur-md">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-                </span>
-                <span className="font-medium tracking-wide">Available for Work</span>
-              </div>
-
-              {/* Story Journey Tag */}
-              <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#9056A2]/25 bg-[#31122E]/40 px-3 py-1 text-[11px] text-[#FFFBFC]">
-                <span className="text-[#c084fc] font-semibold font-mono">The Story:</span>
-                <span className="text-zinc-300">Design ➔ Code Evolution</span>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+              </span>
+              <span className="font-medium tracking-wide text-emerald-300">Available for select projects</span>
             </div>
 
             <div className="flex items-center gap-4 text-[#A89CB2] font-mono text-[11px]">
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#9056A2]" />
-                <span>{content.contact.location || "India"}</span>
-              </div>
+              <span>📍 {content.contact.location || "India"}</span>
               {currentTime ? (
-                <div className="border-l border-[#9056A2]/20 pl-4">
-                  <span className="text-[#FFFBFC] font-medium">{currentTime}</span>
-                </div>
+                <span className="border-l border-[#9056A2]/20 pl-4 text-white">
+                  {currentTime} IST
+                </span>
               ) : null}
-              <div className="hidden md:block border-l border-[#9056A2]/20 pl-4 text-zinc-500">
-                ©2026 / SHARUKH H.
-              </div>
             </div>
           </div>
 
-          {/* Main Hero Grid: Left Narrative + Right Interactive Story Stage */}
-          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-            {/* Left Column: Bold Typography & Story Evolution */}
-            <div className="reveal-up space-y-6">
-              {/* Origin Badge */}
-              <div className="inline-flex items-center gap-2 rounded-lg border border-[#9056A2]/30 bg-[#31122E]/60 px-3.5 py-1.5 text-xs text-[#FFFBFC] backdrop-blur-md">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-[#c084fc] font-semibold">
-                  Creative Evolution
-                </span>
-                <span className="text-[#9056A2]">/</span>
-                <span className="text-zinc-300">From Visual Craft to Living Code</span>
-              </div>
-
-              {/* Giant Poster-Grade Typography (Ref 1 & 3) */}
+          {/* Main 2-Column Editorial Grid */}
+          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+            {/* Left Column: Human Story & Typography */}
+            <div className="reveal-up space-y-7">
               <div className="space-y-3">
+                <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#c084fc] font-semibold">
+                  Creative Developer & Designer
+                </p>
                 <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-[#FFFBFC] leading-[0.92]">
                   {content.hero.displayName}
                 </h1>
-                <div className="flex flex-wrap items-center gap-2 text-lg sm:text-xl md:text-2xl font-display font-medium text-zinc-300">
-                  <span className="text-[#c084fc] font-semibold">{content.hero.rolePrimary}</span>
-                  <span className="text-[#9056A2]">➔</span>
-                  <span className="text-white font-semibold">{content.hero.roleSecondary}</span>
-                </div>
+                <p className="font-display text-xl sm:text-2xl font-medium text-zinc-300">
+                  {content.hero.rolePrimary} <span className="text-[#9056A2] font-normal mx-1">&</span> {content.hero.roleSecondary}
+                </p>
               </div>
 
-              {/* The Narrative: "What I was and what I am today" */}
+              {/* The Human Value Proposition */}
               <p className="max-w-[48ch] text-base sm:text-lg text-[#A89CB2] leading-relaxed">
-                {content.hero.subheadline || "Designing visuals that connect. Developing experiences that perform."}
+                {content.hero.subheadline ||
+                  "I craft clean, high-performance web applications and thoughtful visual identities. From graphic design precision to modern code, I build digital experiences that feel human, fluid, and memorable."}
               </p>
 
-              {/* Story Bridge Strip: The Dual Superpower */}
-              <div className="grid grid-cols-2 gap-3 max-w-lg rounded-2xl border border-[#9056A2]/20 bg-[#31122E]/30 p-3.5 backdrop-blur-md">
-                <div className="space-y-1 border-r border-[#9056A2]/20 pr-3">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
-                    01 • Visual Heritage
-                  </p>
-                  <p className="text-xs text-zinc-300 leading-snug">
-                    Brand systems, poster composition, typography & aesthetic hierarchy.
-                  </p>
-                </div>
-                <div className="space-y-1 pl-1">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
-                    02 • Technical Craft
-                  </p>
-                  <p className="text-xs text-zinc-300 leading-snug">
-                    Next.js, React, TypeScript, fluid GSAP motion & high-performance UI.
-                  </p>
-                </div>
-              </div>
-
-              {/* Action Buttons (Ref 1 & 3) */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <a
-                  href={content.hero.primaryCtaHref}
-                  onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
-                  data-cursor="interactive"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-gradient-accent px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#110C17] shadow-[0_0_28px_rgba(144,86,162,0.45)] transition hover:brightness-110 hover:scale-[1.02]"
-                >
-                  <span>{content.hero.primaryCtaLabel || "Explore Works"}</span>
-                  <span className="text-sm">→</span>
-                </a>
-
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-1">
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, "#contact")}
                   data-cursor="interactive"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#9056A2]/30 bg-[#31122E]/50 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition hover:bg-[#9056A2]/20 hover:border-[#9056A2]/60"
+                  className="inline-flex items-center gap-2.5 rounded-full bg-gradient-accent px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#110C17] shadow-[0_0_28px_rgba(144,86,162,0.45)] transition hover:brightness-110 hover:scale-[1.02]"
                 >
-                  <span>Start a Project ↗</span>
+                  <span>Start a Project</span>
+                  <span className="text-sm">↗</span>
+                </a>
+
+                <a
+                  href={content.hero.primaryCtaHref}
+                  onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
+                  data-cursor="interactive"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#9056A2]/30 bg-[#31122E]/40 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition hover:bg-[#9056A2]/20 hover:border-[#9056A2]/60"
+                >
+                  <span>{content.hero.primaryCtaLabel || "View Work"} ↓</span>
                 </a>
 
                 <button
@@ -1087,10 +1044,27 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   <span>{copiedEmail ? "Copied!" : "Copy Email"}</span>
                 </button>
               </div>
+
+              {/* Minimal Specialties Strip (Ref 1 - Matteo Backer) */}
+              <div className="border-t border-[#9056A2]/15 pt-5">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] mb-2 font-semibold">
+                  Core Specialties
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {["Next.js 16", "React 19", "TypeScript", "Tailwind CSS", "GSAP Motion", "Brand Systems"].map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-lg border border-[#9056A2]/20 bg-[#31122E]/30 px-2.5 py-1 text-xs text-zinc-300"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* Right Column: Creative Minimalist Kinetic Engine (Interactive & Animated) */}
-            <div className="relative mx-auto flex w-full max-w-[480px] items-center justify-center py-6 lg:py-0">
+            {/* Right Column: Cinematic Human Portrait with Floating "Let's Talk" Card (Ref 1 & 3) */}
+            <div className="relative mx-auto w-full max-w-[420px] lg:max-w-none">
               <motion.div
                 ref={cardRef}
                 onMouseMove={handleCardMouseMove}
@@ -1104,128 +1078,58 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       }
                     : undefined
                 }
-                className="relative flex aspect-square w-full max-w-[420px] items-center justify-center select-none"
+                className="group relative overflow-hidden rounded-3xl border border-[#9056A2]/30 bg-[#1C1326] p-2 sm:p-2.5 shadow-[0_24px_60px_rgba(17,12,23,0.95)] backdrop-blur-2xl"
               >
-                {/* Soft Ambient Orchid & Plum Aura */}
-                <div className="pointer-events-none absolute inset-4 rounded-full bg-gradient-to-tr from-[#31122E]/80 via-[#9056A2]/25 to-transparent blur-[80px]" />
+                {/* Portrait Canvas */}
+                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-[#110C17]">
+                  {/* Ambient Glow */}
+                  <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#110C17] via-transparent to-transparent opacity-80" />
 
-                {/* Outer Concentric Orbit - Rotating Clockwise */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 38, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 rounded-full border border-dashed border-[#9056A2]/30"
-                >
-                  {/* Orbiting Satellite Dot */}
-                  <span className="absolute -top-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-[#9056A2] shadow-[0_0_12px_#9056A2]" />
-                </motion.div>
+                  {/* Creator Photo */}
+                  <MediaThumb
+                    kind="image"
+                    url={content.about.imageUrl}
+                    alt={content.hero.displayName}
+                    className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 90vw, (max-width: 1280px) 40vw, 480px"
+                    priority
+                    loading="eager"
+                  />
 
-                {/* Middle Kinetic Ring - Rotating Counter-Clockwise */}
-                <motion.div
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-9 rounded-full border border-[#c084fc]/25"
-                  style={{
-                    borderStyle: "dashed",
-                    strokeDasharray: "8 12",
-                  }}
-                >
-                  {/* Orbiting Secondary Satellite Dot */}
-                  <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-[#c084fc] shadow-[0_0_10px_#c084fc]" />
-                </motion.div>
-
-                {/* Inner Architectural Ring */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-20 rounded-full border border-dotted border-[#9056A2]/35"
-                />
-
-                {/* Center Core: Glowing Creative Engine Emblem */}
-                <motion.div
-                  animate={{ scale: [1, 1.04, 1] }}
-                  transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative z-10 flex h-32 w-32 flex-col items-center justify-center rounded-full border border-[#9056A2]/45 bg-[#1C1326]/90 shadow-[0_0_50px_rgba(144,86,162,0.45)] backdrop-blur-2xl"
-                >
-                  <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-[#c084fc] font-semibold">
-                    CREATIVE
-                  </span>
-                  <span className="font-display text-3xl font-black tracking-tight text-white">
-                    SH
-                  </span>
-                  <div className="mt-1 flex items-center gap-1.5 rounded-full bg-emerald-950/60 px-2 py-0.5 border border-emerald-500/30">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-mono text-[8px] text-emerald-300 uppercase tracking-widest">
-                      ACTIVE
-                    </span>
+                  {/* Corner Accent Badge */}
+                  <div className="absolute right-3 top-3 z-20 rounded-full border border-white/15 bg-black/60 px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md">
+                    ©2026
                   </div>
-                </motion.div>
+                </div>
 
-                {/* Floating Magnetic Story Badges (Minimal, Kinetic, Interactive) */}
-                {/* Badge 1: Top Right - Visual Systems */}
-                <motion.div
-                  animate={{ y: [0, -9, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  whileHover={{ scale: 1.08 }}
-                  className="absolute -top-3 right-2 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#31122E]/80 px-3.5 py-2 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
+                {/* Floating "Let's Talk" Card (Reference 3 - Michael) */}
+                <a
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, "#contact")}
+                  className="mt-2.5 flex items-center justify-between rounded-2xl border border-[#9056A2]/25 bg-[#31122E]/80 p-3.5 backdrop-blur-xl transition hover:border-[#9056A2] hover:bg-[#31122E]"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#c084fc] text-xs">✦</span>
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-10 w-10 overflow-hidden rounded-full border border-[#9056A2]/40 bg-[#110C17]">
+                      <MediaThumb
+                        kind="image"
+                        url={content.about.imageUrl}
+                        alt={content.hero.displayName}
+                        className="h-full w-full object-cover object-top"
+                      />
+                    </div>
                     <div>
-                      <p className="font-mono text-[10px] uppercase tracking-wider text-[#A89CB2]">
-                        Origin
+                      <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
+                        Let&apos;s Connect
                       </p>
-                      <p className="font-display text-xs font-semibold text-white">
-                        Visual Systems
+                      <p className="font-display text-xs sm:text-sm font-semibold text-white">
+                        {content.hero.displayName}
                       </p>
                     </div>
                   </div>
-                </motion.div>
-
-                {/* Badge 2: Bottom Left - Modern Frontend */}
-                <motion.div
-                  animate={{ y: [0, 9, 0] }}
-                  transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
-                  whileHover={{ scale: 1.08 }}
-                  className="absolute -bottom-3 left-2 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#1C1326]/90 px-3.5 py-2 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-emerald-400 text-xs">⚡</span>
-                    <div>
-                      <p className="font-mono text-[10px] uppercase tracking-wider text-[#A89CB2]">
-                        Code Craft
-                      </p>
-                      <p className="font-display text-xs font-semibold text-white">
-                        Next.js 16 & React
-                      </p>
-                    </div>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9056A2]/20 text-white transition group-hover:bg-[#9056A2] group-hover:text-[#110C17]">
+                    ↗
                   </div>
-                </motion.div>
-
-                {/* Badge 3: Top Left - Fluid Motion */}
-                <motion.div
-                  animate={{ x: [0, -8, 0] }}
-                  transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-                  whileHover={{ scale: 1.08 }}
-                  className="absolute top-1/4 -left-6 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#31122E]/80 px-3 py-1.5 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[#c084fc] text-xs">✹</span>
-                    <span className="font-mono text-[11px] font-medium text-white">GSAP Motion</span>
-                  </div>
-                </motion.div>
-
-                {/* Badge 4: Bottom Right - Creative Direction */}
-                <motion.div
-                  animate={{ x: [0, 8, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
-                  whileHover={{ scale: 1.08 }}
-                  className="absolute bottom-1/4 -right-6 z-20 cursor-default rounded-xl border border-[#9056A2]/30 bg-[#1C1326]/90 px-3 py-1.5 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.4)]"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[#c084fc] text-xs">★</span>
-                    <span className="font-mono text-[11px] font-medium text-white">Pixel Precision</span>
-                  </div>
-                </motion.div>
+                </a>
               </motion.div>
             </div>
           </div>
