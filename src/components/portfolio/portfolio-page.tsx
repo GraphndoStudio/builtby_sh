@@ -150,6 +150,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingDone, setLoadingDone] = useState(false);
   const [mockupIndex, setMockupIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState("");
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
   const [cursorActive, setCursorActive] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(false);
@@ -209,6 +211,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     setMockupIndex((prev) =>
       prev < content.hero.mockupMedia.length - 1 ? prev + 1 : 0,
     );
+  };
+
+  const handleCopyEmail = () => {
+    if (!content.contact.email) return;
+    void navigator.clipboard.writeText(content.contact.email);
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2400);
   };
 
   const { scrollYProgress: experienceScrollYProgress } = useScroll({
@@ -316,6 +325,24 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     updateViewportState();
     window.addEventListener("resize", updateViewportState);
     return () => window.removeEventListener("resize", updateViewportState);
+  }, []);
+
+  // Studio live clock (India time)
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        }),
+      );
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   // Loading screen progression
@@ -571,7 +598,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           initial={{ opacity: 1 }}
           animate={{ opacity: loadingProgress >= 100 ? 0 : 1 }}
           transition={{ duration: 0.35 }}
-          className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-black"
+          className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-[#110C17]"
         >
           <p className="font-display text-4xl tracking-[0.08em]">{content.loading.displayName}</p>
           <p className="mt-2 text-sm tracking-[0.18em] text-brand-muted">{content.loading.statusText}</p>
@@ -580,7 +607,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               <span
                 key={`loading-${index}`}
                 className={`h-4 w-5 border border-brand-border transition-colors duration-150 ${
-                  index < loadingFilledBlocks ? "bg-brand-accent shadow-[0_0_12px_rgba(42,250,223,0.6)]" : "bg-transparent"
+                  index < loadingFilledBlocks ? "bg-brand-accent shadow-[0_0_14px_rgba(144,86,162,0.85)]" : "bg-transparent"
                 }`}
               />
             ))}
@@ -799,32 +826,33 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       ) : null}
 
-      {/* Clean, calm background layers (no distracting rotating 3D cubes) */}
+      {/* Editorial architectural background with royal purple & plum ambience */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[#050505]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(42,250,223,0.12),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[#110C17]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_-15%,rgba(144,86,162,0.22),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_90%_100%,rgba(49,18,46,0.5),transparent_70%)]" />
         <div
           className="absolute inset-0 opacity-40"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            maskImage: "radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%)",
+              "linear-gradient(rgba(144,86,162,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(144,86,162,0.06) 1px, transparent 1px)",
+            backgroundSize: "68px 68px",
+            maskImage: "radial-gradient(ellipse at 50% 35%, black 45%, transparent 80%)",
           }}
         />
         <motion.div
-          className="absolute left-[10%] top-[15%] h-80 w-80 rounded-full bg-brand-accent/10 blur-[100px]"
+          className="absolute left-[8%] top-[15%] h-80 w-80 rounded-full bg-[#9056A2]/15 blur-[120px]"
           style={{ x: orbAX, y: orbAY }}
         />
         <motion.div
-          className="absolute right-[12%] top-[25%] h-96 w-96 rounded-full bg-[#4c83ff]/10 blur-[120px]"
+          className="absolute right-[10%] top-[25%] h-96 w-96 rounded-full bg-[#31122E]/80 blur-[130px]"
           style={{ x: orbBX, y: orbBY }}
         />
       </div>
 
       {/* Floating navigation header */}
       <header className="fixed left-1/2 top-5 z-50 w-[min(900px,92vw)] -translate-x-1/2">
-        <div className="relative rounded-full border border-white/10 bg-black/60 px-5 py-2.5 backdrop-blur-xl shadow-lg">
+        <div className="relative rounded-full border border-[#9056A2]/25 bg-[#110C17]/80 px-5 py-2.5 backdrop-blur-xl shadow-[0_12px_40px_rgba(17,12,23,0.9)]">
           <div className="flex items-center justify-between gap-4">
             <a
               href="#hero"
@@ -840,7 +868,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               type="button"
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={mobileNavOpen}
-              className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-brand-text transition hover:border-brand-accent/60 md:hidden"
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#9056A2]/30 bg-[#31122E]/50 text-brand-text transition hover:border-brand-accent/60 md:hidden"
               onClick={() => setMobileNavOpen((prev) => !prev)}
             >
               <span className="relative block h-3 w-4">
@@ -868,7 +896,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   key={item.href}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="text-xs font-medium text-zinc-300 transition hover:text-brand-accent"
+                  className="text-xs font-medium text-[#A89CB2] transition hover:text-[#FFFBFC]"
                 >
                   {item.label}
                 </a>
@@ -897,10 +925,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -16, scale: 0.97 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-x-4 top-20 rounded-3xl border border-white/10 bg-[#0c0d12] p-5 shadow-2xl"
+              className="absolute inset-x-4 top-20 rounded-3xl border border-[#9056A2]/30 bg-[#1C1326] p-5 shadow-2xl"
             >
               <div className="mb-3 flex items-center justify-between px-1">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-brand-accent font-semibold">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#c084fc] font-semibold font-mono">
                   Navigation
                 </p>
                 <button
@@ -917,7 +945,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   <a
                     key={`mobile-${item.href}`}
                     href={item.href}
-                    className="rounded-xl px-4 py-3 font-display text-lg text-white transition hover:bg-white/5 hover:text-brand-accent"
+                    className="rounded-xl px-4 py-3 font-display text-lg text-white transition hover:bg-white/5 hover:text-[#c084fc]"
                     onClick={(e) => handleNavClick(e, item.href)}
                   >
                     {item.label}
@@ -930,183 +958,287 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </AnimatePresence>
 
       <main className="w-full px-4 pb-20 pt-28 sm:pt-36 md:px-8 lg:px-12 max-w-7xl mx-auto">
-        {/* HERO SECTION - REFINED, CLEAN & PROFESSIONAL */}
+        {/* HERO SECTION - THE STORY EVOLUTION (ORIGIN ➔ PRESENT) */}
         <section
           id="hero"
-          className="grid min-h-[calc(100vh-10rem)] items-center gap-10 pb-16 pt-2 lg:grid-cols-[1fr_1.05fr] lg:gap-14"
+          className="relative min-h-[calc(100vh-8rem)] flex flex-col justify-center pb-12 pt-4 lg:pt-8"
         >
-          {/* Left Column: Clear Visual Hierarchy & Direct Actions */}
-          <div className="reveal-up space-y-6">
-            {/* Availability Status Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3.5 py-1.5 text-xs text-emerald-300">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
-              <span className="font-medium tracking-wide">Available for new opportunities</span>
-            </div>
+          {/* Subtle Grid Crosshairs & Architectural Watermark (Ref 1 & Ref 3) */}
+          <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
+            <span className="font-display text-[14vw] font-black uppercase tracking-tighter text-[#9056A2]/[0.05] select-none whitespace-nowrap">
+              BUILTBY_SH
+            </span>
+          </div>
 
-            {/* Display Name & Role */}
-            <div className="space-y-2">
-              <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[0.98]">
-                {content.hero.displayName}
-              </h1>
-              <p className="font-display text-xl sm:text-2xl font-medium text-zinc-300">
-                {content.hero.rolePrimary} <span className="text-brand-accent mx-1.5">/</span> {content.hero.roleSecondary}
-              </p>
-            </div>
-
-            {/* Subheadline / Bio */}
-            <p className="max-w-[48ch] text-base md:text-lg text-zinc-400 leading-relaxed">
-              {content.hero.subheadline}
-            </p>
-
-            {/* Core Tech Stack Pills */}
-            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-zinc-400">
-              <span className="text-zinc-500 text-[11px] uppercase tracking-wider font-mono">Focus:</span>
-              {["Next.js", "React", "TypeScript", "Tailwind CSS", "UI/UX Design"].map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[11px] text-zinc-300"
-                >
-                  {tag}
+          {/* Top Story Meta Bar (Reference 1 & 3: Location, Live Clock, Availability, Year) */}
+          <div className="reveal-up mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[#9056A2]/15 pb-4 text-xs">
+            <div className="flex items-center gap-3">
+              {/* Availability Beacon */}
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1 text-[11px] text-emerald-300 backdrop-blur-md">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
                 </span>
-              ))}
+                <span className="font-medium tracking-wide">Available for Work</span>
+              </div>
+
+              {/* Story Journey Tag */}
+              <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#9056A2]/25 bg-[#31122E]/40 px-3 py-1 text-[11px] text-[#FFFBFC]">
+                <span className="text-[#c084fc] font-semibold font-mono">The Story:</span>
+                <span className="text-zinc-300">Design ➔ Code Evolution</span>
+              </div>
             </div>
 
-            {/* Simple, Confident Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <a
-                href={content.hero.primaryCtaHref}
-                onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
-                data-cursor="interactive"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 text-xs font-bold uppercase tracking-wider text-black shadow-[0_0_24px_rgba(42,250,223,0.3)] transition hover:brightness-110"
-              >
-                <span>{content.hero.primaryCtaLabel}</span>
-                <span>→</span>
-              </a>
-
-              <a
-                href="#contact"
-                onClick={(e) => handleNavClick(e, "#contact")}
-                data-cursor="interactive"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-xs font-medium text-white transition hover:bg-white/10 hover:border-white/25"
-              >
-                <span>Get in touch</span>
-              </a>
-
-              {content.hero.resumeUrl && content.hero.resumeUrl !== "#contact" ? (
-                <a
-                  href={content.hero.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-cursor="interactive"
-                  className="rounded-full px-4 py-3 text-xs text-zinc-400 transition hover:text-brand-accent underline underline-offset-4"
-                >
-                  Resume ↗
-                </a>
+            <div className="flex items-center gap-4 text-[#A89CB2] font-mono text-[11px]">
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#9056A2]" />
+                <span>{content.contact.location || "India"}</span>
+              </div>
+              {currentTime ? (
+                <div className="border-l border-[#9056A2]/20 pl-4">
+                  <span className="text-[#FFFBFC] font-medium">{currentTime}</span>
+                </div>
               ) : null}
+              <div className="hidden md:block border-l border-[#9056A2]/20 pl-4 text-zinc-500">
+                ©2026 / SHARUKH H.
+              </div>
             </div>
           </div>
 
-          {/* Right Column: Clean, Elegant Media Showcase */}
-          <div className="relative mx-auto w-full max-w-[540px] lg:max-w-none">
-            <motion.div
-              ref={cardRef}
-              onMouseMove={handleCardMouseMove}
-              onMouseLeave={handleCardMouseLeave}
-              style={
-                enableInteractiveMotion
-                  ? {
-                      rotateX: smoothTiltX,
-                      rotateY: smoothTiltY,
-                      transformStyle: "preserve-3d",
-                    }
-                  : undefined
-              }
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/80 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl"
-            >
-              {/* Media Stage: Versatile aspect ratio with ambient color glow */}
-              <div className="relative aspect-[4/3] sm:aspect-[16/11] w-full overflow-hidden bg-black/60">
-                <AnimatePresence mode="wait" initial={false}>
-                  {activeMockup ? (
-                    <motion.div
-                      key={activeMockup.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.35, ease: "easeOut" }}
-                      className="relative h-full w-full flex items-center justify-center overflow-hidden"
-                    >
-                      {/* Ambient color reflection from image */}
-                      {activeMockup.mediaKind === "image" && activeMockup.mediaUrl ? (
+          {/* Main Hero Grid: Left Narrative + Right Interactive Story Stage */}
+          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+            {/* Left Column: Bold Typography & Story Evolution */}
+            <div className="reveal-up space-y-6">
+              {/* Origin Badge */}
+              <div className="inline-flex items-center gap-2 rounded-lg border border-[#9056A2]/30 bg-[#31122E]/60 px-3.5 py-1.5 text-xs text-[#FFFBFC] backdrop-blur-md">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#c084fc] font-semibold">
+                  Creative Evolution
+                </span>
+                <span className="text-[#9056A2]">/</span>
+                <span className="text-zinc-300">From Visual Craft to Living Code</span>
+              </div>
+
+              {/* Giant Poster-Grade Typography (Ref 1 & 3) */}
+              <div className="space-y-3">
+                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-[#FFFBFC] leading-[0.92]">
+                  {content.hero.displayName}
+                </h1>
+                <div className="flex flex-wrap items-center gap-2 text-lg sm:text-xl md:text-2xl font-display font-medium text-zinc-300">
+                  <span className="text-[#c084fc] font-semibold">{content.hero.rolePrimary}</span>
+                  <span className="text-[#9056A2]">➔</span>
+                  <span className="text-white font-semibold">{content.hero.roleSecondary}</span>
+                </div>
+              </div>
+
+              {/* The Narrative: "What I was and what I am today" */}
+              <p className="max-w-[48ch] text-base sm:text-lg text-[#A89CB2] leading-relaxed">
+                {content.hero.subheadline || "Designing visuals that connect. Developing experiences that perform."}
+              </p>
+
+              {/* Story Bridge Strip: The Dual Superpower */}
+              <div className="grid grid-cols-2 gap-3 max-w-lg rounded-2xl border border-[#9056A2]/20 bg-[#31122E]/30 p-3.5 backdrop-blur-md">
+                <div className="space-y-1 border-r border-[#9056A2]/20 pr-3">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
+                    01 • Visual Heritage
+                  </p>
+                  <p className="text-xs text-zinc-300 leading-snug">
+                    Brand systems, poster composition, typography & aesthetic hierarchy.
+                  </p>
+                </div>
+                <div className="space-y-1 pl-1">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
+                    02 • Technical Craft
+                  </p>
+                  <p className="text-xs text-zinc-300 leading-snug">
+                    Next.js, React, TypeScript, fluid GSAP motion & high-performance UI.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons (Ref 1 & 3) */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <a
+                  href={content.hero.primaryCtaHref}
+                  onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
+                  data-cursor="interactive"
+                  className="inline-flex items-center gap-2.5 rounded-full bg-gradient-accent px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#110C17] shadow-[0_0_28px_rgba(144,86,162,0.45)] transition hover:brightness-110 hover:scale-[1.02]"
+                >
+                  <span>{content.hero.primaryCtaLabel || "Explore Works"}</span>
+                  <span className="text-sm">→</span>
+                </a>
+
+                <a
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, "#contact")}
+                  data-cursor="interactive"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#9056A2]/30 bg-[#31122E]/50 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition hover:bg-[#9056A2]/20 hover:border-[#9056A2]/60"
+                >
+                  <span>Start a Project ↗</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  data-cursor="interactive"
+                  className="inline-flex items-center gap-1.5 rounded-full px-4 py-3 text-xs text-[#A89CB2] transition hover:text-[#FFFBFC]"
+                  title="Copy email to clipboard"
+                >
+                  <span className="text-sm">✉</span>
+                  <span>{copiedEmail ? "Copied!" : "Copy Email"}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column: Interactive Story Stage (Ref 3: Centerpiece + Polaroid + Floating Cards) */}
+            <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
+              <motion.div
+                ref={cardRef}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
+                style={
+                  enableInteractiveMotion
+                    ? {
+                        rotateX: smoothTiltX,
+                        rotateY: smoothTiltY,
+                        transformStyle: "preserve-3d",
+                      }
+                    : undefined
+                }
+                className="relative rounded-3xl border border-[#9056A2]/25 bg-[#1C1326]/80 p-3 sm:p-4 shadow-[0_24px_60px_rgba(17,12,23,0.9)] backdrop-blur-2xl"
+              >
+                {/* Hairline Grid Crosshairs at corners (Ref 3) */}
+                <div className="pointer-events-none absolute left-2 top-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
+                <div className="pointer-events-none absolute right-2 top-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
+                <div className="pointer-events-none absolute left-2 bottom-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
+                <div className="pointer-events-none absolute right-2 bottom-2 text-[#9056A2]/40 font-mono text-xs select-none">+</div>
+
+                {/* Main Media Showcase Container */}
+                <div className="relative aspect-[4/3.8] sm:aspect-[4/3.4] w-full overflow-hidden rounded-2xl bg-[#110C17]">
+                  <AnimatePresence mode="wait" initial={false}>
+                    {activeMockup ? (
+                      <motion.div
+                        key={activeMockup.id}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.02 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="relative h-full w-full flex items-center justify-center overflow-hidden"
+                      >
+                        {/* Ambient Orchid Glow sampled from theme */}
                         <div
-                          className="pointer-events-none absolute inset-0 scale-125 blur-3xl opacity-20"
+                          className="pointer-events-none absolute inset-0 scale-125 blur-3xl opacity-25"
                           style={{
-                            backgroundImage: `url(${activeMockup.mediaUrl})`,
+                            backgroundImage: activeMockup.mediaUrl ? `url(${activeMockup.mediaUrl})` : undefined,
                             backgroundPosition: "center",
                             backgroundSize: "cover",
                           }}
                         />
-                      ) : null}
 
-                      {/* Main artwork - never cropped, padded cleanly */}
-                      <div className="relative z-10 flex h-full w-full items-center justify-center p-3 sm:p-5">
-                        <MediaThumb
-                          kind={activeMockup.mediaKind}
-                          url={activeMockup.mediaUrl}
-                          alt={activeMockup.caption}
-                          className="max-h-full max-w-full rounded-xl object-contain drop-shadow-2xl"
-                          sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 600px"
-                          quality={90}
-                          priority
-                          loading="eager"
-                        />
+                        {/* Pristine artwork canvas - zero text collision */}
+                        <div className="relative z-10 flex h-full w-full items-center justify-center p-3 sm:p-5">
+                          <MediaThumb
+                            kind={activeMockup.mediaKind}
+                            url={activeMockup.mediaUrl}
+                            alt={activeMockup.caption}
+                            className="max-h-full max-w-full rounded-xl object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.85)]"
+                            sizes="(max-width: 768px) 90vw, (max-width: 1280px) 46vw, 560px"
+                            quality={92}
+                            priority
+                            loading="eager"
+                          />
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-xs text-zinc-500">
+                        No showcase media
                       </div>
-                    </motion.div>
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-xs text-zinc-500">
-                      No mockup available
-                    </div>
-                  )}
-                </AnimatePresence>
-              </div>
+                    )}
+                  </AnimatePresence>
 
-              {/* Minimal, High-End Bottom Bar (Clean Separation, No Overlap) */}
-              <div className="flex items-center justify-between border-t border-white/10 bg-zinc-950/95 px-5 py-3.5 backdrop-blur-md">
-                <div className="min-w-0 pr-4">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand-accent shadow-[0_0_8px_#2afadf]" />
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
-                      Showcase {mockupIndex + 1} of {content.hero.mockupMedia.length}
-                    </span>
+                  {/* Floating Story Origin Tag (Ref 3: like the ZENTIX polaroid tag) */}
+                  <div className="absolute left-3 top-3 z-20 rounded-full border border-white/15 bg-[#110C17]/80 px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md shadow-lg">
+                    <span className="text-[#c084fc] mr-1.5">✦</span>
+                    Visual Showcase
                   </div>
-                  <p className="mt-0.5 truncate text-xs sm:text-sm font-medium text-white">
-                    {activeMockup?.caption || "Design Showcase"}
-                  </p>
                 </div>
 
-                {/* Slider Controls */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={handlePrevMockup}
-                    aria-label="Previous showcase"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-sm text-zinc-300 transition hover:bg-white/15 hover:border-brand-accent/50 hover:text-white"
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleNextMockup}
-                    aria-label="Next showcase"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-sm text-zinc-300 transition hover:bg-white/15 hover:border-brand-accent/50 hover:text-white"
-                  >
-                    →
-                  </button>
+                {/* Elegant Story Footer Bar */}
+                <div className="mt-3 flex items-center justify-between rounded-xl border border-[#9056A2]/20 bg-[#31122E]/50 px-4 py-3 backdrop-blur-md">
+                  <div className="min-w-0 pr-3">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#9056A2] shadow-[0_0_8px_#9056A2]" />
+                      <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-[#c084fc]">
+                        Archive {String(mockupIndex + 1).padStart(2, "0")} / {String(content.hero.mockupMedia.length).padStart(2, "0")}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 truncate text-xs sm:text-sm font-medium text-white">
+                      {activeMockup?.caption || "Design & Code Archive"}
+                    </p>
+                  </div>
+
+                  {/* Next / Prev Controls */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={handlePrevMockup}
+                      aria-label="Previous archive"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#9056A2]/30 bg-[#110C17]/80 text-sm text-[#FFFBFC] transition hover:bg-[#9056A2]/30 hover:border-[#9056A2]"
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextMockup}
+                      aria-label="Next archive"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#9056A2]/30 bg-[#110C17]/80 text-sm text-[#FFFBFC] transition hover:bg-[#9056A2]/30 hover:border-[#9056A2]"
+                    >
+                      →
+                    </button>
+                  </div>
                 </div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Core Disciplines Strip (Ref 1: Matteo Backer Services List) */}
+          <div className="reveal-up mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 border-t border-[#9056A2]/15 pt-8">
+            {[
+              {
+                num: "01",
+                label: "Frontend Engineering",
+                desc: "High-performance web applications built with Next.js, React, and TypeScript.",
+              },
+              {
+                num: "02",
+                label: "Visual Design & Identity",
+                desc: "Impactful brand systems, art direction, and poster-level typography.",
+              },
+              {
+                num: "03",
+                label: "Motion & Micro-interactions",
+                desc: "Fluid animation storytelling powered by GSAP, Lenis, and Framer Motion.",
+              },
+              {
+                num: "04",
+                label: "UI/UX & Design Systems",
+                desc: "User-centered design components with pixel-perfect responsive layouts.",
+              },
+            ].map((discipline) => (
+              <div
+                key={discipline.num}
+                className="group rounded-2xl border border-[#9056A2]/15 bg-[#31122E]/20 p-4 transition hover:border-[#9056A2]/40 hover:bg-[#31122E]/40"
+              >
+                <span className="font-mono text-xs font-semibold text-[#c084fc]">
+                  {discipline.num} /
+                </span>
+                <h3 className="mt-1 font-display text-base font-semibold text-white">
+                  {discipline.label}
+                </h3>
+                <p className="mt-1 text-xs text-[#A89CB2] leading-relaxed">
+                  {discipline.desc}
+                </p>
               </div>
-            </motion.div>
+            ))}
           </div>
         </section>
 
@@ -1147,7 +1279,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   top: experienceGlowTop,
                   opacity: experienceGlowOpacity,
                   height: "6.5rem",
-                  boxShadow: "0 0 24px rgba(42,250,223,0.92)",
+                  boxShadow: "0 0 24px rgba(144,86,162,0.92)",
                   maskImage:
                     "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
                 }}
@@ -1169,12 +1301,12 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     animate={{
                       opacity: 0.28,
                       scale: 0.72,
-                      boxShadow: "0 0 8px rgba(42,250,223,0.35)",
+                      boxShadow: "0 0 8px rgba(144,86,162,0.4)",
                     }}
                     whileInView={{
                       opacity: 1,
                       scale: 1,
-                      boxShadow: "0 0 22px rgba(42,250,223,0.95)",
+                      boxShadow: "0 0 22px rgba(144,86,162,0.95)",
                     }}
                     viewport={{ amount: 0.7 }}
                     transition={{
@@ -1267,7 +1399,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         {/* SERVICES SECTION */}
         <section
           id="services"
-          className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_0%_0%,rgba(42,250,223,0.14),rgba(0,0,0,0)_52%),linear-gradient(180deg,rgba(16,16,16,0.86),rgba(6,6,6,0.92))] p-6 md:p-8"
+          className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_0%_0%,rgba(144,86,162,0.18),transparent_55%),linear-gradient(180deg,rgba(28,19,38,0.86),rgba(17,12,23,0.95))] p-6 md:p-8"
         >
           <div className="reveal-up flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
@@ -1305,7 +1437,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         {/* TOOLBOX SECTION */}
         <section
           id="toolbox"
-          className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(100%_120%_at_100%_0%,rgba(76,131,255,0.18),rgba(0,0,0,0)_50%),linear-gradient(180deg,rgba(16,16,16,0.86),rgba(7,7,7,0.92))] p-6 md:p-8"
+          className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(100%_120%_at_100%_0%,rgba(144,86,162,0.2),transparent_55%),linear-gradient(180deg,rgba(28,19,38,0.86),rgba(17,12,23,0.95))] p-6 md:p-8"
         >
           <div className="reveal-up flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
@@ -1365,7 +1497,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </section>
 
         {/* WHY WORK WITH ME */}
-        <section className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_50%_0%,rgba(42,250,223,0.12),rgba(0,0,0,0)_56%),linear-gradient(180deg,rgba(15,15,15,0.88),rgba(6,6,6,0.92))] p-6 md:p-8">
+        <section className="mt-24 rounded-[2rem] border border-brand-border bg-[radial-gradient(120%_120%_at_50%_0%,rgba(144,86,162,0.18),transparent_56%),linear-gradient(180deg,rgba(28,19,38,0.88),rgba(17,12,23,0.95))] p-6 md:p-8">
           <div className="reveal-up flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">Core Values</p>
@@ -1523,7 +1655,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             href={content.contact.projectCtaHref}
             onClick={(e) => handleNavClick(e, content.contact.projectCtaHref)}
             data-cursor="interactive"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-accent px-6 py-3 text-sm font-semibold text-black shadow-[0_0_30px_rgba(42,250,223,0.38)] transition hover:brightness-110"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-accent px-7 py-3.5 text-sm font-bold text-[#110C17] shadow-[0_0_30px_rgba(144,86,162,0.45)] transition hover:brightness-110 hover:scale-[1.02]"
           >
             {content.contact.projectCtaLabel}
             <span>→</span>
