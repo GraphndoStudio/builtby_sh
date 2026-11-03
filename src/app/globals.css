@@ -37,11 +37,59 @@ body {
   font-family: var(--font-numbers), var(--font-body), sans-serif;
 }
 
+/* Kinetic Shimmer & Gradient Text Effects */
+.text-shimmer {
+  background: linear-gradient(
+    115deg,
+    #FFFBFC 0%,
+    #FFFBFC 28%,
+    #E9D5FF 45%,
+    #C084FC 55%,
+    #9056A2 68%,
+    #FFFBFC 88%,
+    #FFFBFC 100%
+  );
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textShimmer 6s ease-in-out infinite;
+}
+
+@keyframes textShimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: -100% 50%;
+  }
+}
+
+.text-glow-orchid {
+  text-shadow: 0 0 28px rgba(144, 86, 162, 0.6), 0 0 54px rgba(144, 86, 162, 0.35);
+  filter: drop-shadow(0 0 28px rgba(144, 86, 162, 0.45));
+}
+
 .text-gradient-accent {
   background: linear-gradient(135deg, #FFFBFC 0%, #D8B4FE 45%, #9056A2 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #c084fc 0%, #9056A2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-shadow-hero {
+  text-shadow: 0 4px 24px rgba(17, 12, 23, 0.95), 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.badge-glow-orchid {
+  box-shadow: 0 0 20px rgba(144, 86, 162, 0.3), inset 0 0 12px rgba(144, 86, 162, 0.15);
 }
 
 .bg-gradient-accent {

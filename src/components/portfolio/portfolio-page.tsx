@@ -227,11 +227,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   });
   const heroImageOpacity = useTransform(
     heroScrollProgress,
-    [0, 0.75, 1],
-    [0.55, 0.15, 0],
+    [0, 0.65, 1],
+    [0.85, 0.25, 0],
   );
-  const heroImageY = useTransform(heroScrollProgress, [0, 1], ["0%", "14%"]);
-  const heroImageScale = useTransform(heroScrollProgress, [0, 1], [1, 1.06]);
+  const heroImageY = useTransform(heroScrollProgress, [0, 1], ["0%", "10%"]);
+  const heroImageScale = useTransform(heroScrollProgress, [0, 1], [1, 1.05]);
 
   const { scrollYProgress: experienceScrollYProgress } = useScroll({
     target: experienceTimelineRef,
@@ -970,12 +970,12 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         ) : null}
       </AnimatePresence>
 
-      <main className="w-full px-4 pb-20 pt-28 sm:pt-36 md:px-8 lg:px-12 max-w-7xl mx-auto">
+      <main className="w-full px-4 pb-20 pt-32 sm:pt-36 md:pt-40 lg:pt-44 md:px-8 lg:px-12 max-w-7xl mx-auto">
         {/* HERO SECTION - CINEMATIC BACKGROUND PORTRAIT WITH SCROLL FADE */}
         <section
           id="hero"
           ref={heroRef}
-          className="relative min-h-[calc(100vh-8rem)] flex flex-col justify-between overflow-hidden pb-12 pt-4 lg:pt-8"
+          className="relative min-h-[calc(100vh-10rem)] flex flex-col justify-between overflow-hidden pb-12 pt-2 sm:pt-4"
         >
           {/* Dynamic Scroll-Fading Creator Photo in Background (Fades on Scroll Down, Fades in on Scroll Up) */}
           {content.about.imageUrl ? (
@@ -985,27 +985,26 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 y: heroImageY,
                 scale: heroImageScale,
               }}
-              className="pointer-events-none absolute right-0 top-0 h-full w-full select-none overflow-hidden md:w-[68%] lg:w-[60%]"
+              className="pointer-events-none absolute inset-0 select-none overflow-hidden md:left-auto md:right-0 md:w-[72%] lg:w-[65%] xl:w-[60%]"
             >
               <div className="relative h-full w-full">
                 <MediaThumb
                   kind="image"
                   url={content.about.imageUrl}
                   alt={content.hero.displayName}
-                  className="h-full w-full object-cover object-[center_18%]"
+                  className="h-full w-full object-cover object-[center_top] md:object-[right_top]"
                   priority
                   loading="eager"
                 />
 
-                {/* Left edge seamless gradient blend into #110C17 */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#110C17] via-[#110C17]/90 to-transparent md:via-[#110C17]/65" />
+                {/* Mobile: smooth dark gradient from bottom; Desktop: left-to-right fade into #110C17 */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#110C17] via-[#110C17]/90 via-50% to-[#110C17]/40 md:bg-gradient-to-r md:from-[#110C17] md:via-[#110C17]/75 md:via-30% md:to-transparent" />
 
-                {/* Top and Bottom soft vignette */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#110C17]/80 via-transparent to-[#110C17]" />
+                {/* Soft top and bottom atmospheric vignettes */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#110C17]/60 via-transparent to-[#110C17]" />
 
-                {/* Royal Plum & Orchid Color Grading Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#31122E]/80 via-[#9056A2]/25 to-transparent mix-blend-color" />
-                <div className="absolute inset-0 bg-[#110C17]/35" />
+                {/* Harmonious Royal Plum & Orchid tint without darkening or muddying the face */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#31122E]/40 via-[#9056A2]/15 to-transparent mix-blend-color" />
               </div>
             </motion.div>
           ) : null}
@@ -1017,20 +1016,25 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             </span>
           </div>
 
-          {/* Top Quiet Eyebrow Bar */}
-          <div className="reveal-up relative z-10 mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[#9056A2]/15 pb-4 text-xs">
-            <div className="flex items-center gap-2">
+          {/* Top Eyebrow Status Bar */}
+          <div className="reveal-up relative z-10 mb-8 sm:mb-10 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 border-b border-[#9056A2]/20 pb-4 text-xs">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 shadow-[0_0_16px_rgba(16,185,129,0.15)] backdrop-blur-md">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              <span className="font-medium tracking-wide text-emerald-300">Available for select projects</span>
+              <span className="font-mono text-[11px] sm:text-xs font-medium tracking-wide text-emerald-300">
+                Available for select projects
+              </span>
             </div>
 
-            <div className="flex items-center gap-4 text-[#A89CB2] font-mono text-[11px]">
-              <span>📍 {content.contact.location || "India"}</span>
+            <div className="flex items-center gap-3 sm:gap-4 text-[#A89CB2] font-mono text-[11px]">
+              <span className="flex items-center gap-1.5">
+                <span className="text-[#c084fc]">📍</span>
+                <span>{content.contact.location || "India"}</span>
+              </span>
               {currentTime ? (
-                <span className="border-l border-[#9056A2]/20 pl-4 text-white">
+                <span className="border-l border-[#9056A2]/25 pl-3 sm:pl-4 text-[#FFFBFC] font-semibold">
                   {currentTime} IST
                 </span>
               ) : null}
@@ -1038,34 +1042,41 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
 
           {/* Main Hero Content: Left Narrative + Right Ambient Breathing Space */}
-          <div className="relative z-10 grid items-center gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:gap-14 my-auto">
+          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:gap-14 my-auto">
             {/* Left Column: Human Story & Typography */}
-            <div className="reveal-up space-y-7">
-              <div className="space-y-3">
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#c084fc] font-semibold">
-                  Creative Developer & Designer
-                </p>
-                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-[#FFFBFC] leading-[0.92]">
+            <div className="reveal-up space-y-6 sm:space-y-7">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="inline-flex items-center gap-2 rounded-md border border-[#9056A2]/30 bg-[#31122E]/40 px-3 py-1 backdrop-blur-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#c084fc] shadow-[0_0_8px_#c084fc]" />
+                  <p className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.22em] text-[#c084fc] font-semibold">
+                    Creative Developer &amp; Designer
+                  </p>
+                </div>
+
+                <h1 className="font-display text-shimmer text-glow-orchid text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[0.92] select-none break-words">
                   {content.hero.displayName}
                 </h1>
-                <p className="font-display text-xl sm:text-2xl font-medium text-zinc-300">
-                  {content.hero.rolePrimary} <span className="text-[#9056A2] font-normal mx-1">&</span> {content.hero.roleSecondary}
+
+                <p className="font-display text-lg sm:text-xl md:text-2xl font-medium text-[#FFFBFC] text-shadow-hero">
+                  <span>{content.hero.rolePrimary}</span>
+                  <span className="text-[#9056A2] font-mono text-glow-orchid mx-2">&amp;</span>
+                  <span className="text-gradient-purple font-semibold">{content.hero.roleSecondary}</span>
                 </p>
               </div>
 
               {/* The Human Value Proposition */}
-              <p className="max-w-[48ch] text-base sm:text-lg text-[#A89CB2] leading-relaxed">
+              <p className="max-w-[48ch] text-sm sm:text-base md:text-lg text-[#D1C7D8] leading-relaxed text-shadow-hero font-normal">
                 {content.hero.subheadline ||
                   "Designing engaging visuals. Building responsive experiences. Combining graphic design precision with modern frontend engineering."}
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, "#contact")}
                   data-cursor="interactive"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-gradient-accent px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#110C17] shadow-[0_0_28px_rgba(144,86,162,0.45)] transition hover:brightness-110 hover:scale-[1.02]"
+                  className="inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-accent px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#110C17] shadow-[0_0_28px_rgba(144,86,162,0.45)] transition duration-300 hover:brightness-110 hover:shadow-[0_0_36px_rgba(144,86,162,0.7)] hover:scale-[1.02]"
                 >
                   <span>Start a Project</span>
                   <span className="text-sm">↗</span>
@@ -1075,7 +1086,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   href={content.hero.primaryCtaHref}
                   onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
                   data-cursor="interactive"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#9056A2]/30 bg-[#31122E]/50 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition hover:bg-[#9056A2]/20 hover:border-[#9056A2]/60"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#9056A2]/40 bg-[#31122E]/50 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition duration-300 hover:bg-[#9056A2]/25 hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.3)]"
                 >
                   <span>{content.hero.primaryCtaLabel || "View My Work"} ↓</span>
                 </a>
@@ -1084,24 +1095,24 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   type="button"
                   onClick={handleCopyEmail}
                   data-cursor="interactive"
-                  className="inline-flex items-center gap-1.5 rounded-full px-4 py-3 text-xs text-[#A89CB2] transition hover:text-[#FFFBFC]"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/5 sm:border-transparent bg-white/[0.02] sm:bg-transparent px-4 py-3 text-xs text-[#A89CB2] transition hover:text-[#FFFBFC] hover:bg-white/5"
                   title="Copy email to clipboard"
                 >
                   <span className="text-sm">✉</span>
-                  <span>{copiedEmail ? "Copied!" : "Copy Email"}</span>
+                  <span>{copiedEmail ? "Copied to clipboard!" : "Copy Email"}</span>
                 </button>
               </div>
 
               {/* Minimal Specialties Strip */}
-              <div className="border-t border-[#9056A2]/15 pt-5">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] mb-2 font-semibold">
+              <div className="border-t border-[#9056A2]/20 pt-5">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] mb-2.5 font-semibold">
                   Core Specialties
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {["Next.js 16", "React 19", "TypeScript", "Tailwind CSS", "GSAP Motion", "Brand Systems"].map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-lg border border-[#9056A2]/20 bg-[#31122E]/30 px-2.5 py-1 text-xs text-zinc-300"
+                      className="rounded-lg border border-[#9056A2]/25 bg-[#31122E]/40 px-3 py-1 text-xs text-zinc-300 backdrop-blur-sm transition hover:border-[#9056A2]/60 hover:text-white"
                     >
                       {tag}
                     </span>
@@ -1111,11 +1122,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             </div>
 
             {/* Right Column: Floating Tactical "Let's Connect" Card */}
-            <div className="flex items-end justify-start lg:justify-end pt-6 lg:pt-0">
+            <div className="flex items-end justify-start lg:justify-end pt-4 lg:pt-0">
               <a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, "#contact")}
-                className="group inline-flex items-center gap-4 rounded-2xl border border-[#9056A2]/30 bg-[#1C1326]/85 p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] transition hover:border-[#9056A2] hover:bg-[#31122E]"
+                className="group inline-flex items-center gap-4 rounded-2xl border border-[#9056A2]/30 bg-[#1C1326]/80 p-3.5 sm:p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] transition duration-300 hover:border-[#9056A2] hover:bg-[#31122E]/90 hover:shadow-[0_0_30px_rgba(144,86,162,0.3)]"
               >
                 <span className="relative flex h-3 w-3">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -1125,11 +1136,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
                     Let&apos;s Connect
                   </p>
-                  <p className="font-display text-sm font-semibold text-white">
+                  <p className="font-display text-xs sm:text-sm font-semibold text-white">
                     Available for Select Projects
                   </p>
                 </div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9056A2]/20 text-white transition group-hover:bg-[#9056A2] group-hover:text-[#110C17]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9056A2]/20 text-white transition duration-300 group-hover:bg-[#9056A2] group-hover:text-[#110C17]">
                   ↗
                 </div>
               </a>
@@ -1137,7 +1148,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
 
           {/* Core Disciplines Strip (Ref 1: Matteo Backer Services List) */}
-          <div className="reveal-up mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 border-t border-[#9056A2]/15 pt-8">
+          <div className="reveal-up mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 border-t border-[#9056A2]/20 pt-8">
             {[
               {
                 num: "01",
@@ -1162,15 +1173,20 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             ].map((discipline) => (
               <div
                 key={discipline.num}
-                className="group rounded-2xl border border-[#9056A2]/15 bg-[#31122E]/20 p-4 transition hover:border-[#9056A2]/40 hover:bg-[#31122E]/40"
+                className="group rounded-2xl border border-[#9056A2]/15 bg-[#31122E]/25 p-4 sm:p-5 backdrop-blur-sm transition duration-300 hover:border-[#9056A2]/50 hover:bg-[#31122E]/45 hover:shadow-[0_10px_30px_rgba(144,86,162,0.15)]"
               >
-                <span className="font-mono text-xs font-semibold text-[#c084fc]">
-                  {discipline.num} /
-                </span>
-                <h3 className="mt-1 font-display text-base font-semibold text-white">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[#c084fc] group-hover:text-white transition-colors">
+                    {discipline.num} /
+                  </span>
+                  <span className="text-xs text-[#9056A2] opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </span>
+                </div>
+                <h3 className="mt-2 font-display text-base font-semibold text-white group-hover:text-[#c084fc] transition-colors">
                   {discipline.label}
                 </h3>
-                <p className="mt-1 text-xs text-[#A89CB2] leading-relaxed">
+                <p className="mt-1.5 text-xs text-[#A89CB2] leading-relaxed">
                   {discipline.desc}
                 </p>
               </div>
