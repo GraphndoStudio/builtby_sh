@@ -864,7 +864,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               className="text-left transition hover:opacity-85"
             >
               <p className="font-display text-sm font-semibold tracking-wide text-white">
-                {content.brand.name}
+                {content.brand.shortName || content.brand.name || "BuiltBy.sh"}
               </p>
             </a>
 
@@ -883,11 +883,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </nav>
 
               <a
-                href="#contact"
-                onClick={(e) => handleNavClick(e, "#contact")}
+                href={content.brand.navCtaHref || "#contact"}
+                onClick={(e) => handleNavClick(e, content.brand.navCtaHref || "#contact")}
                 className="inline-flex items-center gap-1.5 rounded-full border border-[#FF77B8]/30 bg-[#FF77B8]/10 px-3.5 py-1 text-xs font-semibold text-[#FF77B8] transition hover:bg-[#FF77B8] hover:text-[#0A050E]"
               >
-                <span>Say Hello</span>
+                <span>{content.brand.navCtaLabel || "Say Hello"}</span>
                 <span>↗</span>
               </a>
             </div>
@@ -1010,23 +1010,23 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
               <span className="font-mono text-xs font-medium text-white tracking-wide">
-                Available for Select Projects
+                {content.hero.availabilityText || "Available for Select Projects"}
               </span>
               <span className="text-white/20">/</span>
               <span className="font-mono text-xs text-[#D8CCE0]">
-                India · Worldwide
+                {content.hero.locationText || "India · Worldwide"}
               </span>
             </div>
 
             <div className="hidden sm:flex items-center gap-3 font-mono text-[11px] tracking-wider text-[#D8CCE0]">
               <span className="text-[#FF77B8] font-semibold">01</span>
-              <span>Frontend Engineering</span>
+              <span>{content.hero.rolePrimary || "Frontend Engineering"}</span>
               <span className="text-white/20">·</span>
               <span className="text-[#FF77B8] font-semibold">02</span>
-              <span>Visual Systems</span>
+              <span>{content.hero.roleSecondary || "Visual Systems"}</span>
               <span className="text-white/20">·</span>
               <span className="text-[#FF77B8] font-semibold">03</span>
-              <span>Motion UI</span>
+              <span>{content.hero.roleMorph || "Motion UI"}</span>
             </div>
           </div>
 
@@ -1035,7 +1035,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             {/* Giant Architectural Headline Name: SHARUKH */}
             <div className="w-full text-center select-none overflow-hidden">
               <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[11.5rem] font-extrabold uppercase tracking-[0.14em] sm:tracking-[0.22em] text-white leading-none drop-shadow-2xl">
-                SHARUKH
+                {content.hero.displayName || "SHARUKH"}
               </h1>
             </div>
 
@@ -1046,8 +1046,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 <div className="relative h-[340px] sm:h-[420px] md:h-[460px] w-full overflow-hidden rounded-[1.6rem] sm:rounded-[2rem] bg-[#0B0610]">
                   <MediaThumb
                     kind="image"
-                    url={content.about.imageUrl}
-                    alt="Sharukh H - Frontend Developer & Graphic Designer"
+                    url={content.hero.portraitUrl || content.about.imageUrl}
+                    alt={`${content.hero.displayName} - ${content.hero.rolePrimary} & ${content.hero.roleSecondary}`}
                     className="h-full w-full object-cover object-[center_top] transition-transform duration-700 group-hover:scale-105"
                     priority
                     loading="eager"
@@ -1065,8 +1065,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               >
                 <div className="h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-xl border border-white/10 bg-black/60">
                   <Image
-                    src="/uploads/1781775293542-artboard-1-300x.png"
-                    alt="Graphndo Studio Work"
+                    src={content.hero.archiveThumbnailUrl || content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
+                    alt="Studio Archive Work"
                     width={48}
                     height={48}
                     className="h-full w-full object-cover"
@@ -1077,7 +1077,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     Studio Archive
                   </p>
                   <p className="font-display text-xs sm:text-sm font-bold text-white group-hover:text-[#FF77B8] transition-colors">
-                    Graphndo ↗
+                    {content.about.posterCredit || "Graphndo"} ↗
                   </p>
                 </div>
               </a>
@@ -1093,7 +1093,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 </div>
                 <div className="text-left">
                   <p className="font-mono text-[9px] uppercase tracking-wider text-[#FF77B8] font-semibold">
-                    Frontend &amp; Design
+                    {content.hero.rolePrimary} &amp; Design
                   </p>
                   <p className="font-display text-xs sm:text-sm font-bold text-white">
                     Let&apos;s Connect ↗
@@ -1108,42 +1108,50 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             {/* Left Column: Bold Editorial Headline */}
             <div className="space-y-3">
               <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#FF77B8] font-semibold">
-                Frontend Developer &amp; Graphic Designer
+                {content.hero.rolePrimary} &amp; {content.hero.roleSecondary}
               </p>
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.12]">
-                Designing products that shape experiences. Engineering code that <span className="text-[#FF77B8]">connects</span>.
+                {content.hero.headline ? (
+                  content.hero.headline
+                ) : (
+                  <>
+                    Designing products that shape experiences. Engineering code that{" "}
+                    <span className="text-[#FF77B8]">connects</span>.
+                  </>
+                )}
               </h2>
             </div>
 
             {/* Right Column: Authentic Story, Action Buttons & Email */}
             <div className="space-y-6">
               <p className="text-base sm:text-lg text-[#D8CCE0] leading-relaxed font-normal">
-                From concept to creation. I combine intentional graphic design with modern frontend engineering (React, Next.js, TypeScript) to craft digital products that blend form, function, and emotion—turning ideas into designs that earn trust.
+                {content.hero.story ||
+                  "From concept to creation. I combine intentional graphic design with modern frontend engineering (React, Next.js, TypeScript) to craft digital products that blend form, function, and emotion—turning ideas into designs that earn trust."}
               </p>
 
               {/* Actions: Ardian Prasetyo Pill Button + Contact Button */}
               <div className="flex flex-wrap items-center gap-3.5 pt-1">
                 {/* Primary Pill Button (Ardian Prasetyo style) */}
                 <a
-                  href="#featured-works"
-                  onClick={(e) => handleNavClick(e, "#featured-works")}
+                  href={content.hero.primaryCtaHref || "#featured-works"}
+                  onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref || "#featured-works")}
                   data-cursor="interactive"
                   className="group inline-flex items-center gap-3 rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#0B0610] shadow-xl transition-all duration-300 hover:bg-[#FF77B8] hover:text-[#0B0610] hover:scale-[1.02]"
                 >
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0B0610] text-white transition-transform duration-300 group-hover:translate-x-0.5">
                     →
                   </span>
-                  <span>See My Work</span>
+                  <span>{content.hero.primaryCtaLabel || "See My Work"}</span>
                 </a>
 
                 {/* Secondary Ghost Button */}
                 <a
-                  href="#contact"
-                  onClick={(e) => handleNavClick(e, "#contact")}
+                  href={content.hero.secondaryCtaHref || "#contact"}
+                  onClick={(e) => handleNavClick(e, content.hero.secondaryCtaHref || "#contact")}
                   data-cursor="interactive"
                   className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#16081A]/80 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-md transition-all duration-300 hover:border-[#FF77B8] hover:text-[#FF77B8] hover:bg-[#FF77B8]/10"
                 >
-                  <span>Start a Project</span>
+                  <span>{content.hero.secondaryCtaLabel || "Start a Project"}</span>
                   <span className="text-[#FF77B8] transition-transform duration-300 group-hover:translate-x-0.5">↗</span>
                 </a>
 
@@ -1160,22 +1168,25 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 </button>
               </div>
 
-              {/* Quiet Trust Metrics Strip */}
-              <div className="flex items-center gap-8 border-t border-white/10 pt-4">
-                <div>
-                  <span className="font-display text-xl font-bold text-white">3+</span>
-                  <span className="ml-2 font-mono text-[11px] uppercase tracking-wider text-[#D8CCE0]">Years Crafting</span>
-                </div>
-                <div className="text-white/20">|</div>
-                <div>
-                  <span className="font-display text-xl font-bold text-white">20+</span>
-                  <span className="ml-2 font-mono text-[11px] uppercase tracking-wider text-[#D8CCE0]">Projects Shipped</span>
-                </div>
-                <div className="text-white/20">|</div>
-                <div>
-                  <span className="font-display text-xl font-bold text-[#FF77B8]">100%</span>
-                  <span className="ml-2 font-mono text-[11px] uppercase tracking-wider text-[#D8CCE0]">Commitment</span>
-                </div>
+              {/* Dynamic Trust Metrics Strip (reads from content.numbers) */}
+              <div className="flex flex-wrap items-center gap-6 sm:gap-8 border-t border-white/10 pt-4">
+                {(content.numbers && content.numbers.length > 0 ? content.numbers.slice(0, 3) : [
+                  { id: "def-1", value: 3, suffix: "+", label: "Years Crafting" },
+                  { id: "def-2", value: 20, suffix: "+", label: "Projects Shipped" },
+                  { id: "def-3", value: 100, suffix: "%", label: "Commitment" },
+                ]).map((metric, idx) => (
+                  <div key={metric.id || idx} className="flex items-center gap-6 sm:gap-8">
+                    <div>
+                      <span className={`font-display text-xl font-bold ${idx === 2 ? "text-[#FF77B8]" : "text-white"}`}>
+                        {metric.value}{metric.suffix}
+                      </span>
+                      <span className="ml-2 font-mono text-[11px] uppercase tracking-wider text-[#D8CCE0]">
+                        {metric.label}
+                      </span>
+                    </div>
+                    {idx < 2 ? <div className="text-white/20">|</div> : null}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -1190,8 +1201,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           <div className="group relative mx-auto w-full max-w-[480px] overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b from-[#220926]/80 to-[#120516]/90 p-3 sm:p-4 shadow-2xl backdrop-blur-xl">
             <div className="relative h-[380px] sm:h-[460px] w-full overflow-hidden rounded-2xl bg-[#0B0610]">
               <Image
-                src="/uploads/1781775293542-artboard-1-300x.png"
-                alt="Graphndo Studio Design Poster"
+                src={content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
+                alt={content.about.posterTag || "Graphndo Studio Design Poster"}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 94vw, 480px"
@@ -1201,42 +1212,58 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
             <div className="mt-3 flex items-center justify-between px-2 pt-1 text-xs">
               <span className="font-mono text-[10px] uppercase tracking-widest text-[#FF77B8] font-semibold">
-                Visual Archive 01 / Graphic Poster System
+                {content.about.posterTag || "Visual Archive 01 / Graphic Poster System"}
               </span>
-              <span className="font-mono text-[10px] text-[#D8CCE0]">Graphndo Studio</span>
+              <span className="font-mono text-[10px] text-[#D8CCE0]">
+                {content.about.posterCredit || "Graphndo Studio"}
+              </span>
             </div>
           </div>
 
           {/* Editorial Narrative */}
           <div className="rounded-3xl border border-white/10 bg-[#16081A]/70 p-7 sm:p-9 backdrop-blur-xl shadow-xl">
             <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#FF77B8] font-semibold">
-              The Evolution / From Visual Craft to Living Code
+              {content.about.title || "The Evolution / From Visual Craft to Living Code"}
             </p>
             <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
-              A designer-developer crafting memorable digital experiences.
+              {content.about.heading}
             </h2>
             <div className="mt-5 space-y-4 text-sm sm:text-base leading-relaxed text-[#D8CCE0]">
-              <p>
-                My creative foundation started in graphic design—obsessing over composition, poster typography, and brand identity systems that capture attention and communicate purpose.
-              </p>
-              <p>
-                To bring those designs to life, I expanded into modern frontend engineering. Today, I build responsive, production-ready web applications using React, Next.js, TypeScript, and fluid GSAP motion—delivering products where aesthetic finesse and technical performance work seamlessly together.
-              </p>
+              <p>{content.about.description}</p>
+              {content.about.storyParagraphTwo ? (
+                <p>{content.about.storyParagraphTwo}</p>
+              ) : (
+                <p>
+                  To bring those designs to life, I expanded into modern frontend engineering. Today, I build responsive, production-ready web applications using React, Next.js, TypeScript, and fluid GSAP motion—delivering products where aesthetic finesse and technical performance work seamlessly together.
+                </p>
+              )}
             </div>
 
             {/* 3 Pillars */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-white/10 pt-6">
               <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">01 / Visual Heritage</span>
-                <p className="mt-1 text-xs font-semibold text-white">Brand &amp; Typography</p>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">
+                  {content.about.pillarOneTitle || "01 / Visual Heritage"}
+                </span>
+                <p className="mt-1 text-xs font-semibold text-white">
+                  {content.about.pillarOneDesc || "Brand & Typography"}
+                </p>
               </div>
               <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">02 / Technical Craft</span>
-                <p className="mt-1 text-xs font-semibold text-white">Next.js &amp; TypeScript</p>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">
+                  {content.about.pillarTwoTitle || "02 / Technical Craft"}
+                </span>
+                <p className="mt-1 text-xs font-semibold text-white">
+                  {content.about.pillarTwoDesc || "Next.js & TypeScript"}
+                </p>
               </div>
               <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">03 / Fluid Motion</span>
-                <p className="mt-1 text-xs font-semibold text-white">GSAP &amp; Interaction</p>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">
+                  {content.about.pillarThreeTitle || "03 / Fluid Motion"}
+                </span>
+                <p className="mt-1 text-xs font-semibold text-white">
+                  {content.about.pillarThreeDesc || "GSAP & Interaction"}
+                </p>
               </div>
             </div>
           </div>
@@ -1622,6 +1649,30 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               >
                 <span className="font-semibold text-brand-accent">WA</span>
                 WhatsApp
+              </a>
+            ) : null}
+            {content.contact.githubUrl ? (
+              <a
+                href={content.contact.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="interactive"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+              >
+                <span className="font-semibold text-brand-accent">GH</span>
+                GitHub
+              </a>
+            ) : null}
+            {content.contact.behanceUrl ? (
+              <a
+                href={content.contact.behanceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="interactive"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+              >
+                <span className="font-semibold text-brand-accent">BE</span>
+                Behance
               </a>
             ) : null}
           </div>

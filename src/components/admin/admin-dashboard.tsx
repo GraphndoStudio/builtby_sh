@@ -758,6 +758,48 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                   </div>
                 </div>
 
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Short Navbar Brand Name</label>
+                    <input
+                      value={content.brand.shortName ?? ""}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.brand.shortName = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. BuiltBy.sh"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Navbar CTA Button Label</label>
+                    <input
+                      value={content.brand.navCtaLabel ?? ""}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.brand.navCtaLabel = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. Say Hello"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Navbar CTA Button Target</label>
+                    <input
+                      value={content.brand.navCtaHref ?? ""}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.brand.navCtaHref = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. #contact"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center justify-between">
                     <div>
@@ -867,7 +909,7 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         })
                       }
                       className={fieldClass}
-                      placeholder="e.g. SHARUKH H"
+                      placeholder="e.g. SHARUKH"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -880,11 +922,11 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         })
                       }
                       className={fieldClass}
-                      placeholder="e.g. Graphic Designer"
+                      placeholder="e.g. Frontend Developer"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-brand-muted">Secondary Role (Morphing)</label>
+                    <label className="text-xs font-medium text-brand-muted">Secondary Role</label>
                     <input
                       value={content.hero.roleSecondary}
                       onChange={(e) =>
@@ -893,11 +935,11 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         })
                       }
                       className={fieldClass}
-                      placeholder="e.g. Frontend Developer"
+                      placeholder="e.g. Graphic Designer"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-brand-muted">Third Role (Morphing)</label>
+                    <label className="text-xs font-medium text-brand-muted">Third Role / Specialty</label>
                     <input
                       value={content.hero.roleMorph}
                       onChange={(e) =>
@@ -906,13 +948,71 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         })
                       }
                       className={fieldClass}
-                      placeholder="e.g. Creative Problem Solver"
+                      placeholder="e.g. Motion UI"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Live Availability Status</label>
+                    <input
+                      value={content.hero.availabilityText ?? ""}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.hero.availabilityText = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. Available for Select Projects"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Location / Scope</label>
+                    <input
+                      value={content.hero.locationText ?? ""}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.hero.locationText = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. India · Worldwide"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-brand-muted">Hero Subheadline</label>
+                  <label className="text-xs font-medium text-brand-muted">Editorial Main Headline</label>
+                  <input
+                    value={content.hero.headline ?? ""}
+                    onChange={(e) =>
+                      editContent((d) => {
+                        d.hero.headline = e.target.value;
+                      })
+                    }
+                    className={fieldClass}
+                    placeholder="e.g. Designing products that shape experiences. Engineering code that connects."
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-brand-muted">Connecting Human Story / Bio Paragraph</label>
+                  <textarea
+                    rows={3}
+                    value={content.hero.story ?? ""}
+                    onChange={(e) =>
+                      editContent((d) => {
+                        d.hero.story = e.target.value;
+                      })
+                    }
+                    className={fieldClass}
+                    placeholder="e.g. From concept to creation. I combine intentional graphic design with modern frontend engineering..."
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-brand-muted">Short Subheadline (Secondary)</label>
                   <textarea
                     rows={2}
                     value={content.hero.subheadline}
@@ -926,7 +1026,8 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                   />
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-3">
+                {/* CTA Action Buttons */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-brand-muted">Primary CTA Label</label>
                     <input
@@ -937,6 +1038,7 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         })
                       }
                       className={fieldClass}
+                      placeholder="e.g. See My Work"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -949,21 +1051,92 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         })
                       }
                       className={fieldClass}
+                      placeholder="e.g. #featured-works"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-brand-muted">Resume URL / File</label>
+                    <label className="text-xs font-medium text-brand-muted">Secondary CTA Label</label>
                     <input
-                      value={content.hero.resumeUrl}
+                      value={content.hero.secondaryCtaLabel}
                       onChange={(e) =>
                         editContent((d) => {
-                          d.hero.resumeUrl = e.target.value;
+                          d.hero.secondaryCtaLabel = e.target.value;
                         })
                       }
                       className={fieldClass}
-                      placeholder="Link or PDF path"
+                      placeholder="e.g. Start a Project"
                     />
                   </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Secondary CTA Target</label>
+                    <input
+                      value={content.hero.secondaryCtaHref}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.hero.secondaryCtaHref = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. #contact"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-brand-muted">Resume URL / File</label>
+                  <input
+                    value={content.hero.resumeUrl}
+                    onChange={(e) =>
+                      editContent((d) => {
+                        d.hero.resumeUrl = e.target.value;
+                      })
+                    }
+                    className={fieldClass}
+                    placeholder="Link or PDF path"
+                  />
+                </div>
+
+                {/* Hero Media: Dedicated Portrait & Floating Card Image */}
+                <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-white/10">
+                  <MediaField
+                    label="Hero Centerpiece Portrait"
+                    url={content.hero.portraitUrl || content.about.imageUrl}
+                    mediaKind="image"
+                    helperText="Portrait displayed on the hero stage (overrides about portrait if set)"
+                    isUploading={uploadingField === "hero-portrait"}
+                    onUrlChange={(url) =>
+                      editContent((d) => {
+                        d.hero.portraitUrl = url;
+                      })
+                    }
+                    onUpload={(file) =>
+                      handleMediaUpload(file, "hero-portrait", (url) => {
+                        editContent((d) => {
+                          d.hero.portraitUrl = url;
+                        });
+                      })
+                    }
+                  />
+
+                  <MediaField
+                    label="Studio Archive Card Thumbnail"
+                    url={content.hero.archiveThumbnailUrl || content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
+                    mediaKind="image"
+                    helperText="Artwork shown in the floating Studio Archive badge"
+                    isUploading={uploadingField === "hero-archive-thumb"}
+                    onUrlChange={(url) =>
+                      editContent((d) => {
+                        d.hero.archiveThumbnailUrl = url;
+                      })
+                    }
+                    onUpload={(file) =>
+                      handleMediaUpload(file, "hero-archive-thumb", (url) => {
+                        editContent((d) => {
+                          d.hero.archiveThumbnailUrl = url;
+                        });
+                      })
+                    }
+                  />
                 </div>
 
                 {/* Hero Mockup Media Cards */}
@@ -1083,15 +1256,15 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         })
                       }
                       className={fieldClass}
-                      placeholder="e.g. A designer-developer who builds..."
+                      placeholder="e.g. A designer-developer crafting memorable digital experiences."
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-brand-muted">Detailed Story / Bio</label>
+                  <label className="text-xs font-medium text-brand-muted">Primary Story / Paragraph 1 (Design Roots)</label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     value={content.about.description}
                     onChange={(e) =>
                       editContent((d) => {
@@ -1099,28 +1272,176 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                       })
                     }
                     className={fieldClass}
+                    placeholder="My creative foundation started in graphic design—obsessing over composition..."
                   />
                 </div>
 
-                <MediaField
-                  label="Portrait Image"
-                  url={content.about.imageUrl}
-                  mediaKind="image"
-                  helperText="Primary high-resolution portrait or workspace photo"
-                  isUploading={uploadingField === "about-portrait"}
-                  onUrlChange={(url) =>
-                    editContent((d) => {
-                      d.about.imageUrl = url;
-                    })
-                  }
-                  onUpload={(file) =>
-                    handleMediaUpload(file, "about-portrait", (url) => {
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-brand-muted">Evolution Story / Paragraph 2 (Frontend Engineering)</label>
+                  <textarea
+                    rows={3}
+                    value={content.about.storyParagraphTwo ?? ""}
+                    onChange={(e) =>
+                      editContent((d) => {
+                        d.about.storyParagraphTwo = e.target.value;
+                      })
+                    }
+                    className={fieldClass}
+                    placeholder="To bring those designs to life, I expanded into modern frontend engineering..."
+                  />
+                </div>
+
+                {/* Media Showcase: Headshot & Graphic Design Poster */}
+                <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-white/10">
+                  <MediaField
+                    label="Creator Portrait Image"
+                    url={content.about.imageUrl}
+                    mediaKind="image"
+                    helperText="Primary high-resolution portrait or workspace photo"
+                    isUploading={uploadingField === "about-portrait"}
+                    onUrlChange={(url) =>
                       editContent((d) => {
                         d.about.imageUrl = url;
-                      });
-                    })
-                  }
-                />
+                      })
+                    }
+                    onUpload={(file) =>
+                      handleMediaUpload(file, "about-portrait", (url) => {
+                        editContent((d) => {
+                          d.about.imageUrl = url;
+                        });
+                      })
+                    }
+                  />
+
+                  <MediaField
+                    label="Visual Archive Graphic Poster Artwork"
+                    url={content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
+                    mediaKind="image"
+                    helperText="Graphic design showcase artwork displayed in the About section"
+                    isUploading={uploadingField === "about-poster"}
+                    onUrlChange={(url) =>
+                      editContent((d) => {
+                        d.about.posterImageUrl = url;
+                      })
+                    }
+                    onUpload={(file) =>
+                      handleMediaUpload(file, "about-poster", (url) => {
+                        editContent((d) => {
+                          d.about.posterImageUrl = url;
+                        });
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Poster Archive Tag</label>
+                    <input
+                      value={content.about.posterTag ?? ""}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.about.posterTag = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. Visual Archive 01 / Graphic Poster System"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-brand-muted">Poster Attribution / Studio</label>
+                    <input
+                      value={content.about.posterCredit ?? ""}
+                      onChange={(e) =>
+                        editContent((d) => {
+                          d.about.posterCredit = e.target.value;
+                        })
+                      }
+                      className={fieldClass}
+                      placeholder="e.g. Graphndo Studio"
+                    />
+                  </div>
+                </div>
+
+                {/* 3 Pillars Editor */}
+                <div className="space-y-3 pt-3 border-t border-white/10">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-accent">
+                    Core Craft Pillars (3-Column Showcase)
+                  </h3>
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    <div className="space-y-2 rounded-xl border border-white/10 bg-black/30 p-3">
+                      <label className="text-[11px] font-semibold text-white">Pillar 1</label>
+                      <input
+                        value={content.about.pillarOneTitle ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.about.pillarOneTitle = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="e.g. 01 / Visual Heritage"
+                      />
+                      <input
+                        value={content.about.pillarOneDesc ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.about.pillarOneDesc = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="e.g. Brand & Typography"
+                      />
+                    </div>
+
+                    <div className="space-y-2 rounded-xl border border-white/10 bg-black/30 p-3">
+                      <label className="text-[11px] font-semibold text-white">Pillar 2</label>
+                      <input
+                        value={content.about.pillarTwoTitle ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.about.pillarTwoTitle = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="e.g. 02 / Technical Craft"
+                      />
+                      <input
+                        value={content.about.pillarTwoDesc ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.about.pillarTwoDesc = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="e.g. Next.js & TypeScript"
+                      />
+                    </div>
+
+                    <div className="space-y-2 rounded-xl border border-white/10 bg-black/30 p-3">
+                      <label className="text-[11px] font-semibold text-white">Pillar 3</label>
+                      <input
+                        value={content.about.pillarThreeTitle ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.about.pillarThreeTitle = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="e.g. 03 / Fluid Motion"
+                      />
+                      <input
+                        value={content.about.pillarThreeDesc ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.about.pillarThreeDesc = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="e.g. GSAP & Interaction"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : null}
 
@@ -1602,18 +1923,46 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                               }
                             />
 
-                            <div className="space-y-1">
-                              <label className="text-[11px] font-medium text-brand-muted">External Case Study URL (Optional)</label>
-                              <input
-                                value={work.caseStudyUrl ?? ""}
-                                onChange={(e) =>
-                                  editContent((d) => {
-                                    d.featuredWorks[workIndex].caseStudyUrl = e.target.value;
-                                  })
-                                }
-                                placeholder="https://behance.net/..."
-                                className={fieldClass}
-                              />
+                            <div className="grid gap-3 sm:grid-cols-3">
+                              <div className="space-y-1">
+                                <label className="text-[11px] font-medium text-brand-muted">Case Study URL (Behance / Article)</label>
+                                <input
+                                  value={work.caseStudyUrl ?? ""}
+                                  onChange={(e) =>
+                                    editContent((d) => {
+                                      d.featuredWorks[workIndex].caseStudyUrl = e.target.value;
+                                    })
+                                  }
+                                  placeholder="https://behance.net/..."
+                                  className={fieldClass}
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[11px] font-medium text-brand-muted">Live Project URL</label>
+                                <input
+                                  value={work.liveUrl ?? ""}
+                                  onChange={(e) =>
+                                    editContent((d) => {
+                                      d.featuredWorks[workIndex].liveUrl = e.target.value;
+                                    })
+                                  }
+                                  placeholder="https://example.com"
+                                  className={fieldClass}
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[11px] font-medium text-brand-muted">GitHub Repository URL</label>
+                                <input
+                                  value={work.githubUrl ?? ""}
+                                  onChange={(e) =>
+                                    editContent((d) => {
+                                      d.featuredWorks[workIndex].githubUrl = e.target.value;
+                                    })
+                                  }
+                                  placeholder="https://github.com/..."
+                                  className={fieldClass}
+                                />
+                              </div>
                             </div>
                           </div>
                         ) : null}
@@ -1980,9 +2329,9 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
 
                 <div className="space-y-3 pt-3 border-t border-white/10">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-brand-accent">
-                    Social Media Channels
+                    Social &amp; Professional Channels
                   </h3>
-                  <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div className="space-y-1.5">
                       <label className="text-xs font-medium text-brand-muted">Instagram URL</label>
                       <input
@@ -2020,6 +2369,45 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         }
                         className={fieldClass}
                         placeholder="https://wa.me/..."
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-brand-muted">GitHub Profile URL</label>
+                      <input
+                        value={content.contact.githubUrl ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.contact.githubUrl = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="https://github.com/..."
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-brand-muted">Behance / Dribbble Portfolio URL</label>
+                      <input
+                        value={content.contact.behanceUrl ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.contact.behanceUrl = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="https://behance.net/..."
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-brand-muted">Availability Status Badge</label>
+                      <input
+                        value={content.contact.availabilityStatus ?? ""}
+                        onChange={(e) =>
+                          editContent((d) => {
+                            d.contact.availabilityStatus = e.target.value;
+                          })
+                        }
+                        className={fieldClass}
+                        placeholder="e.g. Available for select projects"
                       />
                     </div>
                   </div>

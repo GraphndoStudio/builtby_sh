@@ -4,6 +4,9 @@ export const defaultPortfolioContent: PortfolioContent = {
   brand: {
     name: "THE CREATIVE ENGINE",
     tagline: "Design. Build. Elevate.",
+    shortName: "BuiltBy.sh",
+    navCtaLabel: "Say Hello",
+    navCtaHref: "#contact",
   },
   navigation: [
     { label: "Hero", href: "#hero" },
@@ -19,16 +22,22 @@ export const defaultPortfolioContent: PortfolioContent = {
     statusText: "Initializing Portfolio...",
   },
   hero: {
-    displayName: "SHARUKH H",
-    rolePrimary: "Graphic Designer",
-    roleSecondary: "Frontend Developer",
+    displayName: "SHARUKH",
+    rolePrimary: "Frontend Developer",
+    roleSecondary: "Graphic Designer",
     roleMorph: "Creative Problem Solver",
+    headline: "Designing products that shape experiences. Engineering code that connects.",
     subheadline: "Designing visuals that connect. Developing experiences that perform.",
-    primaryCtaLabel: "View My Work",
+    story: "From concept to creation. I combine intentional graphic design with modern frontend engineering (React, Next.js, TypeScript) to craft digital products that blend form, function, and emotion—turning ideas into designs that earn trust.",
+    availabilityText: "Available for Select Projects",
+    locationText: "India · Worldwide",
+    primaryCtaLabel: "See My Work",
     primaryCtaHref: "#featured-works",
-    secondaryCtaLabel: "Download Resume",
+    secondaryCtaLabel: "Start a Project",
     secondaryCtaHref: "#contact",
     resumeUrl: "#contact",
+    portraitUrl: "",
+    archiveThumbnailUrl: "/uploads/1781775293542-artboard-1-300x.png",
     mockupMedia: [
       {
         id: "mockup-1",
@@ -55,11 +64,22 @@ export const defaultPortfolioContent: PortfolioContent = {
   },
   about: {
     title: "WHO I AM",
-    heading: "A designer-developer who builds memorable digital experiences.",
+    heading: "A designer-developer crafting memorable digital experiences.",
     imageUrl:
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
     description:
-      "Creative professional with expertise in Graphic Design and Frontend Development, focused on delivering visually engaging, user-centered digital experiences. From branding and social media campaigns to responsive websites, I combine creativity with technical execution to turn ideas into impactful solutions.",
+      "My creative foundation started in graphic design—obsessing over composition, poster typography, and brand identity systems that capture attention and communicate purpose.",
+    storyParagraphTwo:
+      "To bring those designs to life, I expanded into modern frontend engineering. Today, I build responsive, production-ready web applications using React, Next.js, TypeScript, and fluid GSAP motion—delivering products where aesthetic finesse and technical performance work seamlessly together.",
+    posterImageUrl: "/uploads/1781775293542-artboard-1-300x.png",
+    posterTag: "Visual Archive 01 / Graphic Poster System",
+    posterCredit: "Graphndo Studio",
+    pillarOneTitle: "01 / Visual Heritage",
+    pillarOneDesc: "Brand & Typography",
+    pillarTwoTitle: "02 / Technical Craft",
+    pillarTwoDesc: "Next.js & TypeScript",
+    pillarThreeTitle: "03 / Fluid Motion",
+    pillarThreeDesc: "GSAP & Interaction",
   },
   experience: [
     {
@@ -328,14 +348,17 @@ export const defaultPortfolioContent: PortfolioContent = {
     title: "Let's build something that people remember.",
     description:
       "From brand systems to responsive frontends, I can help you launch visuals and products that are polished, strategic, and effective.",
-    email: "hello@thecreativeengine.com",
+    email: "studio.graphndo@gmail.com",
     phone: "+91 90000 00000",
     location: "India",
-    instagramUrl: "https://instagram.com/",
+    instagramUrl: "https://instagram.com/graphndo._",
     linkedinUrl: "https://linkedin.com/",
     whatsappUrl: "https://wa.me/919000000000",
+    githubUrl: "https://github.com/GraphndoStudio",
+    behanceUrl: "https://behance.net",
+    availabilityStatus: "Available for select projects",
     projectCtaLabel: "Start a Project",
-    projectCtaHref: "mailto:hello@thecreativeengine.com",
+    projectCtaHref: "#contact",
   },
   footer: {
     lineOne: "Designed. Developed. Delivered.",

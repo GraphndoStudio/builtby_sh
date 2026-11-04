@@ -8,6 +8,9 @@ export interface NavItem {
 export interface BrandContent {
   name: string;
   tagline: string;
+  shortName?: string;
+  navCtaLabel?: string;
+  navCtaHref?: string;
 }
 
 export interface LoadingContent {
@@ -27,12 +30,18 @@ export interface HeroContent {
   rolePrimary: string;
   roleSecondary: string;
   roleMorph: string;
+  headline?: string;
   subheadline: string;
+  story?: string;
+  availabilityText?: string;
+  locationText?: string;
   primaryCtaLabel: string;
   primaryCtaHref: string;
   secondaryCtaLabel: string;
   secondaryCtaHref: string;
   resumeUrl: string;
+  portraitUrl?: string;
+  archiveThumbnailUrl?: string;
   mockupMedia: HeroMockupMedia[];
 }
 
@@ -41,6 +50,16 @@ export interface AboutContent {
   heading: string;
   imageUrl: string;
   description: string;
+  posterImageUrl?: string;
+  posterTag?: string;
+  posterCredit?: string;
+  storyParagraphTwo?: string;
+  pillarOneTitle?: string;
+  pillarOneDesc?: string;
+  pillarTwoTitle?: string;
+  pillarTwoDesc?: string;
+  pillarThreeTitle?: string;
+  pillarThreeDesc?: string;
 }
 
 export interface ExperienceItem {
@@ -64,6 +83,8 @@ export interface FeaturedWorkItem {
   result: string;
   tools: string[];
   caseStudyUrl?: string;
+  liveUrl?: string;
+  githubUrl?: string;
 }
 
 export interface ServiceItem {
@@ -97,9 +118,12 @@ export interface ContactContent {
   email: string;
   phone: string;
   location: string;
-  instagramUrl: string;
-  linkedinUrl: string;
-  whatsappUrl: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  whatsappUrl?: string;
+  githubUrl?: string;
+  behanceUrl?: string;
+  availabilityStatus?: string;
   projectCtaLabel: string;
   projectCtaHref: string;
 }
