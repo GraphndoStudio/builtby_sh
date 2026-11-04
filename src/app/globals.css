@@ -2,22 +2,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: #110C17;
+  --background: #0D0714;
   --foreground: #FFFBFC;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-brand-bg: #110C17;
-  --color-brand-bg-secondary: #1C1326;
+  --color-brand-bg: #0D0714;
+  --color-brand-bg-secondary: #1A091E;
+  --color-brand-black: #0B0610;
   --color-brand-plum: #31122E;
+  --color-brand-purple-deep: #250A24;
   --color-brand-text: #FFFBFC;
-  --color-brand-muted: #A89CB2;
-  --color-brand-accent: #9056A2;
-  --color-brand-accent-hover: #A86BB9;
-  --color-brand-accent-light: #C084FC;
-  --color-brand-border: rgba(144, 86, 162, 0.22);
+  --color-brand-muted: #D8CCE0;
+  --color-brand-accent: #FF77B8;
+  --color-brand-accent-hover: #FF94C7;
+  --color-brand-accent-light: #FFB3D9;
+  --color-brand-pink: #FF77B8;
+  --color-brand-border: rgba(255, 119, 184, 0.22);
   --font-sans: var(--font-body);
 }
 
@@ -37,30 +40,34 @@ body {
   font-family: var(--font-numbers), var(--font-body), sans-serif;
 }
 
+.text-pink-accent {
+  color: #FF77B8;
+}
+
 .text-gradient-accent {
-  background: linear-gradient(135deg, #FFFBFC 0%, #D8B4FE 45%, #9056A2 100%);
+  background: linear-gradient(135deg, #FFFBFC 0%, #FFB3D9 45%, #FF77B8 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .text-gradient-purple {
-  background: linear-gradient(135deg, #c084fc 0%, #9056A2 100%);
+  background: linear-gradient(135deg, #FF77B8 0%, #C026D3 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .text-shadow-hero {
-  text-shadow: 0 4px 24px rgba(17, 12, 23, 0.95), 0 2px 6px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 4px 24px rgba(11, 6, 16, 0.95), 0 2px 6px rgba(0, 0, 0, 0.85);
 }
 
 .badge-glow-orchid {
-  box-shadow: 0 0 20px rgba(144, 86, 162, 0.3), inset 0 0 12px rgba(144, 86, 162, 0.15);
+  box-shadow: 0 0 20px rgba(255, 119, 184, 0.3), inset 0 0 12px rgba(255, 119, 184, 0.15);
 }
 
 .bg-gradient-accent {
-  background: linear-gradient(135deg, #9056A2 0%, #B876CE 100%);
+  background: linear-gradient(135deg, #FF77B8 0%, #C026D3 100%);
 }
 
 .noise-overlay {

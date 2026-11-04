@@ -839,42 +839,42 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       ) : null}
 
-      {/* Editorial architectural background with rich royal plum & orchid atmosphere */}
+      {/* Editorial architectural background: Deep Purple & Black Combo */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[#110C17]" />
-        {/* Strong color wash for the top hero region */}
-        <div className="absolute inset-x-0 top-0 h-[100vh] bg-gradient-to-b from-[#4A1547] via-[#361134]/90 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_-15%,rgba(144,86,162,0.38),transparent_70%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_90%_100%,rgba(49,18,46,0.5),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[#0B0610]" />
+        {/* Deep purple atmospheric wash for top region */}
+        <div className="absolute inset-x-0 top-0 h-[100vh] bg-gradient-to-b from-[#380E35]/90 via-[#20081E]/80 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_-15%,rgba(65,18,62,0.7),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_90%_100%,rgba(49,18,46,0.6),transparent_70%)]" />
         <div
-          className="absolute inset-0 opacity-30"
+          className="absolute inset-0 opacity-25"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(144,86,162,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(144,86,162,0.06) 1px, transparent 1px)",
-            backgroundSize: "68px 68px",
+              "linear-gradient(rgba(255,119,184,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,119,184,0.05) 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
             maskImage: "radial-gradient(ellipse at 50% 35%, black 45%, transparent 80%)",
           }}
         />
         <motion.div
-          className="absolute left-[8%] top-[15%] h-80 w-80 rounded-full bg-[#9056A2]/20 blur-[120px]"
+          className="absolute left-[8%] top-[15%] h-80 w-80 rounded-full bg-[#380E35]/70 blur-[130px]"
           style={{ x: orbAX, y: orbAY }}
         />
         <motion.div
-          className="absolute right-[10%] top-[25%] h-96 w-96 rounded-full bg-[#5C1A55]/70 blur-[130px]"
+          className="absolute right-[10%] top-[25%] h-96 w-96 rounded-full bg-[#250823]/90 blur-[140px]"
           style={{ x: orbBX, y: orbBY }}
         />
       </div>
 
       {/* Floating navigation header */}
       <header className="fixed left-1/2 top-5 z-50 w-[min(900px,92vw)] -translate-x-1/2">
-        <div className="relative rounded-full border border-white/15 bg-[#250B23]/85 px-5 py-2.5 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+        <div className="relative rounded-full border border-white/10 bg-[#140718]/90 px-5 py-2.5 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.7)]">
           <div className="flex items-center justify-between gap-4">
             <a
               href="#hero"
               onClick={(e) => handleNavClick(e, "#hero")}
               className="text-left transition hover:opacity-85"
             >
-              <p className="font-display text-sm font-semibold tracking-wide text-brand-text">
+              <p className="font-display text-sm font-semibold tracking-wide text-white">
                 {content.brand.name}
               </p>
             </a>
@@ -883,7 +883,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               type="button"
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={mobileNavOpen}
-              className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#9056A2]/30 bg-[#31122E]/50 text-brand-text transition hover:border-brand-accent/60 md:hidden"
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#FF77B8]/30 bg-[#250823]/60 text-white transition hover:border-[#FF77B8] md:hidden"
               onClick={() => setMobileNavOpen((prev) => !prev)}
             >
               <span className="relative block h-3 w-4">
@@ -911,7 +911,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   key={item.href}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="text-xs font-medium text-[#A89CB2] transition hover:text-[#FFFBFC]"
+                  className="text-xs font-medium text-[#D8CCE0] transition hover:text-[#FF77B8]"
                 >
                   {item.label}
                 </a>
@@ -943,7 +943,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               className="absolute inset-x-4 top-20 rounded-3xl border border-[#9056A2]/30 bg-[#1C1326] p-5 shadow-2xl"
             >
               <div className="mb-3 flex items-center justify-between px-1">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#c084fc] font-semibold font-mono">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#FF77B8] font-semibold font-mono">
                   Navigation
                 </p>
                 <button
@@ -960,7 +960,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   <a
                     key={`mobile-${item.href}`}
                     href={item.href}
-                    className="rounded-xl px-4 py-3 font-display text-lg text-white transition hover:bg-white/5 hover:text-[#c084fc]"
+                    className="rounded-xl px-4 py-3 font-display text-lg text-white transition hover:bg-white/5 hover:text-[#FF77B8]"
                     onClick={(e) => handleNavClick(e, item.href)}
                   >
                     {item.label}
@@ -973,28 +973,28 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </AnimatePresence>
 
       <main className="w-full px-4 pb-20 pt-32 sm:pt-36 md:pt-40 lg:pt-44 md:px-8 lg:px-12 max-w-7xl mx-auto">
-        {/* HERO SECTION - BOLD STRONG COLOR THEME */}
+        {/* HERO SECTION - DEEP PURPLE & BLACK COMBO WITH WHITE & PINK TEXTS */}
         <section
           id="hero"
           ref={heroRef}
           className="relative min-h-[calc(100vh-10rem)] flex flex-col justify-between overflow-hidden pb-12 pt-2 sm:pt-4"
         >
-          {/* Strong Color Hero Canvas (Ardian-inspired Plum & Orchid Theme) */}
-          <div className="pointer-events-none absolute -inset-x-4 sm:-inset-x-8 md:-inset-x-12 -top-32 sm:-top-36 md:-top-44 bottom-0 -z-10 overflow-hidden bg-gradient-to-br from-[#4A1547] via-[#5C1A55] to-[#2B0E28]">
-            {/* Rich Orchid Saturated Radial Glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_35%,rgba(144,86,162,0.45),transparent_65%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(74,21,71,0.65),transparent_60%)]" />
+          {/* Deep Purple & Black Canvas */}
+          <div className="pointer-events-none absolute -inset-x-4 sm:-inset-x-8 md:-inset-x-12 -top-32 sm:-top-36 md:-top-44 bottom-0 -z-10 overflow-hidden bg-gradient-to-br from-[#380E35] via-[#240822] to-[#0B0610]">
+            {/* Deep Purple Saturated Radial Glow with Ambient Pink Shimmer */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_35%,rgba(255,119,184,0.18),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(56,14,53,0.85),transparent_60%)]" />
             {/* Subtle Architectural Grid */}
             <div
               className="absolute inset-0 opacity-15"
               style={{
                 backgroundImage:
-                  "linear-gradient(rgba(255,251,252,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,251,252,0.08) 1px, transparent 1px)",
+                  "linear-gradient(rgba(255,119,184,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,119,184,0.06) 1px, transparent 1px)",
                 backgroundSize: "64px 64px",
               }}
             />
-            {/* Smooth bottom transition into Midnight Obsidian for subsequent sections */}
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#110C17] to-transparent" />
+            {/* Smooth bottom transition into Deep Black for subsequent sections */}
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0B0610] to-transparent" />
           </div>
 
           {/* Dynamic Scroll-Fading Creator Photo in Background */}
@@ -1017,14 +1017,14 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   loading="eager"
                 />
 
-                {/* Left/Bottom seamless gradient blend into strong plum #4A1547 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#4A1547] via-[#4A1547]/85 via-50% to-transparent md:bg-gradient-to-r md:from-[#4A1547] md:via-[#4A1547]/75 md:via-30% md:to-transparent" />
+                {/* Left/Bottom seamless gradient blend into deep purple/black #240822 */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#240822] via-[#240822]/85 via-50% to-transparent md:bg-gradient-to-r md:from-[#240822] md:via-[#240822]/75 md:via-30% md:to-transparent" />
 
                 {/* Soft top and bottom atmospheric vignettes */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#4A1547]/40 via-transparent to-[#4A1547]/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#380E35]/40 via-transparent to-[#240822]/90" />
 
-                {/* Harmonious Royal Plum & Orchid color grading overlay */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#31122E]/40 via-[#9056A2]/15 to-transparent mix-blend-color" />
+                {/* Harmonious Deep Purple color grading overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#31122E]/40 via-[#FF77B8]/10 to-transparent mix-blend-color" />
               </div>
             </motion.div>
           ) : null}
@@ -1037,7 +1037,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
 
           {/* Top Eyebrow Status Bar */}
-          <div className="reveal-up relative z-10 mb-8 sm:mb-10 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 border-b border-white/15 pb-4 text-xs">
+          <div className="reveal-up relative z-10 mb-8 sm:mb-10 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 border-b border-white/10 pb-4 text-xs">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-950/60 px-3 py-1 shadow-[0_0_16px_rgba(16,185,129,0.2)] backdrop-blur-md">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -1048,13 +1048,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </span>
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4 text-[#E2D1E5] font-mono text-[11px]">
+            <div className="flex items-center gap-3 sm:gap-4 text-[#D8CCE0] font-mono text-[11px]">
               <span className="flex items-center gap-1.5">
-                <span>📍</span>
+                <span className="text-[#FF77B8]">📍</span>
                 <span>{content.contact.location || "India"}</span>
               </span>
               {currentTime ? (
-                <span className="border-l border-white/20 pl-3 sm:pl-4 text-[#FFFBFC] font-semibold">
+                <span className="border-l border-white/15 pl-3 sm:pl-4 text-white font-semibold">
                   {currentTime} IST
                 </span>
               ) : null}
@@ -1063,42 +1063,42 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
           {/* Main Hero Content: Left Narrative + Right Ambient Breathing Space */}
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:gap-14 my-auto">
-            {/* Left Column: Human Story & Typography */}
+            {/* Left Column: Human Story & Typography (White & Pink Texts) */}
             <div className="reveal-up space-y-6 sm:space-y-7">
               <div className="space-y-3 sm:space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-md">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#FFFBFC]" />
-                  <p className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.22em] text-[#FFFBFC] font-semibold">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#FF77B8]/30 bg-[#FF77B8]/10 px-3 py-1 backdrop-blur-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#FF77B8] shadow-[0_0_8px_#FF77B8]" />
+                  <p className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.22em] text-[#FF77B8] font-semibold">
                     Creative Developer &amp; Designer
                   </p>
                 </div>
 
-                <h1 className="font-display text-4xl xs:text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[#FFFBFC] select-none break-words leading-[1.05]">
+                <h1 className="font-display text-4xl xs:text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white select-none break-words leading-[1.05]">
                   {content.hero.displayName}
                 </h1>
 
-                <p className="font-display text-lg sm:text-xl md:text-2xl font-medium text-[#FFFBFC]">
+                <p className="font-display text-lg sm:text-xl md:text-2xl font-medium text-white">
                   <span>{content.hero.rolePrimary}</span>
-                  <span className="text-[#E9D5FF] font-mono mx-2">&amp;</span>
-                  <span className="text-[#FFFBFC] font-semibold">{content.hero.roleSecondary}</span>
+                  <span className="text-[#FF77B8] font-mono mx-2">&amp;</span>
+                  <span className="text-[#FF77B8] font-semibold">{content.hero.roleSecondary}</span>
                 </p>
               </div>
 
               {/* The Human Value Proposition */}
-              <p className="max-w-[48ch] text-sm sm:text-base md:text-lg text-[#EADCEE] leading-relaxed font-normal">
+              <p className="max-w-[48ch] text-sm sm:text-base md:text-lg text-white/90 leading-relaxed font-normal">
                 {content.hero.subheadline ||
                   "Designing engaging visuals. Building responsive experiences. Combining graphic design precision with modern frontend engineering."}
               </p>
 
-              {/* Action Buttons (Ardian-inspired pro buttons) */}
+              {/* Action Buttons: White & Pink accents on Deep Black */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, "#contact")}
                   data-cursor="interactive"
-                  className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#110C17] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-2xl border border-white/15 transition-all duration-300 hover:bg-[#FFFBFC] hover:text-[#110C17] hover:scale-[1.02]"
+                  className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#0B0610] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-2xl border border-[#FF77B8]/40 transition-all duration-300 hover:bg-[#FF77B8] hover:text-[#0B0610] hover:border-[#FF77B8] hover:scale-[1.02] shadow-[0_0_24px_rgba(255,119,184,0.18)]"
                 >
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 text-white transition-colors duration-300 group-hover:bg-[#110C17] group-hover:text-white text-xs">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF77B8]/20 text-[#FF77B8] transition-colors duration-300 group-hover:bg-[#0B0610] group-hover:text-white text-xs">
                     ↗
                   </span>
                   <span>Start a Project</span>
@@ -1108,9 +1108,9 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   href={content.hero.primaryCtaHref}
                   onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
                   data-cursor="interactive"
-                  className="group inline-flex items-center justify-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:border-white/40"
+                  className="group inline-flex items-center justify-center gap-3 rounded-full border border-white/20 bg-[#1A091E]/70 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-md transition-all duration-300 hover:border-[#FF77B8]/60 hover:text-[#FF77B8] hover:bg-[#FF77B8]/10"
                 >
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 text-white transition-colors duration-300 group-hover:bg-white group-hover:text-[#31122E] text-xs">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-white transition-colors duration-300 group-hover:bg-[#FF77B8] group-hover:text-[#0B0610] text-xs">
                     ↓
                   </span>
                   <span>{content.hero.primaryCtaLabel || "View My Work"}</span>
@@ -1120,7 +1120,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   type="button"
                   onClick={handleCopyEmail}
                   data-cursor="interactive"
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/10 sm:border-transparent bg-white/5 sm:bg-transparent px-4 py-3 text-xs text-[#E2D1E5] transition hover:text-white hover:bg-white/10"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/10 sm:border-transparent bg-white/5 sm:bg-transparent px-4 py-3 text-xs text-[#D8CCE0] transition hover:text-[#FF77B8] hover:bg-white/10"
                   title="Copy email to clipboard"
                 >
                   <span className="text-sm">✉</span>
@@ -1129,15 +1129,15 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </div>
 
               {/* Minimal Specialties Strip */}
-              <div className="border-t border-white/15 pt-5">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-[#E9D5FF] mb-2.5 font-semibold">
+              <div className="border-t border-white/10 pt-5">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-[#FF77B8] mb-2.5 font-semibold">
                   Core Specialties
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {["Next.js 16", "React 19", "TypeScript", "Tailwind CSS", "GSAP Motion", "Brand Systems"].map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-lg border border-white/15 bg-black/25 px-3 py-1 text-xs text-[#F3E8F4] backdrop-blur-sm transition hover:border-white/30 hover:text-white"
+                      className="rounded-lg border border-[#FF77B8]/20 bg-[#1A091E]/80 px-3 py-1 text-xs text-white backdrop-blur-sm transition hover:border-[#FF77B8]/50 hover:text-[#FF77B8]"
                     >
                       {tag}
                     </span>
@@ -1151,21 +1151,21 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               <a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, "#contact")}
-                className="group inline-flex items-center gap-4 rounded-2xl border border-white/15 bg-[#1F0A1D]/80 p-3.5 sm:p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition duration-300 hover:border-white/30 hover:bg-[#2B0E28] hover:shadow-[0_0_30px_rgba(144,86,162,0.3)]"
+                className="group inline-flex items-center gap-4 rounded-2xl border border-[#FF77B8]/25 bg-[#140816]/90 p-3.5 sm:p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition duration-300 hover:border-[#FF77B8] hover:bg-[#200A23] hover:shadow-[0_0_30px_rgba(255,119,184,0.25)]"
               >
                 <span className="relative flex h-3 w-3">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
                 </span>
                 <div className="text-left">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#E9D5FF] font-semibold">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#FF77B8] font-semibold">
                     Let&apos;s Connect
                   </p>
                   <p className="font-display text-xs sm:text-sm font-semibold text-white">
                     Available for Select Projects
                   </p>
                 </div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 group-hover:bg-white group-hover:text-[#110C17]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FF77B8]/15 text-[#FF77B8] transition duration-300 group-hover:bg-[#FF77B8] group-hover:text-[#0B0610]">
                   ↗
                 </div>
               </a>
@@ -1173,7 +1173,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
 
           {/* Core Disciplines Strip */}
-          <div className="reveal-up mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 border-t border-white/15 pt-8">
+          <div className="reveal-up mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 border-t border-white/10 pt-8">
             {[
               {
                 num: "01",
@@ -1198,20 +1198,20 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             ].map((discipline) => (
               <div
                 key={discipline.num}
-                className="group rounded-2xl border border-white/10 bg-black/25 p-4 sm:p-5 backdrop-blur-md transition duration-300 hover:border-white/25 hover:bg-black/35 hover:shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
+                className="group rounded-2xl border border-white/10 bg-[#150618]/70 p-4 sm:p-5 backdrop-blur-md transition duration-300 hover:border-[#FF77B8]/35 hover:bg-[#1E0922]/80 hover:shadow-[0_10px_30px_rgba(255,119,184,0.1)]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-[#E9D5FF] group-hover:text-white transition-colors">
+                  <span className="font-mono text-xs font-bold text-[#FF77B8] group-hover:text-white transition-colors">
                     {discipline.num} /
                   </span>
-                  <span className="text-xs text-[#E9D5FF] opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs text-[#FF77B8] opacity-0 group-hover:opacity-100 transition-opacity">
                     →
                   </span>
                 </div>
-                <h3 className="mt-2 font-display text-base font-semibold text-white group-hover:text-[#E9D5FF] transition-colors">
+                <h3 className="mt-2 font-display text-base font-semibold text-white group-hover:text-[#FF77B8] transition-colors">
                   {discipline.label}
                 </h3>
-                <p className="mt-1.5 text-xs text-[#E2D1E5] leading-relaxed">
+                <p className="mt-1.5 text-xs text-[#D8CCE0] leading-relaxed">
                   {discipline.desc}
                 </p>
               </div>
