@@ -254,16 +254,33 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     [content.certifications, activeCertificateId],
   );
 
+  const isAnyModalOpen = Boolean(activeExperience || activeFeaturedWork || activeCertificate);
+
+  // Freeze Lenis, lock body scroll, and listen to Escape key when any modal is open
   useEffect(() => {
-    if (!activeCertificate) return;
+    if (isAnyModalOpen) {
+      lenisRef.current?.stop();
+      document.body.style.overflow = "hidden";
+    } else {
+      lenisRef.current?.start();
+      document.body.style.overflow = "";
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && isAnyModalOpen) {
+        setActiveExperienceId(null);
+        setActiveFeaturedWork(null);
         setActiveCertificateId(null);
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeCertificate]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      lenisRef.current?.start();
+      document.body.style.overflow = "";
+    };
+  }, [isAnyModalOpen]);
 
   function openExperienceGallery(experienceId: string) {
     setActiveExperienceId(experienceId);
@@ -656,118 +673,126 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-black/85 p-4 py-6 backdrop-blur-md md:items-center md:py-4"
+          data-lenis-prevent
+          className="fixed inset-0 z-[95] overflow-y-auto overscroll-contain bg-black/85 p-3 sm:p-6 py-6 sm:py-10 backdrop-blur-md"
           onClick={() => setActiveExperienceId(null)}
         >
-          <div
-            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-5xl overflow-y-auto rounded-3xl border border-brand-border bg-brand-bg-secondary p-4 md:p-6 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="font-numbers text-xs uppercase tracking-[0.18em] text-brand-accent">
-                  {activeExperience.year}
-                </p>
-                <h3 className="mt-1 font-display text-3xl">{activeExperience.title}</h3>
-                <p className="mt-1 text-sm text-brand-muted">{activeExperience.organization}</p>
+          <div className="flex min-h-full items-center justify-center">
+            <div
+              className="w-full max-w-5xl rounded-2xl sm:rounded-3xl border border-brand-border bg-brand-bg-secondary p-4 sm:p-6 md:p-8 shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="font-numbers text-xs uppercase tracking-[0.18em] text-brand-accent">
+                    {activeExperience.year}
+                  </p>
+                  <h3 className="mt-1 font-display text-2xl sm:text-3xl font-bold text-white">
+                    {activeExperience.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-brand-muted">{activeExperience.organization}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveExperienceId(null)}
+                  className="rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+                >
+                  Close
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setActiveExperienceId(null)}
-                className="rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
-              >
-                Close
-              </button>
-            </div>
 
-            <p className="mt-4 max-w-[70ch] text-sm leading-7 text-brand-muted">
-              {activeExperience.summary}
-            </p>
+              <p className="mt-4 max-w-[70ch] text-sm leading-7 text-brand-muted">
+                {activeExperience.summary}
+              </p>
 
-            <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.35fr]">
-              <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-black/40">
-                {activeExperienceMedia ? (
-                  <div className="relative">
-                    <MediaThumb
-                      kind={activeExperienceMedia.mediaKind}
-                      url={activeExperienceMedia.mediaUrl}
-                      alt={activeExperienceMedia.caption}
-                      className="h-[420px] w-full object-cover"
-                      sizes="(max-width: 1024px) 94vw, 64vw"
-                    />
+              <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.35fr]">
+                <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-black/40">
+                  {activeExperienceMedia ? (
+                    <div className="relative">
+                      <MediaThumb
+                        kind={activeExperienceMedia.mediaKind}
+                        url={activeExperienceMedia.mediaUrl}
+                        alt={activeExperienceMedia.caption}
+                        className="h-[300px] sm:h-[420px] w-full object-cover"
+                        sizes="(max-width: 1024px) 94vw, 64vw"
+                      />
 
+                      {activeExperience.gallery.length > 1 ? (
+                        <>
+                          <button
+                            type="button"
+                            aria-label="Previous gallery image"
+                            onClick={() =>
+                              setActiveExperienceMediaIndex((prev) =>
+                                prev > 0 ? prev - 1 : activeExperience.gallery.length - 1,
+                              )
+                            }
+                            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
+                          >
+                            {"<"}
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="Next gallery image"
+                            onClick={() =>
+                              setActiveExperienceMediaIndex((prev) =>
+                                prev < activeExperience.gallery.length - 1 ? prev + 1 : 0,
+                              )
+                            }
+                            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
+                          >
+                            {">"}
+                          </button>
+                        </>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div className="flex h-[300px] sm:h-[420px] items-center justify-center p-6 text-sm text-brand-muted">
+                      No preview media available.
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between border-t border-brand-border px-4 py-3 text-sm text-brand-text/90">
+                    <span>{activeExperienceMedia?.caption}</span>
                     {activeExperience.gallery.length > 1 ? (
-                      <>
-                        <button
-                          type="button"
-                          aria-label="Previous gallery image"
-                          onClick={() =>
-                            setActiveExperienceMediaIndex((prev) =>
-                              prev > 0 ? prev - 1 : activeExperience.gallery.length - 1,
-                            )
-                          }
-                          className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
-                        >
-                          {"<"}
-                        </button>
-                        <button
-                          type="button"
-                          aria-label="Next gallery image"
-                          onClick={() =>
-                            setActiveExperienceMediaIndex((prev) =>
-                              prev < activeExperience.gallery.length - 1 ? prev + 1 : 0,
-                            )
-                          }
-                          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
-                        >
-                          {">"}
-                        </button>
-                      </>
+                      <span className="font-numbers text-xs text-brand-muted">
+                        {activeExperienceMediaIndex + 1} / {activeExperience.gallery.length}
+                      </span>
                     ) : null}
                   </div>
-                ) : (
-                  <div className="flex h-[420px] items-center justify-center p-6 text-sm text-brand-muted">
-                    No preview media available.
-                  </div>
-                )}
-                <div className="flex items-center justify-between border-t border-brand-border px-4 py-3 text-sm text-brand-text/90">
-                  <span>{activeExperienceMedia?.caption}</span>
-                  {activeExperience.gallery.length > 1 ? (
-                    <span className="font-numbers text-xs text-brand-muted">
-                      {activeExperienceMediaIndex + 1} / {activeExperience.gallery.length}
-                    </span>
-                  ) : null}
                 </div>
-              </div>
 
-              <div className="max-h-[460px] space-y-3 overflow-auto pr-1">
-                {activeExperience.gallery.length > 0 ? (
-                  activeExperience.gallery.map((item, index) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setActiveExperienceMediaIndex(index)}
-                      className={`w-full overflow-hidden rounded-xl border text-left transition ${
-                        index === activeExperienceMediaIndex
-                          ? "border-brand-accent shadow-[0_0_12px_rgba(42,250,223,0.3)]"
-                          : "border-brand-border hover:border-brand-accent/50"
-                      }`}
-                    >
-                      <MediaThumb
-                        kind={item.mediaKind}
-                        url={item.mediaUrl}
-                        alt={item.caption}
-                        className="h-24 w-full object-cover"
-                        sizes="(max-width: 1024px) 36vw, 220px"
-                      />
-                      <p className="line-clamp-1 px-3 py-2 text-xs text-brand-muted">{item.caption}</p>
-                    </button>
-                  ))
-                ) : (
-                  <div className="rounded-xl border border-brand-border bg-black/35 p-4 text-xs text-brand-muted">
-                    No gallery items found for this experience yet.
-                  </div>
-                )}
+                <div
+                  data-lenis-prevent
+                  className="max-h-[300px] lg:max-h-[460px] space-y-3 overflow-y-auto overscroll-contain pr-1"
+                >
+                  {activeExperience.gallery.length > 0 ? (
+                    activeExperience.gallery.map((item, index) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setActiveExperienceMediaIndex(index)}
+                        className={`w-full overflow-hidden rounded-xl border text-left transition ${
+                          index === activeExperienceMediaIndex
+                            ? "border-brand-accent shadow-[0_0_12px_rgba(42,250,223,0.3)]"
+                            : "border-brand-border hover:border-brand-accent/50"
+                        }`}
+                      >
+                        <MediaThumb
+                          kind={item.mediaKind}
+                          url={item.mediaUrl}
+                          alt={item.caption}
+                          className="h-20 sm:h-24 w-full object-cover"
+                          sizes="(max-width: 1024px) 36vw, 220px"
+                        />
+                        <p className="line-clamp-1 px-3 py-2 text-xs text-brand-muted">{item.caption}</p>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="rounded-xl border border-brand-border bg-black/35 p-4 text-xs text-brand-muted">
+                      No gallery items found for this experience yet.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -779,84 +804,89 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-black/85 p-4 py-6 backdrop-blur-md md:items-center md:py-6"
+          data-lenis-prevent
+          className="fixed inset-0 z-[95] overflow-y-auto overscroll-contain bg-black/85 p-3 sm:p-6 py-6 sm:py-10 backdrop-blur-md"
           onClick={() => setActiveFeaturedWork(null)}
         >
-          <div
-            className="my-auto max-h-[calc(100dvh-2rem)] w-full max-w-4xl overflow-y-auto rounded-3xl border border-brand-border bg-brand-bg-secondary p-5 md:p-8 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">
-                  {activeFeaturedWork.subtitle}
-                </p>
-                <h3 className="mt-1 font-display text-3xl md:text-4xl">{activeFeaturedWork.title}</h3>
+          <div className="flex min-h-full items-center justify-center">
+            <div
+              className="w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-brand-border bg-brand-bg-secondary p-4 sm:p-6 md:p-8 shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">
+                    {activeFeaturedWork.subtitle}
+                  </p>
+                  <h3 className="mt-1 font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+                    {activeFeaturedWork.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveFeaturedWork(null)}
+                  className="rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
+                >
+                  Close
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setActiveFeaturedWork(null)}
-                className="rounded-full border border-brand-border px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
-              >
-                Close
-              </button>
-            </div>
 
-            <div className="mt-6 overflow-hidden rounded-2xl border border-brand-border bg-black/50">
-              <MediaThumb
-                kind={activeFeaturedWork.mediaKind}
-                url={activeFeaturedWork.mediaUrl}
-                alt={activeFeaturedWork.title}
-                className="max-h-[460px] w-full object-cover"
-                sizes="(max-width: 1024px) 94vw, 896px"
-              />
-            </div>
+              <div className="mt-5 sm:mt-6 overflow-hidden rounded-2xl border border-brand-border bg-black/50">
+                <MediaThumb
+                  kind={activeFeaturedWork.mediaKind}
+                  url={activeFeaturedWork.mediaUrl}
+                  alt={activeFeaturedWork.title}
+                  className="max-h-[320px] sm:max-h-[460px] w-full object-cover"
+                  sizes="(max-width: 1024px) 94vw, 896px"
+                />
+              </div>
 
-            <div className="mt-6 grid gap-4 rounded-2xl border border-brand-border bg-black/40 p-5 text-sm leading-7 text-brand-muted">
-              <div>
-                <span className="font-semibold text-brand-text">The Challenge: </span>
-                {activeFeaturedWork.challenge}
-              </div>
-              <div>
-                <span className="font-semibold text-brand-text">Research & Strategy: </span>
-                {activeFeaturedWork.research}
-              </div>
-              <div>
-                <span className="font-semibold text-brand-text">Design Execution: </span>
-                {activeFeaturedWork.design}
-              </div>
-              <div>
-                <span className="font-semibold text-brand-text">Outcome & Impact: </span>
-                {activeFeaturedWork.result}
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-brand-border pt-5">
-              <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-brand-accent">Tools Applied</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {activeFeaturedWork.tools.map((tool) => (
-                    <span
-                      key={tool}
-                      className="rounded-full border border-brand-border bg-brand-bg px-3 py-1 text-xs text-brand-text"
-                    >
-                      {tool}
-                    </span>
-                  ))}
+              <div className="mt-5 sm:mt-6 grid gap-4 rounded-2xl border border-brand-border bg-black/40 p-4 sm:p-5 text-xs sm:text-sm leading-6 sm:leading-7 text-brand-muted">
+                <div>
+                  <span className="font-semibold text-brand-text">The Challenge: </span>
+                  {activeFeaturedWork.challenge}
+                </div>
+                <div>
+                  <span className="font-semibold text-brand-text">Research & Strategy: </span>
+                  {activeFeaturedWork.research}
+                </div>
+                <div>
+                  <span className="font-semibold text-brand-text">Design Execution: </span>
+                  {activeFeaturedWork.design}
+                </div>
+                <div>
+                  <span className="font-semibold text-brand-text">Outcome & Impact: </span>
+                  {activeFeaturedWork.result}
                 </div>
               </div>
 
-              {activeFeaturedWork.caseStudyUrl && activeFeaturedWork.caseStudyUrl !== "#" ? (
-                <a
-                  href={activeFeaturedWork.caseStudyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-accent px-5 py-2.5 text-xs font-semibold text-black transition hover:brightness-110"
-                >
-                  Visit Project Link
-                  <span>{"->"}</span>
-                </a>
-              ) : null}
+              <div className="mt-5 sm:mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-brand-border pt-4 sm:pt-5">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.16em] text-brand-accent font-semibold">Tools Applied</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {activeFeaturedWork.tools.map((tool) => (
+                      <span
+                        key={tool}
+                        className="rounded-full border border-brand-border bg-brand-bg px-3 py-1 text-xs text-brand-text"
+                      >
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {activeFeaturedWork.caseStudyUrl && activeFeaturedWork.caseStudyUrl !== "#" ? (
+                  <a
+                    href={activeFeaturedWork.caseStudyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full bg-gradient-accent px-5 py-2.5 text-xs font-semibold text-black transition hover:brightness-110"
+                  >
+                    Visit Project Link
+                    <span>{"->"}</span>
+                  </a>
+                ) : null}
+              </div>
             </div>
           </div>
         </div>
@@ -869,114 +899,117 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             role="dialog"
             aria-modal="true"
             aria-label={`Certificate: ${activeCertificate.name}`}
-            className="fixed inset-0 z-[96] flex items-start sm:items-center justify-center overflow-y-auto bg-black/90 p-3 sm:p-6 py-5 sm:py-6 backdrop-blur-md"
+            data-lenis-prevent
+            className="fixed inset-0 z-[96] overflow-y-auto overscroll-contain bg-black/90 p-3 sm:p-6 py-6 sm:py-10 backdrop-blur-md"
             onClick={() => setActiveCertificateId(null)}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 14 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 14 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-              className="relative my-auto w-full max-w-4xl max-h-[calc(100dvh-2.5rem)] overflow-y-auto rounded-2xl sm:rounded-3xl border border-[#FF77B8]/30 bg-gradient-to-b from-[#1E0922] via-[#120516] to-[#0B0610] p-4 sm:p-7 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Top Header Bar */}
-              <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-3 sm:pb-4">
-                <div className="pr-2 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#FF77B8]">
-                      {activeCertificate.year}
-                    </span>
-                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-400">
-                      ✓ Verified Credential
-                    </span>
-                  </div>
-                  <h3 className="mt-1 font-display text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight">
-                    {activeCertificate.name}
-                  </h3>
-                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#D8CCE0]">
-                    Issued by <span className="text-white font-semibold">{activeCertificate.issuer}</span>
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveCertificateId(null)}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-zinc-300 transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/10 hover:text-white"
-                  aria-label="Close certificate popup"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Certificate Image Display */}
-              <div className="mt-4 sm:mt-5 overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-black/60 shadow-inner">
-                {activeCertificate.imageUrl ? (
-                  <div className="relative aspect-[16/10] sm:aspect-[16/11] max-h-[48vh] sm:max-h-[62vh] w-full overflow-hidden bg-black flex items-center justify-center">
-                    <MediaThumb
-                      kind="image"
-                      url={activeCertificate.imageUrl}
-                      alt={`${activeCertificate.name} - ${activeCertificate.issuer}`}
-                      className="h-full w-full object-contain"
-                      sizes="(max-width: 768px) 100vw, 900px"
-                      priority
-                    />
-                  </div>
-                ) : (
-                  /* Fallback preview card if no image uploaded yet */
-                  <div className="relative flex flex-col items-center justify-center p-6 sm:p-14 text-center">
-                    <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-[#FF77B8]/40 bg-[#FF77B8]/10 text-2xl shadow-[0_0_30px_rgba(255,119,184,0.3)]">
-                      🎓
+            <div className="flex min-h-full items-center justify-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 14 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 14 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-[#FF77B8]/30 bg-gradient-to-b from-[#1E0922] via-[#120516] to-[#0B0610] p-4 sm:p-7 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Top Header Bar */}
+                <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-3 sm:pb-4">
+                  <div className="pr-2 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#FF77B8]">
+                        {activeCertificate.year}
+                      </span>
+                      <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-400">
+                        ✓ Verified Credential
+                      </span>
                     </div>
-                    <h4 className="mt-4 font-display text-xl sm:text-2xl font-bold text-white">
+                    <h3 className="mt-1 font-display text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight">
                       {activeCertificate.name}
-                    </h4>
-                    <p className="mt-2 text-xs sm:text-sm text-[#D8CCE0]">
-                      {activeCertificate.issuer} · {activeCertificate.year}
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm font-medium text-[#D8CCE0]">
+                      Issued by <span className="text-white font-semibold">{activeCertificate.issuer}</span>
                     </p>
-                    <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-1 font-mono text-[11px] sm:text-xs text-emerald-400">
-                      <span>✓ Official Credential Record</span>
-                    </div>
                   </div>
-                )}
-              </div>
 
-              {/* Action Buttons */}
-              <div className="mt-4 sm:mt-5 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pt-3 border-t border-white/10">
-                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                  {activeCertificate.imageUrl ? (
-                    <a
-                      href={activeCertificate.imageUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 sm:py-2 font-mono text-xs text-white transition hover:border-[#FF77B8] hover:bg-white/10 text-center"
-                    >
-                      <span>Open Full Size</span>
-                      <span>↗</span>
-                    </a>
-                  ) : null}
-                  {activeCertificate.credentialUrl ? (
-                    <a
-                      href={activeCertificate.credentialUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-full border border-[#FF77B8]/40 bg-[#FF77B8]/10 px-4 py-2.5 sm:py-2 font-mono text-xs font-semibold text-[#FF77B8] transition hover:bg-[#FF77B8]/20 text-center"
-                    >
-                      <span>Verify Online</span>
-                      <span>↗</span>
-                    </a>
-                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => setActiveCertificateId(null)}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-zinc-300 transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/10 hover:text-white"
+                    aria-label="Close certificate popup"
+                  >
+                    ✕
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveCertificateId(null)}
-                  className="w-full sm:w-auto rounded-full border border-white/20 bg-white/10 px-5 py-2.5 sm:py-2 font-mono text-xs font-semibold text-white transition hover:bg-white/20 text-center"
-                >
-                  Close Window
-                </button>
-              </div>
-            </motion.div>
+                {/* Certificate Image Display */}
+                <div className="mt-4 sm:mt-5 overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-black/60 shadow-inner">
+                  {activeCertificate.imageUrl ? (
+                    <div className="relative aspect-[16/10] sm:aspect-[16/11] max-h-[48vh] sm:max-h-[62vh] w-full overflow-hidden bg-black flex items-center justify-center">
+                      <MediaThumb
+                        kind="image"
+                        url={activeCertificate.imageUrl}
+                        alt={`${activeCertificate.name} - ${activeCertificate.issuer}`}
+                        className="h-full w-full object-contain"
+                        sizes="(max-width: 768px) 100vw, 900px"
+                        priority
+                      />
+                    </div>
+                  ) : (
+                    /* Fallback preview card if no image uploaded yet */
+                    <div className="relative flex flex-col items-center justify-center p-6 sm:p-14 text-center">
+                      <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-[#FF77B8]/40 bg-[#FF77B8]/10 text-2xl shadow-[0_0_30px_rgba(255,119,184,0.3)]">
+                        🎓
+                      </div>
+                      <h4 className="mt-4 font-display text-xl sm:text-2xl font-bold text-white">
+                        {activeCertificate.name}
+                      </h4>
+                      <p className="mt-2 text-xs sm:text-sm text-[#D8CCE0]">
+                        {activeCertificate.issuer} · {activeCertificate.year}
+                      </p>
+                      <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-1 font-mono text-[11px] sm:text-xs text-emerald-400">
+                        <span>✓ Official Credential Record</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="mt-4 sm:mt-5 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pt-3 border-t border-white/10">
+                  <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    {activeCertificate.imageUrl ? (
+                      <a
+                        href={activeCertificate.imageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 sm:py-2 font-mono text-xs text-white transition hover:border-[#FF77B8] hover:bg-white/10 text-center"
+                      >
+                        <span>Open Full Size</span>
+                        <span>↗</span>
+                      </a>
+                    ) : null}
+                    {activeCertificate.credentialUrl ? (
+                      <a
+                        href={activeCertificate.credentialUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-full border border-[#FF77B8]/40 bg-[#FF77B8]/10 px-4 py-2.5 sm:py-2 font-mono text-xs font-semibold text-[#FF77B8] transition hover:bg-[#FF77B8]/20 text-center"
+                      >
+                        <span>Verify Online</span>
+                        <span>↗</span>
+                      </a>
+                    ) : null}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveCertificateId(null)}
+                    className="w-full sm:w-auto rounded-full border border-white/20 bg-white/10 px-5 py-2.5 sm:py-2 font-mono text-xs font-semibold text-white transition hover:bg-white/20 text-center"
+                  >
+                    Close Window
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           </div>
         ) : null}
       </AnimatePresence>
