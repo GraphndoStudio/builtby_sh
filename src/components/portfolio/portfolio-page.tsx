@@ -433,9 +433,24 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // Prevent mobile address-bar resize triggers from creating jank/stutter
+    ScrollTrigger.config({
+      ignoreMobileResize: true,
+      autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+    });
+
+    const isTouch =
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window ||
+        navigator.maxTouchPoints > 0 ||
+        window.matchMedia("(pointer: coarse)").matches);
+
     const lenis = new Lenis({
-      duration: 1.05,
+      duration: isTouch ? 0.75 : 1.1,
       smoothWheel: true,
+      syncTouch: true,
+      syncTouchLerp: 0.09,
+      touchMultiplier: 1.15,
       gestureOrientation: "vertical",
     });
     lenisRef.current = lenis;
@@ -447,7 +462,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     };
 
     gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0);
+    // Smooth frame interpolations on mobile to eliminate jerkiness
+    gsap.ticker.lagSmoothing(500, 33);
 
     const ctx = gsap.context(() => {
       const blocks = gsap.utils.toArray<HTMLElement>(".reveal-up");
@@ -1168,19 +1184,19 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
 
           {/* Center Stage: The Ardian & Michael Typographic + Portrait Centerpiece */}
-          <div className="relative z-10 my-auto py-8 sm:py-12 flex flex-col items-center">
+          <div className="relative z-10 my-auto pt-2 pb-6 sm:py-12 flex flex-col items-center">
             {/* Giant Architectural Headline Name: SHARUKH */}
-            <div className="w-full text-center select-none overflow-hidden">
-              <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[11.5rem] font-extrabold uppercase tracking-[0.14em] sm:tracking-[0.22em] text-white leading-none drop-shadow-2xl">
+            <div className="w-full text-center select-none overflow-visible pt-1 pb-2 sm:py-0">
+              <h1 className="font-display text-4xl xs:text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[11.5rem] font-extrabold uppercase tracking-[0.14em] sm:tracking-[0.22em] text-white leading-tight sm:leading-none drop-shadow-2xl">
                 {content.hero.displayName || "SHARUKH"}
               </h1>
             </div>
 
             {/* Portrait Stage: Centerpiece Authentic Subject with Michael-style Floating Cards */}
-            <div className="relative -mt-6 sm:-mt-12 md:-mt-16 w-full max-w-[340px] sm:max-w-[420px] md:max-w-[480px]">
+            <div className="relative mt-2 sm:-mt-10 md:-mt-16 w-full max-w-[310px] sm:max-w-[420px] md:max-w-[480px]">
               {/* Portrait Container Frame */}
-              <div className="group relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-white/15 bg-gradient-to-b from-[#250A24]/90 to-[#110C17]/95 p-2 sm:p-2.5 shadow-[0_30px_70px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition duration-500 hover:border-[#FF77B8]/40">
-                <div className="relative h-[340px] sm:h-[420px] md:h-[460px] w-full overflow-hidden rounded-[1.6rem] sm:rounded-[2rem] bg-[#0B0610]">
+              <div className="group relative overflow-hidden rounded-[1.8rem] sm:rounded-[2.5rem] border border-white/15 bg-gradient-to-b from-[#250A24]/90 to-[#110C17]/95 p-2 sm:p-2.5 shadow-[0_25px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition duration-500 hover:border-[#FF77B8]/40">
+                <div className="relative h-[290px] xs:h-[320px] sm:h-[400px] md:h-[460px] w-full overflow-hidden rounded-[1.4rem] sm:rounded-[2rem] bg-[#0B0610]">
                   <MediaThumb
                     kind="image"
                     url={content.hero.portraitUrl || content.about.imageUrl}
@@ -1190,7 +1206,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     loading="eager"
                   />
                   {/* Subtle dark gradient along bottom for clean visual integration */}
-                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#110C17] via-[#110C17]/60 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 h-28 sm:h-32 bg-gradient-to-t from-[#110C17] via-[#110C17]/60 to-transparent" />
                 </div>
               </div>
 
@@ -1198,9 +1214,9 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               <a
                 href="#featured-works"
                 onClick={(e) => handleNavClick(e, "#featured-works")}
-                className="group absolute -right-3 sm:-right-8 top-10 z-20 flex items-center gap-3 rounded-2xl border border-white/20 bg-[#16081A]/90 p-2.5 sm:p-3 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#FF77B8] hover:scale-105"
+                className="group absolute -right-2 sm:-right-8 top-6 sm:top-10 z-20 flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-white/20 bg-[#16081A]/95 p-2 sm:p-3 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#FF77B8] hover:scale-105"
               >
-                <div className="h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-xl border border-white/10 bg-black/60">
+                <div className="h-9 w-9 sm:h-12 sm:w-12 overflow-hidden rounded-xl border border-white/10 bg-black/60">
                   <Image
                     src={content.hero.archiveThumbnailUrl || content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
                     alt="Studio Archive Work"
@@ -1223,9 +1239,9 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               <a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, "#contact")}
-                className="group absolute -left-3 sm:-left-8 bottom-6 z-20 flex items-center gap-3 rounded-2xl border border-white/20 bg-[#16081A]/90 px-3.5 py-2.5 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#FF77B8] hover:scale-105"
+                className="group absolute -left-2 sm:-left-8 bottom-4 sm:bottom-6 z-20 flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-white/20 bg-[#16081A]/95 px-3 py-2 sm:px-3.5 sm:py-2.5 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#FF77B8] hover:scale-105"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#FF77B8]/15 text-[#FF77B8] font-bold text-xs transition-colors group-hover:bg-[#FF77B8] group-hover:text-[#0B0610]">
+                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-xl bg-[#FF77B8]/15 text-[#FF77B8] font-bold text-xs transition-colors group-hover:bg-[#FF77B8] group-hover:text-[#0B0610]">
                   SH
                 </div>
                 <div className="text-left">
