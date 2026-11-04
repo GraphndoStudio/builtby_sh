@@ -853,29 +853,29 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             role="dialog"
             aria-modal="true"
             aria-label={`Certificate: ${activeCertificate.name}`}
-            className="fixed inset-0 z-[96] flex items-center justify-center overflow-y-auto bg-black/90 p-4 sm:p-6 backdrop-blur-md"
+            className="fixed inset-0 z-[96] flex items-start sm:items-center justify-center overflow-y-auto bg-black/90 p-3 sm:p-6 py-5 sm:py-6 backdrop-blur-md"
             onClick={() => setActiveCertificateId(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 16 }}
+              initial={{ opacity: 0, scale: 0.95, y: 14 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 16 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="relative my-auto w-full max-w-4xl overflow-hidden rounded-3xl border border-[#FF77B8]/30 bg-gradient-to-b from-[#1E0922] via-[#120516] to-[#0B0610] p-5 sm:p-8 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+              exit={{ opacity: 0, scale: 0.95, y: 14 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="relative my-auto w-full max-w-4xl max-h-[calc(100dvh-2.5rem)] overflow-y-auto rounded-2xl sm:rounded-3xl border border-[#FF77B8]/30 bg-gradient-to-b from-[#1E0922] via-[#120516] to-[#0B0610] p-4 sm:p-7 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top Header Bar */}
-              <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#FF77B8]">
+              <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-3 sm:pb-4">
+                <div className="pr-2 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#FF77B8]">
                       {activeCertificate.year}
                     </span>
-                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-emerald-400">
+                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-400">
                       ✓ Verified Credential
                     </span>
                   </div>
-                  <h3 className="mt-1 font-display text-2xl sm:text-3xl font-bold text-white">
+                  <h3 className="mt-1 font-display text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight">
                     {activeCertificate.name}
                   </h3>
                   <p className="mt-1 text-xs sm:text-sm font-medium text-[#D8CCE0]">
@@ -886,7 +886,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 <button
                   type="button"
                   onClick={() => setActiveCertificateId(null)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-zinc-300 transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/10 hover:text-white"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-zinc-300 transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/10 hover:text-white"
                   aria-label="Close certificate popup"
                 >
                   ✕
@@ -894,31 +894,31 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </div>
 
               {/* Certificate Image Display */}
-              <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-black/60 shadow-inner">
+              <div className="mt-4 sm:mt-5 overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-black/60 shadow-inner">
                 {activeCertificate.imageUrl ? (
-                  <div className="relative aspect-[16/10] sm:aspect-[16/11] max-h-[62vh] w-full overflow-hidden bg-black flex items-center justify-center">
+                  <div className="relative aspect-[16/10] sm:aspect-[16/11] max-h-[48vh] sm:max-h-[62vh] w-full overflow-hidden bg-black flex items-center justify-center">
                     <MediaThumb
                       kind="image"
                       url={activeCertificate.imageUrl}
                       alt={`${activeCertificate.name} - ${activeCertificate.issuer}`}
                       className="h-full w-full object-contain"
-                      sizes="(max-width: 1024px) 100vw, 900px"
+                      sizes="(max-width: 768px) 100vw, 900px"
                       priority
                     />
                   </div>
                 ) : (
                   /* Fallback preview card if no image uploaded yet */
-                  <div className="relative flex flex-col items-center justify-center p-8 sm:p-14 text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#FF77B8]/40 bg-[#FF77B8]/10 text-2xl shadow-[0_0_30px_rgba(255,119,184,0.3)]">
+                  <div className="relative flex flex-col items-center justify-center p-6 sm:p-14 text-center">
+                    <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-[#FF77B8]/40 bg-[#FF77B8]/10 text-2xl shadow-[0_0_30px_rgba(255,119,184,0.3)]">
                       🎓
                     </div>
-                    <h4 className="mt-4 font-display text-2xl font-bold text-white">
+                    <h4 className="mt-4 font-display text-xl sm:text-2xl font-bold text-white">
                       {activeCertificate.name}
                     </h4>
-                    <p className="mt-2 text-sm text-[#D8CCE0]">
+                    <p className="mt-2 text-xs sm:text-sm text-[#D8CCE0]">
                       {activeCertificate.issuer} · {activeCertificate.year}
                     </p>
-                    <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 font-mono text-xs text-emerald-400">
+                    <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-1 font-mono text-[11px] sm:text-xs text-emerald-400">
                       <span>✓ Official Credential Record</span>
                     </div>
                   </div>
@@ -926,14 +926,14 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
-                <div className="flex items-center gap-2">
+              <div className="mt-4 sm:mt-5 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pt-3 border-t border-white/10">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                   {activeCertificate.imageUrl ? (
                     <a
                       href={activeCertificate.imageUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 font-mono text-xs text-white transition hover:border-[#FF77B8] hover:bg-white/10"
+                      className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 sm:py-2 font-mono text-xs text-white transition hover:border-[#FF77B8] hover:bg-white/10 text-center"
                     >
                       <span>Open Full Size</span>
                       <span>↗</span>
@@ -944,9 +944,9 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       href={activeCertificate.credentialUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-full border border-[#FF77B8]/40 bg-[#FF77B8]/10 px-4 py-2 font-mono text-xs font-semibold text-[#FF77B8] transition hover:bg-[#FF77B8]/20"
+                      className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-full border border-[#FF77B8]/40 bg-[#FF77B8]/10 px-4 py-2.5 sm:py-2 font-mono text-xs font-semibold text-[#FF77B8] transition hover:bg-[#FF77B8]/20 text-center"
                     >
-                      <span>Verify Credential Online</span>
+                      <span>Verify Online</span>
                       <span>↗</span>
                     </a>
                   ) : null}
@@ -955,7 +955,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 <button
                   type="button"
                   onClick={() => setActiveCertificateId(null)}
-                  className="rounded-full border border-white/20 bg-white/10 px-5 py-2 font-mono text-xs font-semibold text-white transition hover:bg-white/20"
+                  className="w-full sm:w-auto rounded-full border border-white/20 bg-white/10 px-5 py-2.5 sm:py-2 font-mono text-xs font-semibold text-white transition hover:bg-white/20 text-center"
                 >
                   Close Window
                 </button>
@@ -1419,35 +1419,36 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             </div>
 
             {/* Segmented Switcher */}
-            <div className="inline-flex rounded-full border border-white/15 bg-[#140718]/90 p-1 backdrop-blur-xl shadow-lg">
+            <div className="flex w-full sm:w-auto rounded-2xl sm:rounded-full border border-white/15 bg-[#140718]/90 p-1 backdrop-blur-xl shadow-lg">
               <button
                 type="button"
                 onClick={() => setExperienceActiveTab("work")}
-                className={`rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
+                className={`flex-1 sm:flex-initial text-center rounded-xl sm:rounded-full px-3.5 sm:px-5 py-2.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
                   experienceActiveTab === "work"
                     ? "bg-[#FF77B8] text-[#0B0610] shadow-md"
                     : "text-[#D8CCE0] hover:text-white"
                 }`}
               >
-                Work Experience ({content.experience.length})
+                <span>Work Experience ({content.experience.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setExperienceActiveTab("education")}
-                className={`rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
+                className={`flex-1 sm:flex-initial text-center rounded-xl sm:rounded-full px-3.5 sm:px-5 py-2.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
                   experienceActiveTab === "education"
                     ? "bg-[#FF77B8] text-[#0B0610] shadow-md"
                     : "text-[#D8CCE0] hover:text-white"
                 }`}
               >
-                Education &amp; Credentials ({(content.education?.length ?? 0) + (content.certifications?.length ?? 0)})
+                <span className="sm:hidden">Education ({(content.education?.length ?? 0) + (content.certifications?.length ?? 0)})</span>
+                <span className="hidden sm:inline">Education &amp; Credentials ({(content.education?.length ?? 0) + (content.certifications?.length ?? 0)})</span>
               </button>
             </div>
           </div>
 
           {/* TAB 1: WORK EXPERIENCE */}
           {experienceActiveTab === "work" ? (
-            <div ref={experienceTimelineRef} className="relative pl-8 md:pl-10">
+            <div ref={experienceTimelineRef} className="relative pl-6 sm:pl-8 md:pl-10">
               <div className="pointer-events-none absolute bottom-8 left-0 top-8">
                 <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-border to-transparent" />
                 <motion.div
@@ -1471,10 +1472,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, amount: 0.35 }}
                     transition={{ duration: 0.55, delay: index * 0.06 }}
-                    className="relative rounded-2xl border border-brand-border bg-brand-bg-secondary/70 p-5 sm:p-6 backdrop-blur-xl shadow-lg transition-all duration-300 hover:border-[#FF77B8]/40"
+                    className="relative rounded-2xl border border-brand-border bg-brand-bg-secondary/70 p-4 sm:p-5 md:p-6 backdrop-blur-xl shadow-lg transition-all duration-300 hover:border-[#FF77B8]/40"
                   >
                     <motion.span
-                      className="absolute -left-[2.35rem] top-8 h-3 w-3 rounded-full bg-brand-accent md:-left-[2.85rem]"
+                      className="absolute -left-[1.85rem] sm:-left-[2.35rem] md:-left-[2.85rem] top-8 h-3 w-3 rounded-full bg-brand-accent"
                       animate={{
                         opacity: 0.28,
                         scale: 0.72,
@@ -1604,8 +1605,8 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </div>
 
               {/* Verified Certifications & Accolades Grid */}
-              <div className="rounded-3xl border border-white/10 bg-[#120516]/80 p-6 sm:p-8 backdrop-blur-xl shadow-xl">
-                <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+              <div className="rounded-2xl sm:rounded-3xl border border-white/10 bg-[#120516]/80 p-4 sm:p-6 md:p-8 backdrop-blur-xl shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4 border-b border-white/10 pb-4">
                   <div>
                     <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
                       Certifications &amp; Accolades
@@ -1619,7 +1620,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   </span>
                 </div>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-5 sm:mt-6 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {(content.certifications && content.certifications.length > 0
                     ? content.certifications
                     : [

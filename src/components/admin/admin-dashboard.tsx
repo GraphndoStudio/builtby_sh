@@ -166,7 +166,7 @@ function MediaField({
             type="button"
             disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl border border-brand-accent/40 bg-brand-accent/10 px-4 py-2.5 text-xs font-semibold text-brand-accent transition hover:bg-brand-accent/20 disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-brand-accent/40 bg-brand-accent/10 px-4 py-2.5 text-xs font-semibold text-brand-accent transition hover:bg-brand-accent/20 disabled:opacity-50"
           >
             {isUploading ? (
               <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-brand-accent border-t-transparent" />
@@ -1935,20 +1935,20 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                             className="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 select-none"
                             onClick={() => toggleCard(cert.id)}
                           >
-                            <div className="flex items-center gap-3">
-                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FF77B8]/20 text-[#FF77B8] text-xs font-bold font-numbers">
+                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 pr-2">
+                              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FF77B8]/20 text-[#FF77B8] text-xs font-bold font-numbers">
                                 {certIndex + 1}
                               </span>
-                              <div>
-                                <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-                                  <span>{cert.name}</span>
+                              <div className="min-w-0">
+                                <h4 className="text-sm font-semibold text-white flex flex-wrap items-center gap-1.5 truncate">
+                                  <span className="truncate">{cert.name}</span>
                                   {cert.imageUrl ? (
-                                    <span className="rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 font-mono">
-                                      Image Attached
+                                    <span className="rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 font-mono shrink-0">
+                                      Image
                                     </span>
                                   ) : null}
                                 </h4>
-                                <p className="text-xs text-brand-muted">
+                                <p className="text-xs text-brand-muted truncate">
                                   {cert.issuer} · <span className="font-mono text-[#FF77B8]">{cert.year}</span>
                                 </p>
                               </div>
