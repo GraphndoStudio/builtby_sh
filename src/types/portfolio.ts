@@ -86,6 +86,7 @@ export interface CertificationItem {
   issuer: string;
   year: string;
   credentialUrl?: string;
+  imageUrl?: string;
 }
 
 export interface FeaturedWorkItem {

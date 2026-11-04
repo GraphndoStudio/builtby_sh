@@ -125,8 +125,9 @@ export const portfolioContentSchema = z.object({
       issuer: nonEmpty,
       year: nonEmpty,
       credentialUrl: hrefSchema.optional().or(z.literal("")),
+      imageUrl: z.string().optional().or(z.literal("")),
     }),
-  ).optional().default([]),
+  ).default([]),
   featuredWorks: z.array(
     z.object({
       id: nonEmpty,

@@ -1897,7 +1897,7 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                     <div>
                       <h3 className="text-sm font-semibold text-white">Certifications &amp; Accolades</h3>
                       <p className="text-xs text-brand-muted">
-                        Verified professional certificates, workshops, and recognition awards.
+                        Verified professional certificates, workshops, and recognition awards with image scans.
                       </p>
                     </div>
                     <button
@@ -1906,14 +1906,16 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                         const newId = `cert-${Date.now()}`;
                         editContent((d) => {
                           if (!d.certifications) d.certifications = [];
-                          d.certifications.push({
+                          d.certifications.unshift({
                             id: newId,
                             name: "New Certificate",
                             issuer: "Issuing Organization",
                             year: new Date().getFullYear().toString(),
                             credentialUrl: "",
+                            imageUrl: "",
                           });
                         });
+                        setExpandedCards((prev) => ({ ...prev, [newId]: true }));
                       }}
                       className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-brand-accent hover:bg-white/10"
                     >
@@ -1921,72 +1923,172 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                     </button>
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {(content.certifications ?? []).map((cert, certIndex) => (
-                      <div
-                        key={cert.id}
-                        className="rounded-xl border border-white/10 bg-black/35 p-3.5 space-y-2"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">
-                            Certificate #{certIndex + 1}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              editContent((d) => {
-                                d.certifications?.splice(certIndex, 1);
-                              })
-                            }
-                            className="text-xs text-red-400 hover:underline"
+                  <div className="space-y-4">
+                    {(content.certifications ?? []).map((cert, certIndex) => {
+                      const isExpanded = expandedCards[cert.id] ?? false;
+                      return (
+                        <div
+                          key={cert.id}
+                          className="rounded-2xl border border-white/10 bg-black/35 overflow-hidden transition"
+                        >
+                          <div
+                            className="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 select-none"
+                            onClick={() => toggleCard(cert.id)}
                           >
-                            Remove
-                          </button>
+                            <div className="flex items-center gap-3">
+                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FF77B8]/20 text-[#FF77B8] text-xs font-bold font-numbers">
+                                {certIndex + 1}
+                              </span>
+                              <div>
+                                <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+                                  <span>{cert.name}</span>
+                                  {cert.imageUrl ? (
+                                    <span className="rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 font-mono">
+                                      Image Attached
+                                    </span>
+                                  ) : null}
+                                </h4>
+                                <p className="text-xs text-brand-muted">
+                                  {cert.issuer} · <span className="font-mono text-[#FF77B8]">{cert.year}</span>
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                disabled={certIndex === 0}
+                                onClick={() =>
+                                  editContent((d) => {
+                                    if (!d.certifications) return;
+                                    const [moved] = d.certifications.splice(certIndex, 1);
+                                    d.certifications.splice(certIndex - 1, 0, moved);
+                                  })
+                                }
+                                className="rounded p-1 text-xs text-zinc-500 hover:text-white disabled:opacity-30"
+                                title="Move Up"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                disabled={certIndex === (content.certifications?.length ?? 1) - 1}
+                                onClick={() =>
+                                  editContent((d) => {
+                                    if (!d.certifications) return;
+                                    const [moved] = d.certifications.splice(certIndex, 1);
+                                    d.certifications.splice(certIndex + 1, 0, moved);
+                                  })
+                                }
+                                className="rounded p-1 text-xs text-zinc-500 hover:text-white disabled:opacity-30"
+                                title="Move Down"
+                              >
+                                ▼
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (confirm(`Delete certificate "${cert.name}"?`)) {
+                                    editContent((d) => {
+                                      d.certifications?.splice(certIndex, 1);
+                                    });
+                                  }
+                                }}
+                                className="rounded p-1 text-xs text-red-400 hover:bg-red-500/20"
+                                title="Delete"
+                              >
+                                ✕
+                              </button>
+                              <span className="text-zinc-500 text-xs px-1">
+                                {isExpanded ? "Collapse ▲" : "Edit ▼"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {isExpanded ? (
+                            <div className="p-5 pt-0 space-y-4 border-t border-white/5">
+                              <div className="grid gap-3 sm:grid-cols-2 pt-4">
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Certificate Name</label>
+                                  <input
+                                    value={cert.name}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.certifications) d.certifications[certIndex].name = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="e.g. Certified Graphic Designer"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Issuing Organization</label>
+                                  <input
+                                    value={cert.issuer}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.certifications) d.certifications[certIndex].issuer = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="e.g. Artisto Picasso E-Learning Pvt. Ltd."
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Year Issued</label>
+                                  <input
+                                    value={cert.year}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.certifications) d.certifications[certIndex].year = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="e.g. 2024"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Verification Link (Optional)</label>
+                                  <input
+                                    value={cert.credentialUrl ?? ""}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.certifications) d.certifications[certIndex].credentialUrl = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="https://..."
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Certificate Image Scan Upload */}
+                              <MediaField
+                                label="Certificate Image Scan / Document"
+                                url={cert.imageUrl ?? ""}
+                                helperText="Upload or paste the certificate image. Clicking this certificate on your portfolio opens this in a high-resolution popup window."
+                                onUrlChange={(url) => {
+                                  editContent((d) => {
+                                    if (d.certifications) d.certifications[certIndex].imageUrl = url;
+                                  });
+                                }}
+                                isUploading={uploadingField === `cert-${certIndex}`}
+                                onUpload={(file) =>
+                                  handleMediaUpload(file, `cert-${certIndex}`, (url) => {
+                                    editContent((d) => {
+                                      if (d.certifications) d.certifications[certIndex].imageUrl = url;
+                                    });
+                                  })
+                                }
+                              />
+                            </div>
+                          ) : null}
                         </div>
-                        <input
-                          value={cert.name}
-                          onChange={(e) =>
-                            editContent((d) => {
-                              if (d.certifications) d.certifications[certIndex].name = e.target.value;
-                            })
-                          }
-                          className={fieldClass}
-                          placeholder="Certificate Name"
-                        />
-                        <div className="grid grid-cols-2 gap-2">
-                          <input
-                            value={cert.issuer}
-                            onChange={(e) =>
-                              editContent((d) => {
-                                if (d.certifications) d.certifications[certIndex].issuer = e.target.value;
-                              })
-                            }
-                            className={fieldClass}
-                            placeholder="Issuing Organization"
-                          />
-                          <input
-                            value={cert.year}
-                            onChange={(e) =>
-                              editContent((d) => {
-                                if (d.certifications) d.certifications[certIndex].year = e.target.value;
-                              })
-                            }
-                            className={fieldClass}
-                            placeholder="Year"
-                          />
-                        </div>
-                        <input
-                          value={cert.credentialUrl ?? ""}
-                          onChange={(e) =>
-                            editContent((d) => {
-                              if (d.certifications) d.certifications[certIndex].credentialUrl = e.target.value;
-                            })
-                          }
-                          className={fieldClass}
-                          placeholder="Verification Link (Optional)"
-                        />
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </div>

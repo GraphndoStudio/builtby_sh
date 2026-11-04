@@ -233,6 +233,7 @@ export const defaultPortfolioContent: PortfolioContent = {
       issuer: "Artisto Picasso E-Learning Pvt. Ltd.",
       year: "2023",
       credentialUrl: "",
+      imageUrl: "https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=1600&q=80",
     },
     {
       id: "cert-2",
@@ -240,6 +241,7 @@ export const defaultPortfolioContent: PortfolioContent = {
       issuer: "Skypark IT Tech, Coimbatore",
       year: "2024",
       credentialUrl: "",
+      imageUrl: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&w=1600&q=80",
     },
     {
       id: "cert-3",
@@ -247,6 +249,7 @@ export const defaultPortfolioContent: PortfolioContent = {
       issuer: "NxtWave CCBP 4.0 Academy",
       year: "2024",
       credentialUrl: "",
+      imageUrl: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=1600&q=80",
     },
     {
       id: "cert-4",
@@ -254,6 +257,7 @@ export const defaultPortfolioContent: PortfolioContent = {
       issuer: "NxtWave CCBP 4.0 Academy",
       year: "2024",
       credentialUrl: "",
+      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
     },
     {
       id: "cert-5",
@@ -261,6 +265,7 @@ export const defaultPortfolioContent: PortfolioContent = {
       issuer: "NxtWave CCBP 4.0 Academy",
       year: "2024",
       credentialUrl: "",
+      imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80",
     },
   ],
   featuredWorks: [

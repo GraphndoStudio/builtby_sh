@@ -161,6 +161,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [hasFinePointer, setHasFinePointer] = useState(false);
   const [experienceActiveTab, setExperienceActiveTab] = useState<"work" | "education">("work");
+  const [activeCertificateId, setActiveCertificateId] = useState<string | null>(null);
 
   const lenisRef = useRef<Lenis | null>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -247,6 +248,22 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
   const activeExperienceMedia =
     activeExperience?.gallery[activeExperienceMediaIndex] ?? activeExperience?.gallery[0];
+
+  const activeCertificate = useMemo(
+    () => content.certifications?.find((item) => item.id === activeCertificateId) ?? null,
+    [content.certifications, activeCertificateId],
+  );
+
+  useEffect(() => {
+    if (!activeCertificate) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveCertificateId(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeCertificate]);
 
   function openExperienceGallery(experienceId: string) {
     setActiveExperienceId(experienceId);
@@ -828,6 +845,125 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </div>
       ) : null}
+
+      {/* Certificate Lightbox Popup Modal */}
+      <AnimatePresence>
+        {activeCertificate ? (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Certificate: ${activeCertificate.name}`}
+            className="fixed inset-0 z-[96] flex items-center justify-center overflow-y-auto bg-black/90 p-4 sm:p-6 backdrop-blur-md"
+            onClick={() => setActiveCertificateId(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 16 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="relative my-auto w-full max-w-4xl overflow-hidden rounded-3xl border border-[#FF77B8]/30 bg-gradient-to-b from-[#1E0922] via-[#120516] to-[#0B0610] p-5 sm:p-8 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Top Header Bar */}
+              <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#FF77B8]">
+                      {activeCertificate.year}
+                    </span>
+                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-emerald-400">
+                      ✓ Verified Credential
+                    </span>
+                  </div>
+                  <h3 className="mt-1 font-display text-2xl sm:text-3xl font-bold text-white">
+                    {activeCertificate.name}
+                  </h3>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#D8CCE0]">
+                    Issued by <span className="text-white font-semibold">{activeCertificate.issuer}</span>
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveCertificateId(null)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-zinc-300 transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/10 hover:text-white"
+                  aria-label="Close certificate popup"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Certificate Image Display */}
+              <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-black/60 shadow-inner">
+                {activeCertificate.imageUrl ? (
+                  <div className="relative aspect-[16/10] sm:aspect-[16/11] max-h-[62vh] w-full overflow-hidden bg-black flex items-center justify-center">
+                    <MediaThumb
+                      kind="image"
+                      url={activeCertificate.imageUrl}
+                      alt={`${activeCertificate.name} - ${activeCertificate.issuer}`}
+                      className="h-full w-full object-contain"
+                      sizes="(max-width: 1024px) 100vw, 900px"
+                      priority
+                    />
+                  </div>
+                ) : (
+                  /* Fallback preview card if no image uploaded yet */
+                  <div className="relative flex flex-col items-center justify-center p-8 sm:p-14 text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#FF77B8]/40 bg-[#FF77B8]/10 text-2xl shadow-[0_0_30px_rgba(255,119,184,0.3)]">
+                      🎓
+                    </div>
+                    <h4 className="mt-4 font-display text-2xl font-bold text-white">
+                      {activeCertificate.name}
+                    </h4>
+                    <p className="mt-2 text-sm text-[#D8CCE0]">
+                      {activeCertificate.issuer} · {activeCertificate.year}
+                    </p>
+                    <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 font-mono text-xs text-emerald-400">
+                      <span>✓ Official Credential Record</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                <div className="flex items-center gap-2">
+                  {activeCertificate.imageUrl ? (
+                    <a
+                      href={activeCertificate.imageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 font-mono text-xs text-white transition hover:border-[#FF77B8] hover:bg-white/10"
+                    >
+                      <span>Open Full Size</span>
+                      <span>↗</span>
+                    </a>
+                  ) : null}
+                  {activeCertificate.credentialUrl ? (
+                    <a
+                      href={activeCertificate.credentialUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[#FF77B8]/40 bg-[#FF77B8]/10 px-4 py-2 font-mono text-xs font-semibold text-[#FF77B8] transition hover:bg-[#FF77B8]/20"
+                    >
+                      <span>Verify Credential Online</span>
+                      <span>↗</span>
+                    </a>
+                  ) : null}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveCertificateId(null)}
+                  className="rounded-full border border-white/20 bg-white/10 px-5 py-2 font-mono text-xs font-semibold text-white transition hover:bg-white/20"
+                >
+                  Close Window
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        ) : null}
+      </AnimatePresence>
 
       {/* Editorial architectural background: Deep Purple & Black Combo */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -1492,61 +1628,87 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                           name: "Certified Graphic Designer",
                           issuer: "Artisto Picasso E-Learning Pvt. Ltd.",
                           year: "2023",
+                          imageUrl: "https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=1600&q=80",
                         },
                         {
                           id: "cert-2",
                           name: "Web Development Internship Certificate",
                           issuer: "Skypark IT Tech, Coimbatore",
                           year: "2024",
+                          imageUrl: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&fit=crop&w=1600&q=80",
                         },
                         {
                           id: "cert-3",
                           name: "Frontend Development Program (CCBP 4.0)",
                           issuer: "NxtWave CCBP 4.0 Academy",
                           year: "2024",
+                          imageUrl: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=1600&q=80",
                         },
                         {
                           id: "cert-4",
                           name: "AWS Mega Workshop on Cloud Applications",
                           issuer: "NxtWave CCBP 4.0 Academy",
                           year: "2024",
+                          imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
                         },
                         {
                           id: "cert-5",
                           name: "XPM 4.0 Fundamentals",
                           issuer: "NxtWave CCBP 4.0 Academy",
                           year: "2024",
+                          imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80",
                         },
                       ]
                   ).map((cert, index) => (
                     <div
                       key={cert.id || index}
-                      className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 transition duration-300 hover:border-[#FF77B8]/40 hover:bg-[#FF77B8]/5"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setActiveCertificateId(cert.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setActiveCertificateId(cert.id);
+                        }
+                      }}
+                      data-cursor="interactive"
+                      className="group relative flex flex-col justify-between rounded-2xl border border-white/10 bg-[#16081A]/70 p-4 sm:p-5 backdrop-blur-xl text-left cursor-pointer transition-all duration-300 hover:border-[#FF77B8]/60 hover:bg-[#200A25]/90 hover:shadow-[0_0_24px_rgba(255,119,184,0.18)] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[#FF77B8]/50"
                     >
                       <div>
                         <div className="flex items-center justify-between text-xs">
                           <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">
                             {cert.year}
                           </span>
-                          <span className="text-emerald-400 font-mono text-[10px]">✓ Certified</span>
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-400">
+                            <span>✓</span> Certified
+                          </span>
                         </div>
-                        <h4 className="mt-2 text-sm font-bold text-white group-hover:text-[#FF77B8] transition-colors">
+
+                        <h4 className="mt-2.5 text-sm sm:text-base font-bold text-white group-hover:text-[#FF77B8] transition-colors leading-snug">
                           {cert.name}
                         </h4>
                         <p className="mt-1 text-xs text-[#D8CCE0]">{cert.issuer}</p>
                       </div>
 
-                      {cert.credentialUrl ? (
-                        <a
-                          href={cert.credentialUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#FF77B8] hover:underline"
-                        >
-                          <span>Verify Credential</span>
-                          <span>↗</span>
-                        </a>
-                      ) : null}
+                      <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-xs">
+                        <span className="inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-[#FF77B8] group-hover:underline">
+                          <span>View Certificate</span>
+                          <span className="transition-transform duration-300 group-hover:translate-x-0.5">↗</span>
+                        </span>
+
+                        {cert.credentialUrl ? (
+                          <a
+                            href={cert.credentialUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="font-mono text-[10px] text-zinc-400 hover:text-white hover:underline"
+                            title="Verify credential online"
+                          >
+                            Verify Link ↗
+                          </a>
+                        ) : null}
+                      </div>
                     </div>
                   ))}
                 </div>
