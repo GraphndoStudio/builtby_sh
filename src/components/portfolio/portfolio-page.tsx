@@ -221,17 +221,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     setTimeout(() => setCopiedEmail(false), 2400);
   };
 
-  const { scrollYProgress: heroScrollProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroImageOpacity = useTransform(
-    heroScrollProgress,
-    [0, 0.65, 1],
-    [0.85, 0.25, 0],
-  );
-  const heroImageY = useTransform(heroScrollProgress, [0, 1], ["0%", "10%"]);
-  const heroImageScale = useTransform(heroScrollProgress, [0, 1], [1, 1.05]);
 
   const { scrollYProgress: experienceScrollYProgress } = useScroll({
     target: experienceTimelineRef,
@@ -879,6 +868,30 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </p>
             </a>
 
+            <div className="hidden items-center gap-6 md:flex">
+              <nav className="flex items-center gap-6">
+                {content.navigation.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
+                    className="text-xs font-medium text-[#D8CCE0] transition hover:text-[#FF77B8]"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+
+              <a
+                href="#contact"
+                onClick={(e) => handleNavClick(e, "#contact")}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#FF77B8]/30 bg-[#FF77B8]/10 px-3.5 py-1 text-xs font-semibold text-[#FF77B8] transition hover:bg-[#FF77B8] hover:text-[#0A050E]"
+              >
+                <span>Say Hello</span>
+                <span>↗</span>
+              </a>
+            </div>
+
             <button
               type="button"
               aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -904,19 +917,6 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 />
               </span>
             </button>
-
-            <nav className="hidden items-center gap-6 md:flex">
-              {content.navigation.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className="text-xs font-medium text-[#D8CCE0] transition hover:text-[#FF77B8]"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
           </div>
         </div>
       </header>
@@ -973,274 +973,272 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </AnimatePresence>
 
       <main className="w-full px-4 pb-20 pt-32 sm:pt-36 md:pt-40 lg:pt-44 md:px-8 lg:px-12 max-w-7xl mx-auto">
-        {/* HERO SECTION - DEEP PURPLE & BLACK COMBO WITH WHITE & PINK TEXTS */}
+        {/* HERO SECTION - SIMPLE, CONFIDENT, HIGH-TRUST PRO SHOWCASE */}
+        {/* Inspired by Ardian Prasetyo, Matteo Backer & Michael references */}
         <section
           id="hero"
           ref={heroRef}
-          className="relative min-h-[calc(100vh-10rem)] flex flex-col justify-between overflow-hidden pb-12 pt-2 sm:pt-4"
+          className="relative min-h-[calc(100vh-6rem)] flex flex-col justify-between pt-4 pb-12 sm:pb-16 overflow-hidden"
         >
-          {/* Deep Purple & Black Canvas */}
-          <div className="pointer-events-none absolute -inset-x-4 sm:-inset-x-8 md:-inset-x-12 -top-32 sm:-top-36 md:-top-44 bottom-0 -z-10 overflow-hidden bg-gradient-to-br from-[#380E35] via-[#240822] to-[#0B0610]">
-            {/* Deep Purple Saturated Radial Glow with Ambient Pink Shimmer */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_35%,rgba(255,119,184,0.18),transparent_60%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(56,14,53,0.85),transparent_60%)]" />
-            {/* Subtle Architectural Grid */}
+          {/* Deep Purple & Black Atmosphere Canvas */}
+          <div className="pointer-events-none absolute -inset-x-8 sm:-inset-x-12 -top-36 sm:-top-44 bottom-0 -z-10 overflow-hidden">
+            {/* Deep Black Foundation */}
+            <div className="absolute inset-0 bg-[#0B0610]" />
+            {/* Rich Plum & Royal Purple Saturated Ambient Wash */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_15%,rgba(49,18,46,0.75),transparent_75%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(56,14,53,0.55),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_40%,rgba(144,86,162,0.18),transparent_55%)]" />
+            
+            {/* Precision Architectural Hairline Grid with Crosshairs (Michael reference) */}
             <div
-              className="absolute inset-0 opacity-15"
+              className="absolute inset-0 opacity-[0.14]"
               style={{
                 backgroundImage:
-                  "linear-gradient(rgba(255,119,184,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,119,184,0.06) 1px, transparent 1px)",
+                  "linear-gradient(rgba(255,119,184,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,119,184,0.12) 1px, transparent 1px)",
                 backgroundSize: "64px 64px",
               }}
             />
-            {/* Smooth bottom transition into Deep Black for subsequent sections */}
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0B0610] to-transparent" />
+            {/* Smooth bottom fade into deep base */}
+            <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#0B0610] via-[#0B0610]/80 to-transparent" />
           </div>
 
-          {/* Dynamic Scroll-Fading Creator Photo in Background */}
-          {content.about.imageUrl ? (
-            <motion.div
-              style={{
-                opacity: heroImageOpacity,
-                y: heroImageY,
-                scale: heroImageScale,
-              }}
-              className="pointer-events-none absolute inset-0 select-none overflow-hidden md:left-auto md:right-0 md:w-[72%] lg:w-[65%] xl:w-[60%]"
-            >
-              <div className="relative h-full w-full">
-                <MediaThumb
-                  kind="image"
-                  url={content.about.imageUrl}
-                  alt={content.hero.displayName}
-                  className="h-full w-full object-cover object-[center_top] md:object-[right_top]"
-                  priority
-                  loading="eager"
-                />
-
-                {/* Left/Bottom seamless gradient blend into deep purple/black #240822 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#240822] via-[#240822]/85 via-50% to-transparent md:bg-gradient-to-r md:from-[#240822] md:via-[#240822]/75 md:via-30% md:to-transparent" />
-
-                {/* Soft top and bottom atmospheric vignettes */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#380E35]/40 via-transparent to-[#240822]/90" />
-
-                {/* Harmonious Deep Purple color grading overlay */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#31122E]/40 via-[#FF77B8]/10 to-transparent mix-blend-color" />
-              </div>
-            </motion.div>
-          ) : null}
-
-          {/* Subtle Grid Crosshairs & Architectural Watermark */}
-          <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
-            <span className="font-display text-[15vw] font-black uppercase tracking-tighter text-white/[0.04] select-none whitespace-nowrap">
-              {content.hero.displayName || "SHARUKH"}
-            </span>
-          </div>
-
-          {/* Top Eyebrow Status Bar */}
-          <div className="reveal-up relative z-10 mb-8 sm:mb-10 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 border-b border-white/10 pb-4 text-xs">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-950/60 px-3 py-1 shadow-[0_0_16px_rgba(16,185,129,0.2)] backdrop-blur-md">
+          {/* Top Eyebrow Bar: Live Status & Disciplines */}
+          <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4 pt-2">
+            <div className="inline-flex items-center gap-2.5">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              <span className="font-mono text-[11px] sm:text-xs font-medium tracking-wide text-emerald-300">
-                Available for select projects
+              <span className="font-mono text-xs font-medium text-white tracking-wide">
+                Available for Select Projects
+              </span>
+              <span className="text-white/20">/</span>
+              <span className="font-mono text-xs text-[#D8CCE0]">
+                India · Worldwide
               </span>
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4 text-[#D8CCE0] font-mono text-[11px]">
-              <span className="flex items-center gap-1.5">
-                <span className="text-[#FF77B8]">📍</span>
-                <span>{content.contact.location || "India"}</span>
-              </span>
-              {currentTime ? (
-                <span className="border-l border-white/15 pl-3 sm:pl-4 text-white font-semibold">
-                  {currentTime} IST
-                </span>
-              ) : null}
+            <div className="hidden sm:flex items-center gap-3 font-mono text-[11px] tracking-wider text-[#D8CCE0]">
+              <span className="text-[#FF77B8] font-semibold">01</span>
+              <span>Frontend Engineering</span>
+              <span className="text-white/20">·</span>
+              <span className="text-[#FF77B8] font-semibold">02</span>
+              <span>Visual Systems</span>
+              <span className="text-white/20">·</span>
+              <span className="text-[#FF77B8] font-semibold">03</span>
+              <span>Motion UI</span>
             </div>
           </div>
 
-          {/* Main Hero Content: Left Narrative + Right Ambient Breathing Space */}
-          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:gap-14 my-auto">
-            {/* Left Column: Human Story & Typography (White & Pink Texts) */}
-            <div className="reveal-up space-y-6 sm:space-y-7">
-              <div className="space-y-3 sm:space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#FF77B8]/30 bg-[#FF77B8]/10 px-3 py-1 backdrop-blur-md">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#FF77B8] shadow-[0_0_8px_#FF77B8]" />
-                  <p className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.22em] text-[#FF77B8] font-semibold">
-                    Creative Developer &amp; Designer
-                  </p>
-                </div>
-
-                <h1 className="font-display text-4xl xs:text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white select-none break-words leading-[1.05]">
-                  {content.hero.displayName}
-                </h1>
-
-                <p className="font-display text-lg sm:text-xl md:text-2xl font-medium text-white">
-                  <span>{content.hero.rolePrimary}</span>
-                  <span className="text-[#FF77B8] font-mono mx-2">&amp;</span>
-                  <span className="text-[#FF77B8] font-semibold">{content.hero.roleSecondary}</span>
-                </p>
-              </div>
-
-              {/* The Human Value Proposition */}
-              <p className="max-w-[48ch] text-sm sm:text-base md:text-lg text-white/90 leading-relaxed font-normal">
-                {content.hero.subheadline ||
-                  "Designing engaging visuals. Building responsive experiences. Combining graphic design precision with modern frontend engineering."}
-              </p>
-
-              {/* Action Buttons: White & Pink accents on Deep Black */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
-                <a
-                  href="#contact"
-                  onClick={(e) => handleNavClick(e, "#contact")}
-                  data-cursor="interactive"
-                  className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#0B0610] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-2xl border border-[#FF77B8]/40 transition-all duration-300 hover:bg-[#FF77B8] hover:text-[#0B0610] hover:border-[#FF77B8] hover:scale-[1.02] shadow-[0_0_24px_rgba(255,119,184,0.18)]"
-                >
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FF77B8]/20 text-[#FF77B8] transition-colors duration-300 group-hover:bg-[#0B0610] group-hover:text-white text-xs">
-                    ↗
-                  </span>
-                  <span>Start a Project</span>
-                </a>
-
-                <a
-                  href={content.hero.primaryCtaHref}
-                  onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
-                  data-cursor="interactive"
-                  className="group inline-flex items-center justify-center gap-3 rounded-full border border-white/20 bg-[#1A091E]/70 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-md transition-all duration-300 hover:border-[#FF77B8]/60 hover:text-[#FF77B8] hover:bg-[#FF77B8]/10"
-                >
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-white transition-colors duration-300 group-hover:bg-[#FF77B8] group-hover:text-[#0B0610] text-xs">
-                    ↓
-                  </span>
-                  <span>{content.hero.primaryCtaLabel || "View My Work"}</span>
-                </a>
-
-                <button
-                  type="button"
-                  onClick={handleCopyEmail}
-                  data-cursor="interactive"
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/10 sm:border-transparent bg-white/5 sm:bg-transparent px-4 py-3 text-xs text-[#D8CCE0] transition hover:text-[#FF77B8] hover:bg-white/10"
-                  title="Copy email to clipboard"
-                >
-                  <span className="text-sm">✉</span>
-                  <span>{copiedEmail ? "Copied to clipboard!" : "Copy Email"}</span>
-                </button>
-              </div>
-
-              {/* Minimal Specialties Strip */}
-              <div className="border-t border-white/10 pt-5">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-[#FF77B8] mb-2.5 font-semibold">
-                  Core Specialties
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {["Next.js 16", "React 19", "TypeScript", "Tailwind CSS", "GSAP Motion", "Brand Systems"].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-lg border border-[#FF77B8]/20 bg-[#1A091E]/80 px-3 py-1 text-xs text-white backdrop-blur-sm transition hover:border-[#FF77B8]/50 hover:text-[#FF77B8]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+          {/* Center Stage: The Ardian & Michael Typographic + Portrait Centerpiece */}
+          <div className="relative z-10 my-auto py-8 sm:py-12 flex flex-col items-center">
+            {/* Giant Architectural Headline Name: SHARUKH */}
+            <div className="w-full text-center select-none overflow-hidden">
+              <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] xl:text-[11.5rem] font-extrabold uppercase tracking-[0.14em] sm:tracking-[0.22em] text-white leading-none drop-shadow-2xl">
+                SHARUKH
+              </h1>
             </div>
 
-            {/* Right Column: Floating Tactical "Let's Connect" Card */}
-            <div className="flex items-end justify-start lg:justify-end pt-4 lg:pt-0">
+            {/* Portrait Stage: Centerpiece Authentic Subject with Michael-style Floating Cards */}
+            <div className="relative -mt-6 sm:-mt-12 md:-mt-16 w-full max-w-[340px] sm:max-w-[420px] md:max-w-[480px]">
+              {/* Portrait Container Frame */}
+              <div className="group relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] border border-white/15 bg-gradient-to-b from-[#250A24]/90 to-[#110C17]/95 p-2 sm:p-2.5 shadow-[0_30px_70px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition duration-500 hover:border-[#FF77B8]/40">
+                <div className="relative h-[340px] sm:h-[420px] md:h-[460px] w-full overflow-hidden rounded-[1.6rem] sm:rounded-[2rem] bg-[#0B0610]">
+                  <MediaThumb
+                    kind="image"
+                    url={content.about.imageUrl}
+                    alt="Sharukh H - Frontend Developer & Graphic Designer"
+                    className="h-full w-full object-cover object-[center_top] transition-transform duration-700 group-hover:scale-105"
+                    priority
+                    loading="eager"
+                  />
+                  {/* Subtle dark gradient along bottom for clean visual integration */}
+                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#110C17] via-[#110C17]/60 to-transparent" />
+                </div>
+              </div>
+
+              {/* Floating Card 1: Top-Right Visual Showcase (Michael reference "ZENTIX /Design" style) */}
+              <a
+                href="#featured-works"
+                onClick={(e) => handleNavClick(e, "#featured-works")}
+                className="group absolute -right-3 sm:-right-8 top-10 z-20 flex items-center gap-3 rounded-2xl border border-white/20 bg-[#16081A]/90 p-2.5 sm:p-3 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#FF77B8] hover:scale-105"
+              >
+                <div className="h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-xl border border-white/10 bg-black/60">
+                  <Image
+                    src="/uploads/1781775293542-artboard-1-300x.png"
+                    alt="Graphndo Studio Work"
+                    width={48}
+                    height={48}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="text-left pr-1">
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-[#FF77B8] font-semibold">
+                    Studio Archive
+                  </p>
+                  <p className="font-display text-xs sm:text-sm font-bold text-white group-hover:text-[#FF77B8] transition-colors">
+                    Graphndo ↗
+                  </p>
+                </div>
+              </a>
+
+              {/* Floating Card 2: Bottom-Left Let's Connect Card (Michael reference "Let's Talk" style) */}
               <a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, "#contact")}
-                className="group inline-flex items-center gap-4 rounded-2xl border border-[#FF77B8]/25 bg-[#140816]/90 p-3.5 sm:p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition duration-300 hover:border-[#FF77B8] hover:bg-[#200A23] hover:shadow-[0_0_30px_rgba(255,119,184,0.25)]"
+                className="group absolute -left-3 sm:-left-8 bottom-6 z-20 flex items-center gap-3 rounded-2xl border border-white/20 bg-[#16081A]/90 px-3.5 py-2.5 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#FF77B8] hover:scale-105"
               >
-                <span className="relative flex h-3 w-3">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
-                </span>
-                <div className="text-left">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#FF77B8] font-semibold">
-                    Let&apos;s Connect
-                  </p>
-                  <p className="font-display text-xs sm:text-sm font-semibold text-white">
-                    Available for Select Projects
-                  </p>
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#FF77B8]/15 text-[#FF77B8] font-bold text-xs transition-colors group-hover:bg-[#FF77B8] group-hover:text-[#0B0610]">
+                  SH
                 </div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FF77B8]/15 text-[#FF77B8] transition duration-300 group-hover:bg-[#FF77B8] group-hover:text-[#0B0610]">
-                  ↗
+                <div className="text-left">
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-[#FF77B8] font-semibold">
+                    Frontend &amp; Design
+                  </p>
+                  <p className="font-display text-xs sm:text-sm font-bold text-white">
+                    Let&apos;s Connect ↗
+                  </p>
                 </div>
               </a>
             </div>
           </div>
 
-          {/* Core Disciplines Strip */}
-          <div className="reveal-up mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 border-t border-white/10 pt-8">
-            {[
-              {
-                num: "01",
-                label: "Frontend Engineering",
-                desc: "High-performance web applications built with Next.js, React, and TypeScript.",
-              },
-              {
-                num: "02",
-                label: "Visual Design & Identity",
-                desc: "Impactful brand systems, art direction, and poster-level typography.",
-              },
-              {
-                num: "03",
-                label: "Motion & Micro-interactions",
-                desc: "Fluid animation storytelling powered by GSAP, Lenis, and Framer Motion.",
-              },
-              {
-                num: "04",
-                label: "UI/UX & Design Systems",
-                desc: "User-centered design components with pixel-perfect responsive layouts.",
-              },
-            ].map((discipline) => (
-              <div
-                key={discipline.num}
-                className="group rounded-2xl border border-white/10 bg-[#150618]/70 p-4 sm:p-5 backdrop-blur-md transition duration-300 hover:border-[#FF77B8]/35 hover:bg-[#1E0922]/80 hover:shadow-[0_10px_30px_rgba(255,119,184,0.1)]"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-[#FF77B8] group-hover:text-white transition-colors">
-                    {discipline.num} /
-                  </span>
-                  <span className="text-xs text-[#FF77B8] opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Bottom Editorial Split: Inspired by Ardian Prasetyo (Headlines + Story + Actions) */}
+          <div className="relative z-10 grid gap-8 md:grid-cols-2 md:gap-12 border-t border-white/10 pt-8 sm:pt-10">
+            {/* Left Column: Bold Editorial Headline */}
+            <div className="space-y-3">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#FF77B8] font-semibold">
+                Frontend Developer &amp; Graphic Designer
+              </p>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.12]">
+                Designing products that shape experiences. Engineering code that <span className="text-[#FF77B8]">connects</span>.
+              </h2>
+            </div>
+
+            {/* Right Column: Authentic Story, Action Buttons & Email */}
+            <div className="space-y-6">
+              <p className="text-base sm:text-lg text-[#D8CCE0] leading-relaxed font-normal">
+                From concept to creation. I combine intentional graphic design with modern frontend engineering (React, Next.js, TypeScript) to craft digital products that blend form, function, and emotion—turning ideas into designs that earn trust.
+              </p>
+
+              {/* Actions: Ardian Prasetyo Pill Button + Contact Button */}
+              <div className="flex flex-wrap items-center gap-3.5 pt-1">
+                {/* Primary Pill Button (Ardian Prasetyo style) */}
+                <a
+                  href="#featured-works"
+                  onClick={(e) => handleNavClick(e, "#featured-works")}
+                  data-cursor="interactive"
+                  className="group inline-flex items-center gap-3 rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#0B0610] shadow-xl transition-all duration-300 hover:bg-[#FF77B8] hover:text-[#0B0610] hover:scale-[1.02]"
+                >
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0B0610] text-white transition-transform duration-300 group-hover:translate-x-0.5">
                     →
                   </span>
-                </div>
-                <h3 className="mt-2 font-display text-base font-semibold text-white group-hover:text-[#FF77B8] transition-colors">
-                  {discipline.label}
-                </h3>
-                <p className="mt-1.5 text-xs text-[#D8CCE0] leading-relaxed">
-                  {discipline.desc}
-                </p>
+                  <span>See My Work</span>
+                </a>
+
+                {/* Secondary Ghost Button */}
+                <a
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, "#contact")}
+                  data-cursor="interactive"
+                  className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#16081A]/80 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-md transition-all duration-300 hover:border-[#FF77B8] hover:text-[#FF77B8] hover:bg-[#FF77B8]/10"
+                >
+                  <span>Start a Project</span>
+                  <span className="text-[#FF77B8] transition-transform duration-300 group-hover:translate-x-0.5">↗</span>
+                </a>
+
+                {/* Email Copy Trigger */}
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  data-cursor="interactive"
+                  className="inline-flex items-center gap-1.5 rounded-full px-4 py-3 text-xs text-[#D8CCE0] transition hover:text-[#FF77B8]"
+                  title="Copy email to clipboard"
+                >
+                  <span>✉</span>
+                  <span className="font-mono text-xs">{copiedEmail ? "Copied to clipboard!" : content.contact.email || "studio.graphndo@gmail.com"}</span>
+                </button>
               </div>
-            ))}
+
+              {/* Quiet Trust Metrics Strip */}
+              <div className="flex items-center gap-8 border-t border-white/10 pt-4">
+                <div>
+                  <span className="font-display text-xl font-bold text-white">3+</span>
+                  <span className="ml-2 font-mono text-[11px] uppercase tracking-wider text-[#D8CCE0]">Years Crafting</span>
+                </div>
+                <div className="text-white/20">|</div>
+                <div>
+                  <span className="font-display text-xl font-bold text-white">20+</span>
+                  <span className="ml-2 font-mono text-[11px] uppercase tracking-wider text-[#D8CCE0]">Projects Shipped</span>
+                </div>
+                <div className="text-white/20">|</div>
+                <div>
+                  <span className="font-display text-xl font-bold text-[#FF77B8]">100%</span>
+                  <span className="ml-2 font-mono text-[11px] uppercase tracking-wider text-[#D8CCE0]">Commitment</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* ABOUT SECTION */}
+        {/* ABOUT SECTION - THE STORY: VISUAL HERITAGE TO CODE CRAFT */}
         <section
           id="about"
-          className="reveal-up mt-14 grid items-start gap-8 lg:grid-cols-[0.85fr_1.15fr]"
+          className="reveal-up mt-24 grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]"
         >
-          <div className="order-2 mx-auto w-full max-w-[460px] overflow-hidden rounded-3xl border border-brand-border bg-brand-bg-secondary/75 lg:order-1 lg:max-w-[540px]">
-            <MediaThumb
-              kind="image"
-              url={content.about.imageUrl}
-              alt={content.about.heading}
-              className="h-[360px] w-full object-cover sm:h-[460px] lg:h-[560px] xl:h-[620px]"
-              sizes="(max-width: 768px) 94vw, (max-width: 1280px) 42vw, 540px"
-            />
+          {/* Visual Showcase Card: Sharukh's Graphndo Studio Artboard */}
+          <div className="group relative mx-auto w-full max-w-[480px] overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b from-[#220926]/80 to-[#120516]/90 p-3 sm:p-4 shadow-2xl backdrop-blur-xl">
+            <div className="relative h-[380px] sm:h-[460px] w-full overflow-hidden rounded-2xl bg-[#0B0610]">
+              <Image
+                src="/uploads/1781775293542-artboard-1-300x.png"
+                alt="Graphndo Studio Design Poster"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 768px) 94vw, 480px"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#110C17] via-transparent to-transparent opacity-60" />
+            </div>
+
+            <div className="mt-3 flex items-center justify-between px-2 pt-1 text-xs">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[#FF77B8] font-semibold">
+                Visual Archive 01 / Graphic Poster System
+              </span>
+              <span className="font-mono text-[10px] text-[#D8CCE0]">Graphndo Studio</span>
+            </div>
           </div>
-          <div className="order-1 h-fit rounded-3xl border border-brand-border bg-brand-bg-secondary/70 p-8 backdrop-blur-xl lg:order-2">
-            <p className="text-xs uppercase tracking-[0.2em] text-brand-accent">{content.about.title}</p>
-            <h2 className="mt-4 max-w-[18ch] font-display text-4xl leading-tight md:text-5xl">
-              {content.about.heading}
-            </h2>
-            <p className="mt-6 max-w-[58ch] text-base leading-8 text-brand-muted md:text-lg">
-              {content.about.description}
+
+          {/* Editorial Narrative */}
+          <div className="rounded-3xl border border-white/10 bg-[#16081A]/70 p-7 sm:p-9 backdrop-blur-xl shadow-xl">
+            <p className="font-mono text-xs uppercase tracking-[0.25em] text-[#FF77B8] font-semibold">
+              The Evolution / From Visual Craft to Living Code
             </p>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+              A designer-developer crafting memorable digital experiences.
+            </h2>
+            <div className="mt-5 space-y-4 text-sm sm:text-base leading-relaxed text-[#D8CCE0]">
+              <p>
+                My creative foundation started in graphic design—obsessing over composition, poster typography, and brand identity systems that capture attention and communicate purpose.
+              </p>
+              <p>
+                To bring those designs to life, I expanded into modern frontend engineering. Today, I build responsive, production-ready web applications using React, Next.js, TypeScript, and fluid GSAP motion—delivering products where aesthetic finesse and technical performance work seamlessly together.
+              </p>
+            </div>
+
+            {/* 3 Pillars */}
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-white/10 pt-6">
+              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">01 / Visual Heritage</span>
+                <p className="mt-1 text-xs font-semibold text-white">Brand &amp; Typography</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">02 / Technical Craft</span>
+                <p className="mt-1 text-xs font-semibold text-white">Next.js &amp; TypeScript</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">03 / Fluid Motion</span>
+                <p className="mt-1 text-xs font-semibold text-white">GSAP &amp; Interaction</p>
+              </div>
+            </div>
           </div>
         </section>
 
