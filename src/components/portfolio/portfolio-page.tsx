@@ -839,13 +839,15 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         </div>
       ) : null}
 
-      {/* Editorial architectural background with royal purple & plum ambience */}
+      {/* Editorial architectural background with rich royal plum & orchid atmosphere */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-[#110C17]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_-15%,rgba(144,86,162,0.22),transparent_70%)]" />
+        {/* Strong color wash for the top hero region */}
+        <div className="absolute inset-x-0 top-0 h-[100vh] bg-gradient-to-b from-[#4A1547] via-[#361134]/90 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_85%_65%_at_50%_-15%,rgba(144,86,162,0.38),transparent_70%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_90%_100%,rgba(49,18,46,0.5),transparent_70%)]" />
         <div
-          className="absolute inset-0 opacity-40"
+          className="absolute inset-0 opacity-30"
           style={{
             backgroundImage:
               "linear-gradient(rgba(144,86,162,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(144,86,162,0.06) 1px, transparent 1px)",
@@ -854,18 +856,18 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           }}
         />
         <motion.div
-          className="absolute left-[8%] top-[15%] h-80 w-80 rounded-full bg-[#9056A2]/15 blur-[120px]"
+          className="absolute left-[8%] top-[15%] h-80 w-80 rounded-full bg-[#9056A2]/20 blur-[120px]"
           style={{ x: orbAX, y: orbAY }}
         />
         <motion.div
-          className="absolute right-[10%] top-[25%] h-96 w-96 rounded-full bg-[#31122E]/80 blur-[130px]"
+          className="absolute right-[10%] top-[25%] h-96 w-96 rounded-full bg-[#5C1A55]/70 blur-[130px]"
           style={{ x: orbBX, y: orbBY }}
         />
       </div>
 
       {/* Floating navigation header */}
       <header className="fixed left-1/2 top-5 z-50 w-[min(900px,92vw)] -translate-x-1/2">
-        <div className="relative rounded-full border border-[#9056A2]/25 bg-[#110C17]/80 px-5 py-2.5 backdrop-blur-xl shadow-[0_12px_40px_rgba(17,12,23,0.9)]">
+        <div className="relative rounded-full border border-white/15 bg-[#250B23]/85 px-5 py-2.5 backdrop-blur-xl shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
           <div className="flex items-center justify-between gap-4">
             <a
               href="#hero"
@@ -971,13 +973,31 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       </AnimatePresence>
 
       <main className="w-full px-4 pb-20 pt-32 sm:pt-36 md:pt-40 lg:pt-44 md:px-8 lg:px-12 max-w-7xl mx-auto">
-        {/* HERO SECTION - CINEMATIC BACKGROUND PORTRAIT WITH SCROLL FADE */}
+        {/* HERO SECTION - BOLD STRONG COLOR THEME */}
         <section
           id="hero"
           ref={heroRef}
           className="relative min-h-[calc(100vh-10rem)] flex flex-col justify-between overflow-hidden pb-12 pt-2 sm:pt-4"
         >
-          {/* Dynamic Scroll-Fading Creator Photo in Background (Fades on Scroll Down, Fades in on Scroll Up) */}
+          {/* Strong Color Hero Canvas (Ardian-inspired Plum & Orchid Theme) */}
+          <div className="pointer-events-none absolute -inset-x-4 sm:-inset-x-8 md:-inset-x-12 -top-32 sm:-top-36 md:-top-44 bottom-0 -z-10 overflow-hidden bg-gradient-to-br from-[#4A1547] via-[#5C1A55] to-[#2B0E28]">
+            {/* Rich Orchid Saturated Radial Glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_35%,rgba(144,86,162,0.45),transparent_65%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(74,21,71,0.65),transparent_60%)]" />
+            {/* Subtle Architectural Grid */}
+            <div
+              className="absolute inset-0 opacity-15"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,251,252,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,251,252,0.08) 1px, transparent 1px)",
+                backgroundSize: "64px 64px",
+              }}
+            />
+            {/* Smooth bottom transition into Midnight Obsidian for subsequent sections */}
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#110C17] to-transparent" />
+          </div>
+
+          {/* Dynamic Scroll-Fading Creator Photo in Background */}
           {content.about.imageUrl ? (
             <motion.div
               style={{
@@ -997,13 +1017,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   loading="eager"
                 />
 
-                {/* Mobile: smooth dark gradient from bottom; Desktop: left-to-right fade into #110C17 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#110C17] via-[#110C17]/90 via-50% to-[#110C17]/40 md:bg-gradient-to-r md:from-[#110C17] md:via-[#110C17]/75 md:via-30% md:to-transparent" />
+                {/* Left/Bottom seamless gradient blend into strong plum #4A1547 */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#4A1547] via-[#4A1547]/85 via-50% to-transparent md:bg-gradient-to-r md:from-[#4A1547] md:via-[#4A1547]/75 md:via-30% md:to-transparent" />
 
                 {/* Soft top and bottom atmospheric vignettes */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#110C17]/60 via-transparent to-[#110C17]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#4A1547]/40 via-transparent to-[#4A1547]/90" />
 
-                {/* Harmonious Royal Plum & Orchid tint without darkening or muddying the face */}
+                {/* Harmonious Royal Plum & Orchid color grading overlay */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#31122E]/40 via-[#9056A2]/15 to-transparent mix-blend-color" />
               </div>
             </motion.div>
@@ -1011,14 +1031,14 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
           {/* Subtle Grid Crosshairs & Architectural Watermark */}
           <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
-            <span className="font-display text-[15vw] font-black uppercase tracking-tighter text-[#9056A2]/[0.03] select-none whitespace-nowrap">
+            <span className="font-display text-[15vw] font-black uppercase tracking-tighter text-white/[0.04] select-none whitespace-nowrap">
               {content.hero.displayName || "SHARUKH"}
             </span>
           </div>
 
           {/* Top Eyebrow Status Bar */}
-          <div className="reveal-up relative z-10 mb-8 sm:mb-10 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 border-b border-[#9056A2]/20 pb-4 text-xs">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 shadow-[0_0_16px_rgba(16,185,129,0.15)] backdrop-blur-md">
+          <div className="reveal-up relative z-10 mb-8 sm:mb-10 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3 border-b border-white/15 pb-4 text-xs">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-950/60 px-3 py-1 shadow-[0_0_16px_rgba(16,185,129,0.2)] backdrop-blur-md">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
@@ -1028,13 +1048,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </span>
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4 text-[#A89CB2] font-mono text-[11px]">
+            <div className="flex items-center gap-3 sm:gap-4 text-[#E2D1E5] font-mono text-[11px]">
               <span className="flex items-center gap-1.5">
-                <span className="text-[#c084fc]">📍</span>
+                <span>📍</span>
                 <span>{content.contact.location || "India"}</span>
               </span>
               {currentTime ? (
-                <span className="border-l border-[#9056A2]/25 pl-3 sm:pl-4 text-[#FFFBFC] font-semibold">
+                <span className="border-l border-white/20 pl-3 sm:pl-4 text-[#FFFBFC] font-semibold">
                   {currentTime} IST
                 </span>
               ) : null}
@@ -1046,56 +1066,61 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             {/* Left Column: Human Story & Typography */}
             <div className="reveal-up space-y-6 sm:space-y-7">
               <div className="space-y-3 sm:space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-md border border-[#9056A2]/30 bg-[#31122E]/40 px-3 py-1 backdrop-blur-md">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#c084fc] shadow-[0_0_8px_#c084fc]" />
-                  <p className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.22em] text-[#c084fc] font-semibold">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#FFFBFC]" />
+                  <p className="font-mono text-[10px] sm:text-xs uppercase tracking-[0.22em] text-[#FFFBFC] font-semibold">
                     Creative Developer &amp; Designer
                   </p>
                 </div>
 
-                <h1 className="font-display text-shimmer text-glow-orchid text-5xl xs:text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[0.92] select-none break-words">
+                <h1 className="font-display text-4xl xs:text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[#FFFBFC] select-none break-words leading-[1.05]">
                   {content.hero.displayName}
                 </h1>
 
-                <p className="font-display text-lg sm:text-xl md:text-2xl font-medium text-[#FFFBFC] text-shadow-hero">
+                <p className="font-display text-lg sm:text-xl md:text-2xl font-medium text-[#FFFBFC]">
                   <span>{content.hero.rolePrimary}</span>
-                  <span className="text-[#9056A2] font-mono text-glow-orchid mx-2">&amp;</span>
-                  <span className="text-gradient-purple font-semibold">{content.hero.roleSecondary}</span>
+                  <span className="text-[#E9D5FF] font-mono mx-2">&amp;</span>
+                  <span className="text-[#FFFBFC] font-semibold">{content.hero.roleSecondary}</span>
                 </p>
               </div>
 
               {/* The Human Value Proposition */}
-              <p className="max-w-[48ch] text-sm sm:text-base md:text-lg text-[#D1C7D8] leading-relaxed text-shadow-hero font-normal">
+              <p className="max-w-[48ch] text-sm sm:text-base md:text-lg text-[#EADCEE] leading-relaxed font-normal">
                 {content.hero.subheadline ||
                   "Designing engaging visuals. Building responsive experiences. Combining graphic design precision with modern frontend engineering."}
               </p>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+              {/* Action Buttons (Ardian-inspired pro buttons) */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, "#contact")}
                   data-cursor="interactive"
-                  className="inline-flex items-center justify-center gap-2.5 rounded-full bg-gradient-accent px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-[#110C17] shadow-[0_0_28px_rgba(144,86,162,0.45)] transition duration-300 hover:brightness-110 hover:shadow-[0_0_36px_rgba(144,86,162,0.7)] hover:scale-[1.02]"
+                  className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#110C17] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-2xl border border-white/15 transition-all duration-300 hover:bg-[#FFFBFC] hover:text-[#110C17] hover:scale-[1.02]"
                 >
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 text-white transition-colors duration-300 group-hover:bg-[#110C17] group-hover:text-white text-xs">
+                    ↗
+                  </span>
                   <span>Start a Project</span>
-                  <span className="text-sm">↗</span>
                 </a>
 
                 <a
                   href={content.hero.primaryCtaHref}
                   onClick={(e) => handleNavClick(e, content.hero.primaryCtaHref)}
                   data-cursor="interactive"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#9056A2]/40 bg-[#31122E]/50 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition duration-300 hover:bg-[#9056A2]/25 hover:border-[#9056A2] hover:shadow-[0_0_20px_rgba(144,86,162,0.3)]"
+                  className="group inline-flex items-center justify-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#FFFBFC] backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:border-white/40"
                 >
-                  <span>{content.hero.primaryCtaLabel || "View My Work"} ↓</span>
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 text-white transition-colors duration-300 group-hover:bg-white group-hover:text-[#31122E] text-xs">
+                    ↓
+                  </span>
+                  <span>{content.hero.primaryCtaLabel || "View My Work"}</span>
                 </a>
 
                 <button
                   type="button"
                   onClick={handleCopyEmail}
                   data-cursor="interactive"
-                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/5 sm:border-transparent bg-white/[0.02] sm:bg-transparent px-4 py-3 text-xs text-[#A89CB2] transition hover:text-[#FFFBFC] hover:bg-white/5"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/10 sm:border-transparent bg-white/5 sm:bg-transparent px-4 py-3 text-xs text-[#E2D1E5] transition hover:text-white hover:bg-white/10"
                   title="Copy email to clipboard"
                 >
                   <span className="text-sm">✉</span>
@@ -1104,15 +1129,15 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </div>
 
               {/* Minimal Specialties Strip */}
-              <div className="border-t border-[#9056A2]/20 pt-5">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] mb-2.5 font-semibold">
+              <div className="border-t border-white/15 pt-5">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-[#E9D5FF] mb-2.5 font-semibold">
                   Core Specialties
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {["Next.js 16", "React 19", "TypeScript", "Tailwind CSS", "GSAP Motion", "Brand Systems"].map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-lg border border-[#9056A2]/25 bg-[#31122E]/40 px-3 py-1 text-xs text-zinc-300 backdrop-blur-sm transition hover:border-[#9056A2]/60 hover:text-white"
+                      className="rounded-lg border border-white/15 bg-black/25 px-3 py-1 text-xs text-[#F3E8F4] backdrop-blur-sm transition hover:border-white/30 hover:text-white"
                     >
                       {tag}
                     </span>
@@ -1126,29 +1151,29 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               <a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, "#contact")}
-                className="group inline-flex items-center gap-4 rounded-2xl border border-[#9056A2]/30 bg-[#1C1326]/80 p-3.5 sm:p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] transition duration-300 hover:border-[#9056A2] hover:bg-[#31122E]/90 hover:shadow-[0_0_30px_rgba(144,86,162,0.3)]"
+                className="group inline-flex items-center gap-4 rounded-2xl border border-white/15 bg-[#1F0A1D]/80 p-3.5 sm:p-4 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition duration-300 hover:border-white/30 hover:bg-[#2B0E28] hover:shadow-[0_0_30px_rgba(144,86,162,0.3)]"
               >
                 <span className="relative flex h-3 w-3">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
                 </span>
                 <div className="text-left">
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-[#E9D5FF] font-semibold">
                     Let&apos;s Connect
                   </p>
                   <p className="font-display text-xs sm:text-sm font-semibold text-white">
                     Available for Select Projects
                   </p>
                 </div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9056A2]/20 text-white transition duration-300 group-hover:bg-[#9056A2] group-hover:text-[#110C17]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white transition duration-300 group-hover:bg-white group-hover:text-[#110C17]">
                   ↗
                 </div>
               </a>
             </div>
           </div>
 
-          {/* Core Disciplines Strip (Ref 1: Matteo Backer Services List) */}
-          <div className="reveal-up mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 border-t border-[#9056A2]/20 pt-8">
+          {/* Core Disciplines Strip */}
+          <div className="reveal-up mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 border-t border-white/15 pt-8">
             {[
               {
                 num: "01",
@@ -1173,20 +1198,20 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             ].map((discipline) => (
               <div
                 key={discipline.num}
-                className="group rounded-2xl border border-[#9056A2]/15 bg-[#31122E]/25 p-4 sm:p-5 backdrop-blur-sm transition duration-300 hover:border-[#9056A2]/50 hover:bg-[#31122E]/45 hover:shadow-[0_10px_30px_rgba(144,86,162,0.15)]"
+                className="group rounded-2xl border border-white/10 bg-black/25 p-4 sm:p-5 backdrop-blur-md transition duration-300 hover:border-white/25 hover:bg-black/35 hover:shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-[#c084fc] group-hover:text-white transition-colors">
+                  <span className="font-mono text-xs font-bold text-[#E9D5FF] group-hover:text-white transition-colors">
                     {discipline.num} /
                   </span>
-                  <span className="text-xs text-[#9056A2] opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs text-[#E9D5FF] opacity-0 group-hover:opacity-100 transition-opacity">
                     →
                   </span>
                 </div>
-                <h3 className="mt-2 font-display text-base font-semibold text-white group-hover:text-[#c084fc] transition-colors">
+                <h3 className="mt-2 font-display text-base font-semibold text-white group-hover:text-[#E9D5FF] transition-colors">
                   {discipline.label}
                 </h3>
-                <p className="mt-1.5 text-xs text-[#A89CB2] leading-relaxed">
+                <p className="mt-1.5 text-xs text-[#E2D1E5] leading-relaxed">
                   {discipline.desc}
                 </p>
               </div>
