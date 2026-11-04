@@ -78,6 +78,24 @@ export async function getPortfolioContent() {
   if (hasBlobToken()) {
     const blobContent = await readBlobContent();
     if (blobContent) {
+      // Auto-migrate missing schema fields if blob was created from an older schema version
+      const needsEducation = !blobContent.education || blobContent.education.length === 0;
+      const needsCertifications = !blobContent.certifications || blobContent.certifications.length === 0;
+
+      if (needsEducation || needsCertifications) {
+        const migrated: PortfolioContent = {
+          ...blobContent,
+          education: needsEducation ? defaultPortfolioContent.education : blobContent.education,
+          certifications: needsCertifications ? defaultPortfolioContent.certifications : blobContent.certifications,
+        };
+        try {
+          await writeBlobContent(migrated);
+        } catch {
+          // Non-critical background save
+        }
+        return migrated;
+      }
+
       return blobContent;
     }
   }
