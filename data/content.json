@@ -83,10 +83,10 @@
     "heading": "A designer-developer crafting memorable digital experiences.",
     "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
     "description": "My creative foundation started in graphic design—obsessing over composition, poster typography, and brand identity systems that capture attention and communicate purpose.",
-    "storyParagraphTwo": "To bring those designs to life, I expanded into modern frontend engineering. Today, I build responsive, production-ready web applications using React, Next.js, TypeScript, and fluid GSAP motion—delivering products where aesthetic finesse and technical performance work seamlessly together.",
-    "posterImageUrl": "/uploads/1781775293542-artboard-1-300x.png",
+    "posterImageUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798684518-high-abouve.jpg",
     "posterTag": "Visual Archive 01 / Graphic Poster System",
     "posterCredit": "Graphndo Studio",
+    "storyParagraphTwo": "To bring those designs to life, I expanded into modern frontend engineering. Today, I build responsive, production-ready web applications using React, Next.js, TypeScript, and fluid GSAP motion—delivering products where aesthetic finesse and technical performance work seamlessly together.",
     "pillarOneTitle": "01 / Visual Heritage",
     "pillarOneDesc": "Brand & Typography",
     "pillarTwoTitle": "02 / Technical Craft",
@@ -105,14 +105,44 @@
         {
           "id": "exp-zyr-1",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Enterprise HRMS & LMS dashboard interface"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798752102-eid-al-adha.png",
+          "caption": "Eid al-Adha Festive Campaign",
+          "category": "Social Media Creatives"
         },
         {
           "id": "exp-zyr-2",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Frontend component architecture & telemetry"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798769853-products.png",
+          "caption": "Zyrops Unified Products Ecosystem",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-1793798773924",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798784753-live-now-zyrops-1.png",
+          "caption": "Zyrops Live Now Launch Creative",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "gal-1793798791401",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798806067-product-zyrocrm-3.png",
+          "caption": "Zyro CRM Sales Dashboard",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-1793798807552",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798818782-product-zyrohr-.png",
+          "caption": "Zyro HR Enterprise Management",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-1793798808839",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798923507-zyrops_unified_ecosystem.png",
+          "caption": "Zyrops Unified Ecosystem Flow",
+          "category": "Client Designs"
         }
       ]
     },
@@ -126,14 +156,58 @@
         {
           "id": "exp-nom-1",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Brand campaign posters & identity rollouts"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799096417-insta-2.png",
+          "caption": "Brand campaign posters & identity rollouts",
+          "category": "Social Media Creatives"
         },
         {
           "id": "exp-nom-2",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Social media ad creatives & banners"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799103202-festive-poster---nomadscipher---eid.png",
+          "caption": "Festive Campaign - Eid Greeting",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "gal-1793799105974",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799121062-product-hrms.png",
+          "caption": "Product HRMS Interface Design",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-1793799124158",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799136616-nomadscipher---qa-engineer-hiring.jpg",
+          "caption": "QA Engineer Hiring Creative",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "gal-1793799124812",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799162522-nomadscipher---vibe-coder-internship-pg.png",
+          "caption": "Vibe Coder Internship Campaign",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "gal-1793799165213",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799180682-product-ciphertrack.png",
+          "caption": "CipherTrack Product Dashboard",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-1793799228086",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799238234-product-cipherpos.png",
+          "caption": "CipherPOS Point of Sale System",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-1793799228527",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799243509-product-hrms.png",
+          "caption": "HRMS Portal Design System",
+          "category": "Client Designs"
         }
       ]
     },
@@ -143,18 +217,35 @@
       "title": "Frontend Development Intern",
       "organization": "Skypark IT Tech, Coimbatore",
       "summary": "Developed responsive web pages and modular, reusable UI components using HTML5, CSS3, and JavaScript. Improved cross-device responsiveness across desktop and mobile viewports with Bootstrap and Git version control, collaborating with senior developers during project sprints.",
+      "gallery": []
+    },
+    {
+      "id": "exp-1793799404825",
+      "year": "2026",
+      "title": "Freelance Designer & Developer",
+      "organization": "Company or Client",
+      "summary": "I'm a freelance designer and developer passionate about creating meaningful digital experiences and impactful visual identities. I combine creativity with technical skills to design engaging visuals, build responsive websites, and bring ideas to life. From branding and graphic design to web development, I focus on delivering thoughtful, functional, and visually compelling solutions that help brands stand out.",
       "gallery": [
         {
-          "id": "exp-sky-1",
+          "id": "gal-1793802180109",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Responsive frontend development sprint"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793802254953-high-abouve.jpg",
+          "caption": "Travel ad",
+          "category": "Social Media Creatives"
         },
         {
-          "id": "exp-sky-2",
+          "id": "gal-1793802286757",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Engineering team standup & component review"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793802293566-escape.jpg",
+          "caption": "Escape the Ordinary - Mood Board",
+          "category": "Random Designs"
+        },
+        {
+          "id": "gal-1793802296529",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793802301919-gateway.jpg",
+          "caption": "India Gate Monolith - Creative Poster",
+          "category": "Social Media Creatives"
         }
       ]
     },
@@ -164,20 +255,7 @@
       "title": "Graphic Design Trainee",
       "organization": "Political Outreach Campaign",
       "summary": "Designed high-impact posters, banners, social media posts, and print materials for political outreach campaigns, creating compelling visual communication that elevated voter engagement across both offline and digital channels.",
-      "gallery": [
-        {
-          "id": "exp-pol-1",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Outreach poster and typography design"
-        },
-        {
-          "id": "exp-pol-2",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Campaign visual communication review"
-        }
-      ]
+      "gallery": []
     }
   ],
   "education": [

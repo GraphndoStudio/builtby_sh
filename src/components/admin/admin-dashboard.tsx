@@ -1619,6 +1619,7 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                                         mediaKind: "image",
                                         mediaUrl: "",
                                         caption: "Project snapshot",
+                                        category: "Client Designs",
                                       });
                                     })
                                   }
@@ -1632,10 +1633,17 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                                 {exp.gallery.map((item, galIndex) => (
                                   <div
                                     key={item.id}
-                                    className="rounded-xl border border-white/10 bg-black/40 p-3 space-y-2"
+                                    className="rounded-xl border border-white/10 bg-black/40 p-3 space-y-3"
                                   >
                                     <div className="flex justify-between items-center">
-                                      <span className="text-[11px] text-brand-muted">Image #{galIndex + 1}</span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[11px] font-medium text-brand-muted">Image #{galIndex + 1}</span>
+                                        {item.category ? (
+                                          <span className="rounded-full bg-[#FF77B8]/20 border border-[#FF77B8]/30 px-2 py-0.5 text-[10px] text-[#FF77B8] font-medium">
+                                            {item.category}
+                                          </span>
+                                        ) : null}
+                                      </div>
                                       <button
                                         type="button"
                                         onClick={() =>
@@ -1676,16 +1684,63 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                                         )
                                       }
                                     />
-                                    <input
-                                      value={item.caption}
-                                      onChange={(e) =>
-                                        editContent((d) => {
-                                          d.experience[expIndex].gallery[galIndex].caption = e.target.value;
-                                        })
-                                      }
-                                      className={fieldClass}
-                                      placeholder="Image caption"
-                                    />
+                                    {/* Category / Section Field */}
+                                    <div className="space-y-1.5">
+                                      <div className="flex items-center justify-between">
+                                        <label className="text-[11px] font-medium text-brand-muted">
+                                          Section / Category
+                                        </label>
+                                        <span className="text-[10px] text-brand-muted/60">Organizes items into sections</span>
+                                      </div>
+                                      <input
+                                        value={item.category || ""}
+                                        onChange={(e) =>
+                                          editContent((d) => {
+                                            d.experience[expIndex].gallery[galIndex].category = e.target.value;
+                                          })
+                                        }
+                                        className={fieldClass}
+                                        placeholder="e.g. Client Designs, Random Designs, Social Media Creatives"
+                                      />
+                                      <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                                        <span className="text-[10px] text-brand-muted/70">Quick Select:</span>
+                                        {["Client Designs", "Random Designs", "Social Media Creatives", "UI / Web", "Branding & Posters"].map((preset) => (
+                                          <button
+                                            key={preset}
+                                            type="button"
+                                            onClick={() =>
+                                              editContent((d) => {
+                                                d.experience[expIndex].gallery[galIndex].category = preset;
+                                              })
+                                            }
+                                            className={`rounded-md border px-2 py-0.5 text-[10px] transition ${
+                                              item.category === preset
+                                                ? "border-[#FF77B8] bg-[#FF77B8]/20 text-[#FF77B8] font-medium"
+                                                : "border-white/10 bg-white/5 text-brand-muted hover:border-white/20 hover:text-white"
+                                            }`}
+                                          >
+                                            + {preset}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* Caption Field */}
+                                    <div className="space-y-1">
+                                      <label className="text-[11px] font-medium text-brand-muted">
+                                        Artwork / Project Caption
+                                      </label>
+                                      <input
+                                        value={item.caption}
+                                        onChange={(e) =>
+                                          editContent((d) => {
+                                            d.experience[expIndex].gallery[galIndex].caption = e.target.value;
+                                          })
+                                        }
+                                        className={fieldClass}
+                                        placeholder="Image caption"
+                                      />
+                                    </div>
                                   </div>
                                 ))}
                               </div>

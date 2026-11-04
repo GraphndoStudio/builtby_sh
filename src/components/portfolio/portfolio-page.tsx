@@ -157,6 +157,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [cursorVisible, setCursorVisible] = useState(false);
   const [activeExperienceId, setActiveExperienceId] = useState<string | null>(null);
   const [activeExperienceMediaIndex, setActiveExperienceMediaIndex] = useState(0);
+  const [experienceCategoryFilter, setExperienceCategoryFilter] = useState<string>("All");
   const [activeFeaturedWork, setActiveFeaturedWork] = useState<FeaturedWorkItem | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [hasFinePointer, setHasFinePointer] = useState(false);
@@ -246,8 +247,48 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     [content.experience, activeExperienceId],
   );
 
+  const parsedExperienceGallery = useMemo(() => {
+    if (!activeExperience?.gallery) return [];
+    return activeExperience.gallery.map((item) => {
+      let category = (item.category || "").trim();
+      let caption = item.caption.trim();
+
+      // If no explicit category was set, auto-parse "Category | Title" pattern from caption
+      if (!category && caption.includes("|")) {
+        const parts = caption.split("|");
+        category = parts[0].trim();
+        caption = parts.slice(1).join("|").trim() || parts[0].trim();
+      }
+
+      return {
+        ...item,
+        resolvedCategory: category,
+        displayCaption: caption,
+      };
+    });
+  }, [activeExperience]);
+
+  const experienceCategories = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of parsedExperienceGallery) {
+      if (item.resolvedCategory) {
+        map.set(item.resolvedCategory, (map.get(item.resolvedCategory) || 0) + 1);
+      }
+    }
+    return Array.from(map.entries()).map(([name, count]) => ({ name, count }));
+  }, [parsedExperienceGallery]);
+
+  const filteredExperienceGallery = useMemo(() => {
+    if (experienceCategoryFilter === "All") {
+      return parsedExperienceGallery;
+    }
+    return parsedExperienceGallery.filter(
+      (item) => item.resolvedCategory.toLowerCase() === experienceCategoryFilter.toLowerCase(),
+    );
+  }, [parsedExperienceGallery, experienceCategoryFilter]);
+
   const activeExperienceMedia =
-    activeExperience?.gallery[activeExperienceMediaIndex] ?? activeExperience?.gallery[0];
+    filteredExperienceGallery[activeExperienceMediaIndex] ?? filteredExperienceGallery[0];
 
   const activeCertificate = useMemo(
     () => content.certifications?.find((item) => item.id === activeCertificateId) ?? null,
@@ -285,6 +326,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   function openExperienceGallery(experienceId: string) {
     setActiveExperienceId(experienceId);
     setActiveExperienceMediaIndex(0);
+    setExperienceCategoryFilter("All");
   }
 
   function handleFeaturedWorkClick(work: FeaturedWorkItem) {
@@ -538,7 +580,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
   // Modal keyboard handling (Experience)
   useEffect(() => {
-    if (!activeExperience) {
+    if (!activeExperience || filteredExperienceGallery.length === 0) {
       return;
     }
 
@@ -547,11 +589,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
         setActiveExperienceId(null);
       } else if (event.key === "ArrowLeft") {
         setActiveExperienceMediaIndex((prev) =>
-          prev > 0 ? prev - 1 : activeExperience.gallery.length - 1,
+          prev > 0 ? prev - 1 : filteredExperienceGallery.length - 1,
         );
       } else if (event.key === "ArrowRight") {
         setActiveExperienceMediaIndex((prev) =>
-          prev < activeExperience.gallery.length - 1 ? prev + 1 : 0,
+          prev < filteredExperienceGallery.length - 1 ? prev + 1 : 0,
         );
       }
     };
@@ -564,7 +606,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [activeExperience]);
+  }, [activeExperience, filteredExperienceGallery.length]);
 
   // Modal keyboard handling (Featured Work)
   useEffect(() => {
@@ -705,6 +747,66 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 {activeExperience.summary}
               </p>
 
+              {/* Category / Section Tabs */}
+              {experienceCategories.length > 0 && (
+                <div className="mt-5 flex flex-wrap items-center gap-2 border-b border-brand-border/40 pb-3">
+                  <div className="flex items-center gap-1.5 text-xs text-brand-muted/70 font-mono mr-1">
+                    <svg className="w-3.5 h-3.5 text-[#FF77B8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                    <span>SECTIONS:</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setExperienceCategoryFilter("All");
+                      setActiveExperienceMediaIndex(0);
+                    }}
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                      experienceCategoryFilter === "All"
+                        ? "bg-[#FF77B8] text-black font-semibold shadow-[0_0_12px_rgba(255,119,184,0.35)]"
+                        : "border border-white/10 bg-white/5 text-brand-muted hover:border-white/20 hover:text-white"
+                    }`}
+                  >
+                    All Works
+                    <span
+                      className={`ml-1.5 text-[10px] ${
+                        experienceCategoryFilter === "All" ? "text-black/80 font-bold" : "text-brand-muted/60"
+                      }`}
+                    >
+                      {parsedExperienceGallery.length}
+                    </span>
+                  </button>
+                  {experienceCategories.map((cat) => {
+                    const isSelected = experienceCategoryFilter.toLowerCase() === cat.name.toLowerCase();
+                    return (
+                      <button
+                        key={cat.name}
+                        type="button"
+                        onClick={() => {
+                          setExperienceCategoryFilter(cat.name);
+                          setActiveExperienceMediaIndex(0);
+                        }}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                          isSelected
+                            ? "bg-[#FF77B8] text-black font-semibold shadow-[0_0_12px_rgba(255,119,184,0.35)]"
+                            : "border border-white/10 bg-white/5 text-brand-muted hover:border-white/20 hover:text-white"
+                        }`}
+                      >
+                        {cat.name}
+                        <span
+                          className={`ml-1.5 text-[10px] ${
+                            isSelected ? "text-black/80 font-bold" : "text-brand-muted/60"
+                          }`}
+                        >
+                          {cat.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.35fr]">
                 <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-black/60 flex flex-col justify-between">
                   {activeExperienceMedia ? (
@@ -712,20 +814,20 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       <MediaThumb
                         kind={activeExperienceMedia.mediaKind}
                         url={activeExperienceMedia.mediaUrl}
-                        alt={activeExperienceMedia.caption}
+                        alt={activeExperienceMedia.displayCaption}
                         className="max-h-[290px] sm:max-h-[440px] w-full object-contain mx-auto"
                         sizes="(max-width: 1024px) 94vw, 64vw"
                         priority
                       />
 
-                      {activeExperience.gallery.length > 1 ? (
+                      {filteredExperienceGallery.length > 1 ? (
                         <>
                           <button
                             type="button"
                             aria-label="Previous gallery image"
                             onClick={() =>
                               setActiveExperienceMediaIndex((prev) =>
-                                prev > 0 ? prev - 1 : activeExperience.gallery.length - 1,
+                                prev > 0 ? prev - 1 : filteredExperienceGallery.length - 1,
                               )
                             }
                             className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/80 p-2.5 sm:p-3 text-white backdrop-blur transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/20 hover:text-[#FF77B8] shadow-lg"
@@ -737,7 +839,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                             aria-label="Next gallery image"
                             onClick={() =>
                               setActiveExperienceMediaIndex((prev) =>
-                                prev < activeExperience.gallery.length - 1 ? prev + 1 : 0,
+                                prev < filteredExperienceGallery.length - 1 ? prev + 1 : 0,
                               )
                             }
                             className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/80 p-2.5 sm:p-3 text-white backdrop-blur transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/20 hover:text-[#FF77B8] shadow-lg"
@@ -753,8 +855,16 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     </div>
                   )}
                   <div className="flex flex-wrap items-center justify-between gap-2 border-t border-brand-border/60 bg-black/60 px-4 py-3 text-sm text-brand-text/90">
-                    <div className="flex items-center gap-2.5">
-                      <span className="font-medium text-xs sm:text-sm">{activeExperienceMedia?.caption}</span>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                      {activeExperienceMedia?.resolvedCategory ? (
+                        <span className="inline-flex items-center gap-1 rounded-md border border-[#FF77B8]/30 bg-[#FF77B8]/10 px-2 py-0.5 text-[11px] font-medium text-[#FF77B8]">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#FF77B8]" />
+                          {activeExperienceMedia.resolvedCategory}
+                        </span>
+                      ) : null}
+                      <span className="font-medium text-xs sm:text-sm text-white">
+                        {activeExperienceMedia?.displayCaption || activeExperienceMedia?.caption}
+                      </span>
                       {activeExperienceMedia?.mediaUrl ? (
                         <a
                           href={activeExperienceMedia.mediaUrl}
@@ -768,9 +878,9 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                         </a>
                       ) : null}
                     </div>
-                    {activeExperience.gallery.length > 1 ? (
+                    {filteredExperienceGallery.length > 1 ? (
                       <span className="font-numbers text-xs text-brand-muted">
-                        {activeExperienceMediaIndex + 1} / {activeExperience.gallery.length}
+                        {activeExperienceMediaIndex + 1} / {filteredExperienceGallery.length}
                       </span>
                     ) : null}
                   </div>
@@ -780,31 +890,42 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   data-lenis-prevent
                   className="max-h-[300px] lg:max-h-[460px] space-y-3 overflow-y-auto overscroll-contain pr-1"
                 >
-                  {activeExperience.gallery.length > 0 ? (
-                    activeExperience.gallery.map((item, index) => (
+                  {filteredExperienceGallery.length > 0 ? (
+                    filteredExperienceGallery.map((item, index) => (
                       <button
                         key={item.id}
                         type="button"
                         onClick={() => setActiveExperienceMediaIndex(index)}
-                        className={`w-full overflow-hidden rounded-xl border text-left transition ${
+                        className={`group relative w-full overflow-hidden rounded-xl border text-left transition ${
                           index === activeExperienceMediaIndex
-                            ? "border-brand-accent shadow-[0_0_12px_rgba(42,250,223,0.3)]"
-                            : "border-brand-border hover:border-brand-accent/50"
+                            ? "border-brand-accent shadow-[0_0_12px_rgba(42,250,223,0.3)] bg-white/5"
+                            : "border-brand-border bg-black/40 hover:border-brand-accent/50"
                         }`}
                       >
-                        <MediaThumb
-                          kind={item.mediaKind}
-                          url={item.mediaUrl}
-                          alt={item.caption}
-                          className="h-20 sm:h-24 w-full object-cover"
-                          sizes="(max-width: 1024px) 36vw, 220px"
-                        />
-                        <p className="line-clamp-1 px-3 py-2 text-xs text-brand-muted">{item.caption}</p>
+                        <div className="relative">
+                          <MediaThumb
+                            kind={item.mediaKind}
+                            url={item.mediaUrl}
+                            alt={item.displayCaption}
+                            className="h-20 sm:h-24 w-full object-cover"
+                            sizes="(max-width: 1024px) 36vw, 220px"
+                          />
+                          {item.resolvedCategory ? (
+                            <span className="absolute top-1.5 left-1.5 rounded bg-black/80 backdrop-blur-xs border border-white/15 px-1.5 py-0.5 text-[9px] font-medium text-[#FF77B8]">
+                              {item.resolvedCategory}
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="p-2 sm:px-3 sm:py-2">
+                          <p className="line-clamp-1 text-xs text-brand-muted group-hover:text-white transition">
+                            {item.displayCaption}
+                          </p>
+                        </div>
                       </button>
                     ))
                   ) : (
                     <div className="rounded-xl border border-brand-border bg-black/35 p-4 text-xs text-brand-muted">
-                      No gallery items found for this experience yet.
+                      No items found in this section.
                     </div>
                   )}
                 </div>

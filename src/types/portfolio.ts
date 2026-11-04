@@ -23,6 +23,7 @@ export interface HeroMockupMedia {
   mediaKind: MediaKind;
   mediaUrl: string;
   caption: string;
+  category?: string;
 }
 
 export interface HeroContent {
