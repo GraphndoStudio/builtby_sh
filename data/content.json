@@ -96,130 +96,167 @@
   },
   "experience": [
     {
-      "id": "exp-1",
-      "year": "2022",
-      "title": "Computer Science",
-      "organization": "Academic Foundation",
-      "summary": "Built a strong software foundation through projects and system-focused learning.",
+      "id": "exp-zyrops",
+      "year": "APR 2026 – JUN 2026",
+      "title": "Digital Marketing Executive & Frontend Contributor",
+      "organization": "ZyrOps LLP (Startup)",
+      "summary": "Assisted in frontend development of enterprise web applications using HTML5, Tailwind CSS, JavaScript, and PHP. Enhanced responsive dashboard interfaces for internal business operations and implemented UI improvements for HRMS and Learning Management System (LMS) platforms to boost usability, while creating high-converting marketing campaign assets.",
       "gallery": [
         {
-          "id": "exp-1-gal-1",
+          "id": "exp-zyr-1",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Computer science project showcase"
+          "mediaUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
+          "caption": "Enterprise HRMS & LMS dashboard interface"
         },
         {
-          "id": "exp-1-gal-2",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Lab and coding workflow"
-        }
-      ]
-    },
-    {
-      "id": "exp-2",
-      "year": "2023",
-      "title": "Graphic Design Training",
-      "organization": "Design Track",
-      "summary": "Focused on composition, typography, and campaign design systems.",
-      "gallery": [
-        {
-          "id": "exp-2-gal-1",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1524290266577-e90173d9075c?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Poster and visual identity studies"
-        },
-        {
-          "id": "exp-2-gal-2",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Design review board"
-        }
-      ]
-    },
-    {
-      "id": "exp-3",
-      "year": "2024",
-      "title": "Frontend Internship",
-      "organization": "NxtWave CCBP 4.0 Academy",
-      "summary": "Worked on responsive UI implementation and component-based architecture.",
-      "gallery": [
-        {
-          "id": "exp-3-gal-1",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Frontend implementation sprint"
-        },
-        {
-          "id": "exp-3-gal-2",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Team development standup"
-        }
-      ]
-    },
-    {
-      "id": "exp-4",
-      "year": "2024",
-      "title": "Freelance Frontend Developer",
-      "organization": "Independent Projects",
-      "summary": "Delivered landing pages and business websites with custom UI and motion.",
-      "gallery": [
-        {
-          "id": "exp-4-gal-1",
-          "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Freelance project delivery"
-        },
-        {
-          "id": "exp-4-gal-2",
+          "id": "exp-zyr-2",
           "mediaKind": "image",
           "mediaUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Website performance report"
+          "caption": "Frontend component architecture & telemetry"
         }
       ]
     },
     {
-      "id": "exp-5",
-      "year": "2025",
-      "title": "Graphic Designer",
+      "id": "exp-nomadscipher",
+      "year": "MAR 2025 – FEB 2026",
+      "title": "Graphic Designer & Visual Creative",
       "organization": "NomadsCipher LLP",
-      "summary": "Created campaign creatives, social media design kits, and ad concepts.",
+      "summary": "Designed engaging social media posts, stories, ad creatives, and promotional materials across digital platforms for diverse client brands. Maintained brand consistency across Instagram, Facebook, and LinkedIn, delivering Google Ads banners, emailers, and landing page visuals on schedule while collaborating with marketing and development teams.",
       "gallery": [
         {
-          "id": "exp-5-gal-1",
+          "id": "exp-nom-1",
           "mediaKind": "image",
           "mediaUrl": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Brand campaign posters"
+          "caption": "Brand campaign posters & identity rollouts"
         },
         {
-          "id": "exp-5-gal-2",
+          "id": "exp-nom-2",
           "mediaKind": "image",
           "mediaUrl": "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Social media ad creatives"
+          "caption": "Social media ad creatives & banners"
         }
       ]
     },
     {
-      "id": "exp-6",
-      "year": "2026",
-      "title": "Political Campaign",
-      "organization": "Graphic Design Trainee",
-      "summary": "Designed high-impact campaign posters and communication visuals.",
+      "id": "exp-skypark",
+      "year": "JUL 2024",
+      "title": "Frontend Development Intern",
+      "organization": "Skypark IT Tech, Coimbatore",
+      "summary": "Developed responsive web pages and modular, reusable UI components using HTML5, CSS3, and JavaScript. Improved cross-device responsiveness across desktop and mobile viewports with Bootstrap and Git version control, collaborating with senior developers during project sprints.",
       "gallery": [
         {
-          "id": "exp-6-gal-1",
+          "id": "exp-sky-1",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Campaign poster rollout"
+          "mediaUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80",
+          "caption": "Responsive frontend development sprint"
         },
         {
-          "id": "exp-6-gal-2",
+          "id": "exp-sky-2",
           "mediaKind": "image",
-          "mediaUrl": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1400&q=80",
-          "caption": "Creative coordination session"
+          "mediaUrl": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80",
+          "caption": "Engineering team standup & component review"
         }
       ]
+    },
+    {
+      "id": "exp-political",
+      "year": "2026",
+      "title": "Graphic Design Trainee",
+      "organization": "Political Outreach Campaign",
+      "summary": "Designed high-impact posters, banners, social media posts, and print materials for political outreach campaigns, creating compelling visual communication that elevated voter engagement across both offline and digital channels.",
+      "gallery": [
+        {
+          "id": "exp-pol-1",
+          "mediaKind": "image",
+          "mediaUrl": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1400&q=80",
+          "caption": "Outreach poster and typography design"
+        },
+        {
+          "id": "exp-pol-2",
+          "mediaKind": "image",
+          "mediaUrl": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1400&q=80",
+          "caption": "Campaign visual communication review"
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-1",
+      "year": "2025 – 2027",
+      "degree": "Master of Science in Computer Science (M.Sc.)",
+      "institution": "United College of Arts and Science, Tamil Nadu",
+      "summary": "Postgraduate studies focused on advanced computer science, software systems architecture, database engineering, and modern web application development.",
+      "honors": "Postgraduate Degree · Advanced CS"
+    },
+    {
+      "id": "edu-2",
+      "year": "2022 – 2025",
+      "degree": "Bachelor of Science in Computer Science (B.Sc.)",
+      "institution": "Nilgiri College of Arts and Science, Tamil Nadu",
+      "summary": "Comprehensive software foundation covering algorithms, data structures, software development, and UI implementation. Recognized with the Media Supporter Award for designing promotional materials for college technical events and forums.",
+      "honors": "Media Supporter Award Winner"
+    },
+    {
+      "id": "edu-3",
+      "year": "2024 – Present",
+      "degree": "Advanced Frontend Development Program (CCBP 4.0)",
+      "institution": "NxtWave CCBP 4.0 Academy",
+      "summary": "Industry-focused professional training in HTML5, CSS3, JavaScript, React.js, Responsive Web Design, Git, REST APIs, SQL, and Python. Inducted into the NxtWave Hall of Fame for outstanding performance in the Code to Win Challenge.",
+      "honors": "Official NxtWave Hall of Fame Member"
+    },
+    {
+      "id": "edu-4",
+      "year": "2023 – 2024",
+      "degree": "Professional Graphic Design Training",
+      "institution": "Artisto Picasso E-Learning Pvt. Ltd.",
+      "summary": "Comprehensive training in Adobe Photoshop, Adobe Illustrator, Adobe XD, Canva, brand identity systems, social media advertising, and visual communication principles.",
+      "honors": "Certified Graphic Designer (2023)"
+    },
+    {
+      "id": "edu-5",
+      "year": "2020 – 2022",
+      "degree": "Higher Secondary Certificate (Class XII)",
+      "institution": "GTMO Matric Higher Secondary School, Gudalur",
+      "summary": "Tamil Nadu State Board secondary education with emphasis on computer science, physics, and mathematics.",
+      "honors": "Tamil Nadu State Board"
+    }
+  ],
+  "certifications": [
+    {
+      "id": "cert-1",
+      "name": "Certified Graphic Designer",
+      "issuer": "Artisto Picasso E-Learning Pvt. Ltd.",
+      "year": "2023",
+      "credentialUrl": ""
+    },
+    {
+      "id": "cert-2",
+      "name": "Web Development Internship Certificate",
+      "issuer": "Skypark IT Tech, Coimbatore",
+      "year": "2024",
+      "credentialUrl": ""
+    },
+    {
+      "id": "cert-3",
+      "name": "Frontend Development Program (CCBP 4.0)",
+      "issuer": "NxtWave CCBP 4.0 Academy",
+      "year": "2024",
+      "credentialUrl": ""
+    },
+    {
+      "id": "cert-4",
+      "name": "AWS Mega Workshop on Cloud Applications",
+      "issuer": "NxtWave CCBP 4.0 Academy",
+      "year": "2024",
+      "credentialUrl": ""
+    },
+    {
+      "id": "cert-5",
+      "name": "XPM 4.0 Fundamentals",
+      "issuer": "NxtWave CCBP 4.0 Academy",
+      "year": "2024",
+      "credentialUrl": ""
     }
   ],
   "featuredWorks": [
@@ -372,12 +409,12 @@
   "contact": {
     "title": "Let's build something that people remember.",
     "description": "From brand systems to responsive frontends, I can help you launch visuals and products that are polished, strategic, and effective.",
-    "email": "studio.graphndo@gmail.com",
-    "phone": "+91 90000 00000",
-    "location": "India",
+    "email": "contact.sharukhh@gmail.com",
+    "phone": "+91 93633 19599",
+    "location": "Tamil Nadu, India",
     "instagramUrl": "https://instagram.com/graphndo._",
     "linkedinUrl": "https://linkedin.com/",
-    "whatsappUrl": "https://wa.me/919000000000",
+    "whatsappUrl": "https://wa.me/919363319599",
     "githubUrl": "https://github.com/GraphndoStudio",
     "behanceUrl": "https://behance.net",
     "availabilityStatus": "Available for select projects",

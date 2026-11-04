@@ -108,6 +108,25 @@ export const portfolioContentSchema = z.object({
       ),
     }),
   ),
+  education: z.array(
+    z.object({
+      id: nonEmpty,
+      year: nonEmpty,
+      degree: nonEmpty,
+      institution: nonEmpty,
+      summary: nonEmpty,
+      honors: z.string().optional(),
+    }),
+  ).optional().default([]),
+  certifications: z.array(
+    z.object({
+      id: nonEmpty,
+      name: nonEmpty,
+      issuer: nonEmpty,
+      year: nonEmpty,
+      credentialUrl: hrefSchema.optional().or(z.literal("")),
+    }),
+  ).optional().default([]),
   featuredWorks: z.array(
     z.object({
       id: nonEmpty,

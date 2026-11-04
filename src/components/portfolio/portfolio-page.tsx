@@ -160,6 +160,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [activeFeaturedWork, setActiveFeaturedWork] = useState<FeaturedWorkItem | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [hasFinePointer, setHasFinePointer] = useState(false);
+  const [experienceActiveTab, setExperienceActiveTab] = useState<"work" | "education">("work");
 
   const lenisRef = useRef<Lenis | null>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -1269,73 +1270,289 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           </div>
         </section>
 
-        {/* EXPERIENCE SECTION */}
-        <section id="experience" className="mt-24">
-          <h2 className="reveal-up font-display text-4xl md:text-5xl">Experience</h2>
-          <div ref={experienceTimelineRef} className="relative mt-8 pl-8 md:pl-10">
-            <div className="pointer-events-none absolute bottom-8 left-0 top-8">
-              <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-border to-transparent" />
-              <motion.div
-                className="absolute left-0 -translate-x-[1px] w-[3px] rounded-full bg-gradient-to-b from-transparent via-brand-accent to-transparent blur-[0.4px]"
-                style={{
-                  top: experienceGlowTop,
-                  opacity: experienceGlowOpacity,
-                  height: "6.5rem",
-                  boxShadow: "0 0 24px rgba(144,86,162,0.92)",
-                  maskImage:
-                    "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
-                }}
-              />
+        {/* EXPERIENCE & EDUCATION SECTION */}
+        <section id="experience" className="mt-24 space-y-8">
+          <div className="reveal-up flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-white/10 pb-5">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#FF77B8] font-semibold">
+                Trajectory &amp; Foundation
+              </p>
+              <h2 className="mt-1 font-display text-4xl md:text-5xl font-bold text-white">
+                Experience &amp; Education
+              </h2>
             </div>
 
-            <div className="space-y-4">
-              {content.experience.map((item, index) => (
-                <motion.article
-                  key={item.id}
-                  initial={{ opacity: 0, x: -35 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.55, delay: index * 0.06 }}
-                  className="relative rounded-2xl border border-brand-border bg-brand-bg-secondary/70 p-5"
-                >
-                  <motion.span
-                    className="absolute -left-[2.35rem] top-8 h-3 w-3 rounded-full bg-brand-accent md:-left-[2.85rem]"
-                    animate={{
-                      opacity: 0.28,
-                      scale: 0.72,
-                      boxShadow: "0 0 8px rgba(144,86,162,0.4)",
-                    }}
-                    whileInView={{
-                      opacity: 1,
-                      scale: 1,
-                      boxShadow: "0 0 22px rgba(144,86,162,0.95)",
-                    }}
-                    viewport={{ amount: 0.7 }}
-                    transition={{
-                      duration: 0.28,
-                      ease: "easeOut",
-                      delay: index * 0.1,
-                    }}
-                  />
-                  <p className="font-numbers text-xs uppercase tracking-[0.24em] text-brand-accent">{item.year}</p>
-                  <h3 className="mt-1 font-display text-2xl">{item.title}</h3>
-                  <p className="mt-2 text-sm text-brand-muted">{item.organization}</p>
-                  <p className="mt-3 max-w-[65ch] text-sm leading-7 text-brand-muted/95">{item.summary}</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      openExperienceGallery(item.id);
-                    }}
-                    data-cursor="interactive"
-                    className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand-border bg-black/25 px-4 py-2 text-xs uppercase tracking-[0.14em] text-brand-text transition hover:border-brand-accent/70 hover:text-brand-accent"
-                  >
-                    Show Work
-                    <span>→</span>
-                  </button>
-                </motion.article>
-              ))}
+            {/* Segmented Switcher */}
+            <div className="inline-flex rounded-full border border-white/15 bg-[#140718]/90 p-1 backdrop-blur-xl shadow-lg">
+              <button
+                type="button"
+                onClick={() => setExperienceActiveTab("work")}
+                className={`rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
+                  experienceActiveTab === "work"
+                    ? "bg-[#FF77B8] text-[#0B0610] shadow-md"
+                    : "text-[#D8CCE0] hover:text-white"
+                }`}
+              >
+                Work Experience ({content.experience.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setExperienceActiveTab("education")}
+                className={`rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-300 ${
+                  experienceActiveTab === "education"
+                    ? "bg-[#FF77B8] text-[#0B0610] shadow-md"
+                    : "text-[#D8CCE0] hover:text-white"
+                }`}
+              >
+                Education &amp; Credentials ({(content.education?.length ?? 0) + (content.certifications?.length ?? 0)})
+              </button>
             </div>
           </div>
+
+          {/* TAB 1: WORK EXPERIENCE */}
+          {experienceActiveTab === "work" ? (
+            <div ref={experienceTimelineRef} className="relative pl-8 md:pl-10">
+              <div className="pointer-events-none absolute bottom-8 left-0 top-8">
+                <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-brand-border to-transparent" />
+                <motion.div
+                  className="absolute left-0 -translate-x-[1px] w-[3px] rounded-full bg-gradient-to-b from-transparent via-brand-accent to-transparent blur-[0.4px]"
+                  style={{
+                    top: experienceGlowTop,
+                    opacity: experienceGlowOpacity,
+                    height: "6.5rem",
+                    boxShadow: "0 0 24px rgba(144,86,162,0.92)",
+                    maskImage:
+                      "linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)",
+                  }}
+                />
+              </div>
+
+              <div className="space-y-4">
+                {content.experience.map((item, index) => (
+                  <motion.article
+                    key={item.id}
+                    initial={{ opacity: 0, x: -35 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.55, delay: index * 0.06 }}
+                    className="relative rounded-2xl border border-brand-border bg-brand-bg-secondary/70 p-5 sm:p-6 backdrop-blur-xl shadow-lg transition-all duration-300 hover:border-[#FF77B8]/40"
+                  >
+                    <motion.span
+                      className="absolute -left-[2.35rem] top-8 h-3 w-3 rounded-full bg-brand-accent md:-left-[2.85rem]"
+                      animate={{
+                        opacity: 0.28,
+                        scale: 0.72,
+                        boxShadow: "0 0 8px rgba(144,86,162,0.4)",
+                      }}
+                      whileInView={{
+                        opacity: 1,
+                        scale: 1,
+                        boxShadow: "0 0 22px rgba(144,86,162,0.95)",
+                      }}
+                      viewport={{ amount: 0.7 }}
+                      transition={{
+                        duration: 0.28,
+                        ease: "easeOut",
+                        delay: index * 0.1,
+                      }}
+                    />
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="font-mono text-xs uppercase tracking-[0.24em] text-[#FF77B8] font-bold">
+                        {item.year}
+                      </p>
+                      <span className="font-mono text-[10px] text-zinc-400">
+                        {item.organization}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-1 font-display text-2xl font-bold text-white">{item.title}</h3>
+                    <p className="mt-1 text-sm text-[#FF77B8]/80 font-medium">{item.organization}</p>
+                    <p className="mt-3 max-w-[70ch] text-sm leading-relaxed text-[#D8CCE0]">{item.summary}</p>
+
+                    {item.gallery && item.gallery.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => openExperienceGallery(item.id)}
+                        data-cursor="interactive"
+                        className="mt-4 inline-flex items-center gap-2 rounded-full border border-brand-border bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.14em] text-white transition hover:border-[#FF77B8] hover:text-[#FF77B8] hover:bg-[#FF77B8]/10"
+                      >
+                        <span>Show Work ({item.gallery.length})</span>
+                        <span>→</span>
+                      </button>
+                    ) : null}
+                  </motion.article>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* TAB 2: EDUCATION & CREDENTIALS */
+            <div className="space-y-10">
+              {/* Academic Programs Timeline */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                {(content.education && content.education.length > 0
+                  ? content.education
+                  : [
+                      {
+                        id: "edu-1",
+                        year: "2025 – 2027",
+                        degree: "Master of Science in Computer Science (M.Sc.)",
+                        institution: "United College of Arts and Science, Tamil Nadu",
+                        summary: "Advanced computer science, software architecture, algorithm design, and distributed systems.",
+                        honors: "Postgraduate Degree · Advanced CS",
+                      },
+                      {
+                        id: "edu-2",
+                        year: "2022 – 2025",
+                        degree: "Bachelor of Science in Computer Science (B.Sc.)",
+                        institution: "Nilgiri College of Arts and Science, Tamil Nadu",
+                        summary: "Rigorous academic foundation in software development, data structures, and web technologies. Awarded Media Supporter Award.",
+                        honors: "Media Supporter Award Winner",
+                      },
+                      {
+                        id: "edu-3",
+                        year: "2024 – Present",
+                        degree: "Advanced Frontend Development Program (CCBP 4.0)",
+                        institution: "NxtWave CCBP 4.0 Academy",
+                        summary: "Comprehensive training in React.js, Next.js, JavaScript, Responsive Web Design, Git, and REST APIs.",
+                        honors: "Official NxtWave Hall of Fame Member",
+                      },
+                      {
+                        id: "edu-4",
+                        year: "2023 – 2024",
+                        degree: "Professional Graphic Design Training",
+                        institution: "Artisto Picasso E-Learning Pvt. Ltd.",
+                        summary: "Certified training in Adobe Photoshop, Illustrator, Adobe XD, layout hierarchy, and brand systems.",
+                        honors: "Certified Graphic Designer (2023)",
+                      },
+                      {
+                        id: "edu-5",
+                        year: "2020 – 2022",
+                        degree: "Higher Secondary Certificate (Class XII)",
+                        institution: "GTMO Matric Higher Secondary School, Gudalur",
+                        summary: "Tamil Nadu State Board secondary education with focus on foundational computer science and mathematics.",
+                        honors: "Tamil Nadu State Board",
+                      },
+                    ]
+                ).map((edu, idx) => (
+                  <motion.div
+                    key={edu.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: idx * 0.05 }}
+                    className="group relative flex flex-col justify-between rounded-2xl border border-white/10 bg-[#16081A]/70 p-5 sm:p-6 backdrop-blur-xl shadow-lg transition-all duration-300 hover:border-[#FF77B8]/40 hover:bg-[#1E0922]/80"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#FF77B8]">
+                          {edu.year}
+                        </span>
+                        {edu.honors ? (
+                          <span className="inline-flex rounded-full border border-[#FF77B8]/30 bg-[#FF77B8]/10 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#FF77B8]">
+                            {edu.honors}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <h3 className="mt-2 font-display text-xl font-bold text-white group-hover:text-[#FF77B8] transition-colors">
+                        {edu.degree}
+                      </h3>
+                      <p className="mt-1 text-xs sm:text-sm font-medium text-[#D8CCE0]">
+                        {edu.institution}
+                      </p>
+                      <p className="mt-3 text-xs sm:text-sm leading-relaxed text-zinc-400">
+                        {edu.summary}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Verified Certifications & Accolades Grid */}
+              <div className="rounded-3xl border border-white/10 bg-[#120516]/80 p-6 sm:p-8 backdrop-blur-xl shadow-xl">
+                <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                  <div>
+                    <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
+                      Certifications &amp; Accolades
+                    </h3>
+                    <p className="text-xs text-[#D8CCE0] mt-0.5">
+                      Verified professional credentials, workshops, and recognition
+                    </p>
+                  </div>
+                  <span className="font-mono text-xs text-[#FF77B8]">
+                    {content.certifications?.length ?? 5} Verified Credentials
+                  </span>
+                </div>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {(content.certifications && content.certifications.length > 0
+                    ? content.certifications
+                    : [
+                        {
+                          id: "cert-1",
+                          name: "Certified Graphic Designer",
+                          issuer: "Artisto Picasso E-Learning Pvt. Ltd.",
+                          year: "2023",
+                        },
+                        {
+                          id: "cert-2",
+                          name: "Web Development Internship Certificate",
+                          issuer: "Skypark IT Tech, Coimbatore",
+                          year: "2024",
+                        },
+                        {
+                          id: "cert-3",
+                          name: "Frontend Development Program (CCBP 4.0)",
+                          issuer: "NxtWave CCBP 4.0 Academy",
+                          year: "2024",
+                        },
+                        {
+                          id: "cert-4",
+                          name: "AWS Mega Workshop on Cloud Applications",
+                          issuer: "NxtWave CCBP 4.0 Academy",
+                          year: "2024",
+                        },
+                        {
+                          id: "cert-5",
+                          name: "XPM 4.0 Fundamentals",
+                          issuer: "NxtWave CCBP 4.0 Academy",
+                          year: "2024",
+                        },
+                      ]
+                  ).map((cert, index) => (
+                    <div
+                      key={cert.id || index}
+                      className="group flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 transition duration-300 hover:border-[#FF77B8]/40 hover:bg-[#FF77B8]/5"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">
+                            {cert.year}
+                          </span>
+                          <span className="text-emerald-400 font-mono text-[10px]">✓ Certified</span>
+                        </div>
+                        <h4 className="mt-2 text-sm font-bold text-white group-hover:text-[#FF77B8] transition-colors">
+                          {cert.name}
+                        </h4>
+                        <p className="mt-1 text-xs text-[#D8CCE0]">{cert.issuer}</p>
+                      </div>
+
+                      {cert.credentialUrl ? (
+                        <a
+                          href={cert.credentialUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#FF77B8] hover:underline"
+                        >
+                          <span>Verify Credential</span>
+                          <span>↗</span>
+                        </a>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* FEATURED WORKS SECTION */}

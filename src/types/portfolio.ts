@@ -71,6 +71,23 @@ export interface ExperienceItem {
   gallery: HeroMockupMedia[];
 }
 
+export interface EducationItem {
+  id: string;
+  year: string;
+  degree: string;
+  institution: string;
+  summary: string;
+  honors?: string;
+}
+
+export interface CertificationItem {
+  id: string;
+  name: string;
+  issuer: string;
+  year: string;
+  credentialUrl?: string;
+}
+
 export interface FeaturedWorkItem {
   id: string;
   title: string;
@@ -141,6 +158,8 @@ export interface PortfolioContent {
   hero: HeroContent;
   about: AboutContent;
   experience: ExperienceItem[];
+  education: EducationItem[];
+  certifications: CertificationItem[];
   featuredWorks: FeaturedWorkItem[];
   services: ServiceItem[];
   toolbox: ToolboxContent;

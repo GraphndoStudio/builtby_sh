@@ -14,6 +14,7 @@ type SectionId =
   | "hero"
   | "about"
   | "experience"
+  | "education"
   | "featured"
   | "services"
   | "toolbox"
@@ -47,6 +48,7 @@ const sidebarCategories: SidebarCategory[] = [
     items: [
       { id: "about", label: "About Me", icon: "👤", description: "Bio, story & main portrait" },
       { id: "experience", label: "Experience Timeline", icon: "💼", description: "Roles, history & galleries" },
+      { id: "education", label: "Education & Credentials", icon: "🎓", description: "Degrees, training & certifications" },
       { id: "why", label: "Why Work With Me", icon: "⭐", description: "Core values & strengths" },
     ],
   },
@@ -1693,6 +1695,299 @@ export function AdminDashboard({ initialContent }: AdminDashboardProps) {
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            ) : null}
+
+            {/* SECTION: EDUCATION & CREDENTIALS */}
+            {activeSection === "education" ? (
+              <div className="space-y-8">
+                {/* Degrees & Programs */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                    <div>
+                      <h3 className="text-sm font-semibold text-white">Degrees &amp; Formal Programs</h3>
+                      <p className="text-xs text-brand-muted">
+                        Academic degrees and professional training programs.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newId = `edu-${Date.now()}`;
+                        editContent((d) => {
+                          if (!d.education) d.education = [];
+                          d.education.unshift({
+                            id: newId,
+                            year: `${new Date().getFullYear()} – Present`,
+                            degree: "New Degree or Program",
+                            institution: "Institution / University",
+                            summary: "Overview of studies, projects, and learning focus.",
+                            honors: "Degree / Specialization",
+                          });
+                        });
+                        setExpandedCards((prev) => ({ ...prev, [newId]: true }));
+                      }}
+                      className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-brand-accent hover:bg-white/10"
+                    >
+                      + Add Education Entry
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {(content.education ?? []).map((edu, eduIndex) => {
+                      const isExpanded = expandedCards[edu.id] ?? false;
+                      return (
+                        <div
+                          key={edu.id}
+                          className="rounded-2xl border border-white/10 bg-black/35 overflow-hidden transition"
+                        >
+                          <div
+                            className="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 select-none"
+                            onClick={() => toggleCard(edu.id)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FF77B8]/20 text-[#FF77B8] text-xs font-bold font-numbers">
+                                {eduIndex + 1}
+                              </span>
+                              <div>
+                                <h4 className="text-sm font-semibold text-white">{edu.degree}</h4>
+                                <p className="text-xs text-brand-muted">
+                                  {edu.institution} · <span className="font-mono text-[#FF77B8]">{edu.year}</span>
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                disabled={eduIndex === 0}
+                                onClick={() =>
+                                  editContent((d) => {
+                                    if (!d.education) return;
+                                    const [moved] = d.education.splice(eduIndex, 1);
+                                    d.education.splice(eduIndex - 1, 0, moved);
+                                  })
+                                }
+                                className="rounded p-1 text-xs text-zinc-500 hover:text-white disabled:opacity-30"
+                                title="Move Up"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                disabled={eduIndex === (content.education?.length ?? 1) - 1}
+                                onClick={() =>
+                                  editContent((d) => {
+                                    if (!d.education) return;
+                                    const [moved] = d.education.splice(eduIndex, 1);
+                                    d.education.splice(eduIndex + 1, 0, moved);
+                                  })
+                                }
+                                className="rounded p-1 text-xs text-zinc-500 hover:text-white disabled:opacity-30"
+                                title="Move Down"
+                              >
+                                ▼
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (confirm(`Delete education entry "${edu.degree}"?`)) {
+                                    editContent((d) => {
+                                      d.education?.splice(eduIndex, 1);
+                                    });
+                                  }
+                                }}
+                                className="rounded p-1 text-xs text-red-400 hover:bg-red-500/20"
+                                title="Delete"
+                              >
+                                ✕
+                              </button>
+                              <span className="text-zinc-500 text-xs px-1">
+                                {isExpanded ? "Collapse ▲" : "Edit ▼"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {isExpanded ? (
+                            <div className="p-5 pt-0 space-y-4 border-t border-white/5">
+                              <div className="grid gap-3 sm:grid-cols-2 pt-4">
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Degree / Program Title</label>
+                                  <input
+                                    value={edu.degree}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.education) d.education[eduIndex].degree = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="e.g. Master of Science in Computer Science (M.Sc.)"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Institution / University</label>
+                                  <input
+                                    value={edu.institution}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.education) d.education[eduIndex].institution = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="e.g. Nilgiri College of Arts and Science, Tamil Nadu"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Years / Timeframe</label>
+                                  <input
+                                    value={edu.year}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.education) d.education[eduIndex].year = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="e.g. 2022 – 2025"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[11px] font-medium text-brand-muted">Honors / Tag (Optional)</label>
+                                  <input
+                                    value={edu.honors ?? ""}
+                                    onChange={(e) =>
+                                      editContent((d) => {
+                                        if (d.education) d.education[eduIndex].honors = e.target.value;
+                                      })
+                                    }
+                                    className={fieldClass}
+                                    placeholder="e.g. Winner of Media Supporter Award"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="space-y-1">
+                                <label className="text-[11px] font-medium text-brand-muted">Academic Summary &amp; Focus</label>
+                                <textarea
+                                  rows={3}
+                                  value={edu.summary}
+                                  onChange={(e) =>
+                                    editContent((d) => {
+                                      if (d.education) d.education[eduIndex].summary = e.target.value;
+                                    })
+                                  }
+                                  className={fieldClass}
+                                  placeholder="Overview of learning and technical focus..."
+                                />
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Professional Certifications & Accolades */}
+                <div className="space-y-4 pt-6 border-t border-white/10">
+                  <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                    <div>
+                      <h3 className="text-sm font-semibold text-white">Certifications &amp; Accolades</h3>
+                      <p className="text-xs text-brand-muted">
+                        Verified professional certificates, workshops, and recognition awards.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newId = `cert-${Date.now()}`;
+                        editContent((d) => {
+                          if (!d.certifications) d.certifications = [];
+                          d.certifications.push({
+                            id: newId,
+                            name: "New Certificate",
+                            issuer: "Issuing Organization",
+                            year: new Date().getFullYear().toString(),
+                            credentialUrl: "",
+                          });
+                        });
+                      }}
+                      className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-brand-accent hover:bg-white/10"
+                    >
+                      + Add Certificate
+                    </button>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {(content.certifications ?? []).map((cert, certIndex) => (
+                      <div
+                        key={cert.id}
+                        className="rounded-xl border border-white/10 bg-black/35 p-3.5 space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[10px] uppercase tracking-wider text-[#FF77B8] font-bold">
+                            Certificate #{certIndex + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              editContent((d) => {
+                                d.certifications?.splice(certIndex, 1);
+                              })
+                            }
+                            className="text-xs text-red-400 hover:underline"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <input
+                          value={cert.name}
+                          onChange={(e) =>
+                            editContent((d) => {
+                              if (d.certifications) d.certifications[certIndex].name = e.target.value;
+                            })
+                          }
+                          className={fieldClass}
+                          placeholder="Certificate Name"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            value={cert.issuer}
+                            onChange={(e) =>
+                              editContent((d) => {
+                                if (d.certifications) d.certifications[certIndex].issuer = e.target.value;
+                              })
+                            }
+                            className={fieldClass}
+                            placeholder="Issuing Organization"
+                          />
+                          <input
+                            value={cert.year}
+                            onChange={(e) =>
+                              editContent((d) => {
+                                if (d.certifications) d.certifications[certIndex].year = e.target.value;
+                              })
+                            }
+                            className={fieldClass}
+                            placeholder="Year"
+                          />
+                        </div>
+                        <input
+                          value={cert.credentialUrl ?? ""}
+                          onChange={(e) =>
+                            editContent((d) => {
+                              if (d.certifications) d.certifications[certIndex].credentialUrl = e.target.value;
+                            })
+                          }
+                          className={fieldClass}
+                          placeholder="Verification Link (Optional)"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             ) : null}
