@@ -706,15 +706,16 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               </p>
 
               <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.35fr]">
-                <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-black/40">
+                <div className="relative overflow-hidden rounded-2xl border border-brand-border bg-black/60 flex flex-col justify-between">
                   {activeExperienceMedia ? (
-                    <div className="relative">
+                    <div className="relative min-h-[300px] sm:min-h-[460px] max-h-[65vh] w-full bg-black/85 flex items-center justify-center p-2 sm:p-4">
                       <MediaThumb
                         kind={activeExperienceMedia.mediaKind}
                         url={activeExperienceMedia.mediaUrl}
                         alt={activeExperienceMedia.caption}
-                        className="h-[300px] sm:h-[420px] w-full object-cover"
+                        className="max-h-[290px] sm:max-h-[440px] w-full object-contain mx-auto"
                         sizes="(max-width: 1024px) 94vw, 64vw"
+                        priority
                       />
 
                       {activeExperience.gallery.length > 1 ? (
@@ -727,7 +728,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                                 prev > 0 ? prev - 1 : activeExperience.gallery.length - 1,
                               )
                             }
-                            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/80 p-2.5 sm:p-3 text-white backdrop-blur transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/20 hover:text-[#FF77B8] shadow-lg"
                           >
                             {"<"}
                           </button>
@@ -739,7 +740,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                                 prev < activeExperience.gallery.length - 1 ? prev + 1 : 0,
                               )
                             }
-                            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/70 p-2.5 text-white backdrop-blur transition hover:border-brand-accent hover:text-brand-accent"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-brand-border bg-black/80 p-2.5 sm:p-3 text-white backdrop-blur transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/20 hover:text-[#FF77B8] shadow-lg"
                           >
                             {">"}
                           </button>
@@ -751,8 +752,22 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                       No preview media available.
                     </div>
                   )}
-                  <div className="flex items-center justify-between border-t border-brand-border px-4 py-3 text-sm text-brand-text/90">
-                    <span>{activeExperienceMedia?.caption}</span>
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-brand-border/60 bg-black/60 px-4 py-3 text-sm text-brand-text/90">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-medium text-xs sm:text-sm">{activeExperienceMedia?.caption}</span>
+                      {activeExperienceMedia?.mediaUrl ? (
+                        <a
+                          href={activeExperienceMedia.mediaUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 font-mono text-[10px] text-[#FF77B8] hover:bg-[#FF77B8]/15 hover:underline"
+                          title="Open original image in full resolution"
+                        >
+                          <span>Full View</span>
+                          <span>↗</span>
+                        </a>
+                      ) : null}
+                    </div>
                     {activeExperience.gallery.length > 1 ? (
                       <span className="font-numbers text-xs text-brand-muted">
                         {activeExperienceMediaIndex + 1} / {activeExperience.gallery.length}
@@ -831,12 +846,12 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 </button>
               </div>
 
-              <div className="mt-5 sm:mt-6 overflow-hidden rounded-2xl border border-brand-border bg-black/50">
+              <div className="mt-5 sm:mt-6 overflow-hidden rounded-2xl border border-brand-border bg-black/75 flex items-center justify-center p-2 sm:p-4">
                 <MediaThumb
                   kind={activeFeaturedWork.mediaKind}
                   url={activeFeaturedWork.mediaUrl}
                   alt={activeFeaturedWork.title}
-                  className="max-h-[320px] sm:max-h-[460px] w-full object-cover"
+                  className="max-h-[340px] sm:max-h-[500px] w-full object-contain mx-auto"
                   sizes="(max-width: 1024px) 94vw, 896px"
                 />
               </div>
