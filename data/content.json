@@ -61,20 +61,23 @@
       {
         "id": "mockup-1",
         "mediaKind": "image",
-        "mediaUrl": "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1600&q=80",
-        "caption": "Brand presentation"
+        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206032052-web-1920-1.png",
+        "caption": "Apple iPhone Experience - Concept Landing Page",
+        "category": "UI & Web Redesign"
       },
       {
         "id": "mockup-2",
         "mediaKind": "image",
-        "mediaUrl": "https://images.unsplash.com/photo-1558655146-364adaf1fcc9?auto=format&fit=crop&w=1600&q=80",
-        "caption": "UI exploration"
+        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206022835-high-abouve.jpg",
+        "caption": "High Above - Mountain Minimalist Poster",
+        "category": "Graphic Design"
       },
       {
         "id": "mockup-3",
         "mediaKind": "image",
-        "mediaUrl": "https://images.unsplash.com/photo-1515378791036-0648a814c963?auto=format&fit=crop&w=1600&q=80",
-        "caption": "Campaign creative"
+        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206050528-neon-atherr.jpg",
+        "caption": "Ather Energy - Neon Night Edition Campaign",
+        "category": "Brand Campaign"
       }
     ]
   },
@@ -83,9 +86,9 @@
     "heading": "A designer-developer crafting memorable digital experiences.",
     "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
     "description": "My creative foundation started in graphic design—obsessing over composition, poster typography, and brand identity systems that capture attention and communicate purpose.",
-    "posterImageUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793798684518-high-abouve.jpg",
+    "posterImageUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206022835-high-abouve.jpg",
     "posterTag": "Visual Archive 01 / Graphic Poster System",
-    "posterCredit": "Graphndo Studio",
+    "posterCredit": "BuiltBy.sh Studio",
     "storyParagraphTwo": "To bring those designs to life, I expanded into modern frontend engineering. Today, I build responsive, production-ready web applications using React, Next.js, TypeScript, and fluid GSAP motion—delivering products where aesthetic finesse and technical performance work seamlessly together.",
     "pillarOneTitle": "01 / Visual Heritage",
     "pillarOneDesc": "Brand & Typography",
@@ -154,59 +157,87 @@
       "summary": "Designed engaging social media posts, stories, ad creatives, and promotional materials across digital platforms for diverse client brands. Maintained brand consistency across Instagram, Facebook, and LinkedIn, delivering Google Ads banners, emailers, and landing page visuals on schedule while collaborating with marketing and development teams.",
       "gallery": [
         {
-          "id": "exp-nom-1",
+          "id": "nom-gal-1",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799096417-insta-2.png",
-          "caption": "Brand campaign posters & identity rollouts",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206175188-insta-2.png",
+          "caption": "Nomad's Cipher - Social Media Campaign Poster",
           "category": "Social Media Creatives"
         },
         {
-          "id": "exp-nom-2",
+          "id": "nom-gal-2",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799103202-festive-poster---nomadscipher---eid.png",
-          "caption": "Festive Campaign - Eid Greeting",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206176496-festive-poster-nomadscipher-eid.png",
+          "caption": "Nomad's Cipher - Festive Eid Mubarak Greeting",
           "category": "Social Media Creatives"
         },
         {
-          "id": "gal-1793799105974",
+          "id": "nom-gal-3",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799121062-product-hrms.png",
-          "caption": "Product HRMS Interface Design",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206177442-gd-hiring-nomadscipher.jpg",
+          "caption": "Nomad's Cipher - Graphic Designer Recruitment Poster",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "nom-gal-4",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206178684-nomadscipher-qa-engineer-hiring.jpg",
+          "caption": "Nomad's Cipher - QA Engineer Hiring Campaign",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "nom-gal-5",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206179870-nomadscipher-vibe-coder-internship-pg.png",
+          "caption": "Nomad's Cipher - Vibe Coder Internship Launch Poster",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "nom-gal-6",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206180954-nomads-chiper-ciphertrack-meta-ad1.png",
+          "caption": "CipherTrack - Performance Meta Ad 01",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "nom-gal-7",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206181929-nomads-chiper-ciphertrack-meta-ad2.png",
+          "caption": "CipherTrack - Performance Meta Ad 02",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "nom-gal-8",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206183218-nomadscipher-metaads-hrms-1.png",
+          "caption": "Nomad's Cipher HRMS - Meta Ad Campaign 01",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "nom-gal-9",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206184401-nomadscipher-metaads-hrms-2.png",
+          "caption": "Nomad's Cipher HRMS - Meta Ad Campaign 02",
+          "category": "Social Media Creatives"
+        },
+        {
+          "id": "nom-gal-10",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206185910-product-hrms.png",
+          "caption": "HRMS Enterprise Interface Design",
           "category": "Client Designs"
         },
         {
-          "id": "gal-1793799124158",
+          "id": "nom-gal-11",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799136616-nomadscipher---qa-engineer-hiring.jpg",
-          "caption": "QA Engineer Hiring Creative",
-          "category": "Social Media Creatives"
-        },
-        {
-          "id": "gal-1793799124812",
-          "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799162522-nomadscipher---vibe-coder-internship-pg.png",
-          "caption": "Vibe Coder Internship Campaign",
-          "category": "Social Media Creatives"
-        },
-        {
-          "id": "gal-1793799165213",
-          "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799180682-product-ciphertrack.png",
-          "caption": "CipherTrack Product Dashboard",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206186466-product-ciphertrack.png",
+          "caption": "CipherTrack - Cloud Fleet Tracking Dashboard",
           "category": "Client Designs"
         },
         {
-          "id": "gal-1793799228086",
+          "id": "nom-gal-12",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799238234-product-cipherpos.png",
-          "caption": "CipherPOS Point of Sale System",
-          "category": "Client Designs"
-        },
-        {
-          "id": "gal-1793799228527",
-          "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793799243509-product-hrms.png",
-          "caption": "HRMS Portal Design System",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/nomadscipher/1794206187259-product-cipherpos.png",
+          "caption": "CipherPOS - Modern Point-of-Sale System UI",
           "category": "Client Designs"
         }
       ]
@@ -227,25 +258,256 @@
       "summary": "I'm a freelance designer and developer passionate about creating meaningful digital experiences and impactful visual identities. I combine creativity with technical skills to design engaging visuals, build responsive websites, and bring ideas to life. From branding and graphic design to web development, I focus on delivering thoughtful, functional, and visually compelling solutions that help brands stand out.",
       "gallery": [
         {
-          "id": "gal-1793802180109",
+          "id": "gal-cine-1",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793802254953-high-abouve.jpg",
-          "caption": "Travel ad",
-          "category": "Social Media Creatives"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206065745-business-card-mockup-4-copy.png",
+          "caption": "Cine.Arc Productions - Business Card Identity Mockup",
+          "category": "Client Designs"
         },
         {
-          "id": "gal-1793802286757",
+          "id": "gal-cine-2",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793802293566-escape.jpg",
-          "caption": "Escape the Ordinary - Mood Board",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206069363-cine.arc-white-logo.png",
+          "caption": "Cine.Arc Productions - Minimalist Studio Wordmark",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-cine-3",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206068574-businesss.jpg",
+          "caption": "Cine.Arc Productions - Print Collateral Layout",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-honey-1",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206070008-honey-cakes-christmas-sale.jpg",
+          "caption": "Honey Cakes - Christmas Festive Sale Campaign",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-honey-2",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206071640-honey-cakes-logo.png",
+          "caption": "Honey Cakes - Artisanal Brand Identity Logo",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-honey-3",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206072189-honey-cakes-christmas-sale-story-.jpg",
+          "caption": "Honey Cakes - Christmas Social Story Creative",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-os-1",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206073842-os-front.jpg",
+          "caption": "OS Tri-Fold Corporate Brochure - Front Cover Design",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-os-2",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206075433-os-inside-left.jpg",
+          "caption": "OS Tri-Fold Corporate Brochure - Inside Spread",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-os-3",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206076778-os-back.jpg",
+          "caption": "OS Tri-Fold Corporate Brochure - Back Panel Layout",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-techmeet",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206078229-tech-meet.jpg",
+          "caption": "Tech Meet 2024 - Annual Technical Conference Poster",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-culturhythm",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206079586-culturhythm.jpg",
+          "caption": "Culturhythm Fest - Music & Dance Festival Poster",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-finaltouch",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206080900-the-final-touch.jpg",
+          "caption": "The Final Touch - Creative Showcase Poster",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-progday",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206082934-programmers-day.jpg",
+          "caption": "Programmer's Day - Global Celebration Creative",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-happylunch",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206081959-happiness-lunch.jpg",
+          "caption": "Happiness Lunch - Corporate Team Outreach Poster",
+          "category": "Client Designs"
+        },
+        {
+          "id": "gal-highabove",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206022835-high-abouve.jpg",
+          "caption": "High Above - Mountain Minimalist Poster",
           "category": "Random Designs"
         },
         {
-          "id": "gal-1793802296529",
+          "id": "gal-escape",
           "mediaKind": "image",
-          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/media/1793802301919-gateway.jpg",
-          "caption": "India Gate Monolith - Creative Poster",
-          "category": "Social Media Creatives"
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206024525-escape.jpg",
+          "caption": "Escape The Ordinary - Wilderness Mood Poster",
+          "category": "Random Designs"
+        },
+        {
+          "id": "gal-gateway",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206025703-gateway.jpg",
+          "caption": "Gateway of India - Monolith Architecture Poster",
+          "category": "Random Designs"
+        },
+        {
+          "id": "gal-wild",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206026849-into-the-wild-v4.jpg",
+          "caption": "Into The Wild - Atmospheric Wilderness Poster",
+          "category": "Random Designs"
+        },
+        {
+          "id": "gal-awaken",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206028438-awaken.jpg",
+          "caption": "Awaken - Conceptual Typographic Poster",
+          "category": "Random Designs"
+        },
+        {
+          "id": "gal-taj",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206029382-taj.jpg",
+          "caption": "Taj Mahal - Heritage Architectural Poster",
+          "category": "Random Designs"
+        },
+        {
+          "id": "gal-neonather",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/1794206030598-neon-atherr.jpg",
+          "caption": "Neon Cyberpunk Visual Concept",
+          "category": "Random Designs"
+        },
+        {
+          "id": "gal-apple-web",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206032052-web-1920-1.png",
+          "caption": "Apple iPhone Experience - Concept Landing Page",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-apple-ad1",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206036292-insta-ad-1.jpg",
+          "caption": "Apple Instagram Ad - Precision Craftsmanship",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-apple-ad2",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206037022-insta-ad-2.jpg",
+          "caption": "Apple Instagram Ad - Aerospace Titanium Frame",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-apple-ad3",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206037828-insta-ad-3-instagram-feed.jpg",
+          "caption": "Apple Instagram Feed - 48MP Pro Visual Suite",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-apple-email-desk",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206041709-desktop-01.jpg",
+          "caption": "Apple Desktop Email Newsletter Design",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-apple-email-mob",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206043066-mobile-01.jpg",
+          "caption": "Apple Mobile Responsive Emailer Design",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-apple-gads",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206044512-gads.jpg",
+          "caption": "Apple Google Display Ads Suite",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-apple-linkedin",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206040718-apple-life-is-easier-01.jpg",
+          "caption": "Apple LinkedIn Ad - Life is Easier with iPhone",
+          "category": "Apple Brand Redesign"
+        },
+        {
+          "id": "gal-ather-web",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206047000-web-1920-1.jpg",
+          "caption": "Ather Energy EV Landing Page Experience",
+          "category": "Ather Energy Redesign"
+        },
+        {
+          "id": "gal-ather-neon",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206050528-neon-atherr.jpg",
+          "caption": "Ather Neon Night Edition Ad Creative",
+          "category": "Ather Energy Redesign"
+        },
+        {
+          "id": "gal-ather-perf",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206051079-ather-new.jpg",
+          "caption": "Ather 450X High-Torque Performance Ad",
+          "category": "Ather Energy Redesign"
+        },
+        {
+          "id": "gal-ather-rev",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206052030-ather-ads-01.jpg",
+          "caption": "Ather Electric Revolution Campaign Ad",
+          "category": "Ather Energy Redesign"
+        },
+        {
+          "id": "gal-ather-story",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206056419-ather-450x-01.jpg",
+          "caption": "Ather 450X Instagram Story Creative",
+          "category": "Ather Energy Redesign"
+        },
+        {
+          "id": "gal-ather-email-desk",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206058022-ather-emailer-desktop-.jpg",
+          "caption": "Ather Desktop Email Campaign Design",
+          "category": "Ather Energy Redesign"
+        },
+        {
+          "id": "gal-ather-gads",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206062694-ather-gads-01.jpg",
+          "caption": "Ather Google Display Ads Suite",
+          "category": "Ather Energy Redesign"
         }
       ]
     },
@@ -255,7 +517,43 @@
       "title": "Graphic Design Trainee",
       "organization": "Political Outreach Campaign",
       "summary": "Designed high-impact posters, banners, social media posts, and print materials for political outreach campaigns, creating compelling visual communication that elevated voter engagement across both offline and digital channels.",
-      "gallery": []
+      "gallery": [
+        {
+          "id": "pol-gal-1",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206083874-wwd-01.jpg",
+          "caption": "World Wildlife Day - Conservation Awareness Campaign",
+          "category": "Campaign & Event Creatives"
+        },
+        {
+          "id": "pol-gal-2",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206085143-cloud-clash22.jpg",
+          "caption": "Cloud Clash 2022 - Hackathon Competition Poster",
+          "category": "Campaign & Event Creatives"
+        },
+        {
+          "id": "pol-gal-3",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206156152-cs-post.jpg",
+          "caption": "Computer Science Society - Technical Symposium Poster",
+          "category": "Campaign & Event Creatives"
+        },
+        {
+          "id": "pol-gal-4",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206157944-freshers-day-copy.jpg",
+          "caption": "Freshers Induction - Campus Welcome Campaign Poster",
+          "category": "Campaign & Event Creatives"
+        },
+        {
+          "id": "pol-gal-5",
+          "mediaKind": "image",
+          "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/events/1794206159228-tr-hunt.jpg",
+          "caption": "Campus Treasure Hunt - Interactive Quest Poster",
+          "category": "Campaign & Event Creatives"
+        }
+      ]
     }
   ],
   "education": [
@@ -345,54 +643,75 @@
   "featuredWorks": [
     {
       "id": "work-1",
-      "title": "Campaign Identity System",
-      "subtitle": "Political Campaign Creative Direction",
+      "title": "Apple Brand Experience & Digital Campaign Suite",
+      "subtitle": "Full-Funnel Campaign Redesign & Landing Page",
       "mediaKind": "image",
-      "mediaUrl": "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1800&q=80",
-      "challenge": "The campaign needed a cohesive visual language that could perform across print, social, and event media in a short timeline.",
-      "research": "I audited competitor campaign visuals, audience response, and local visual cues to identify high-recall design patterns.",
-      "design": "Developed typography hierarchy, accent color system, and modular layouts for posters, feeds, and ad creatives.",
-      "result": "Delivered a consistent creative system that increased campaign recognition and improved social engagement.",
+      "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/1794206032052-web-1920-1.png",
+      "challenge": "Concept redesign exploring how modern Apple product launches can merge sleek minimalism with dynamic storytelling across high-converting web and social touchpoints.",
+      "research": "Audited Apple's iconic design language, typography scale, high-key lighting, and user conversion paths across desktop, mobile, and social feed ads.",
+      "design": "Engineered an immersive web landing page paired with modular Instagram carousels, LinkedIn campaigns, desktop emailers, and high-impact Google Display ads.",
+      "result": "Produced a cohesive, photorealistic marketing ecosystem that elevates product perception while driving decisive user engagement.",
       "tools": [
         "Adobe Photoshop",
         "Adobe Illustrator",
-        "Figma"
+        "Adobe XD",
+        "Figma",
+        "Typography"
       ],
       "caseStudyUrl": "#"
     },
     {
       "id": "work-2",
-      "title": "Responsive Portfolio Platform",
-      "subtitle": "Frontend + Motion-led Showcase",
+      "title": "Ather Energy EV Brand Experience & Launch Campaign",
+      "subtitle": "Electric Vehicle Showcase & Digital Ad Suite",
       "mediaKind": "image",
-      "mediaUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1800&q=80",
-      "challenge": "The portfolio needed to stand out visually while keeping performance and maintainability high.",
-      "research": "Benchmarked modern agency portfolios and studied interaction patterns that improved user retention.",
-      "design": "Built a motion-first UI with modern layout rhythms, interactive sections, and clear content hierarchy.",
-      "result": "A distinctive, professional website that balances aesthetics, speed, and content control.",
+      "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/1794206047000-web-1920-1.jpg",
+      "challenge": "Crafting a futuristic visual identity and digital launch narrative for Ather Energy's high-performance electric scooter line to stand out in the rapidly evolving EV sector.",
+      "research": "Researched next-gen mobility aesthetics, cyberpunk neon visual cues, and consumer touchpoints across digital banners, email newsletters, and social ads.",
+      "design": "Designed a clean, aerodynamic landing page experience alongside the high-voltage 'Neon Night Edition' campaign, Instagram story formats, and corporate emailers.",
+      "result": "Delivered a dynamic, high-torque visual suite that positions the brand at the cutting edge of modern electric mobility.",
       "tools": [
-        "HTML5",
-        "CSS3",
-        "JavaScript",
-        "GSAP",
-        "Figma"
+        "Adobe Photoshop",
+        "Adobe Illustrator",
+        "Adobe XD",
+        "Visual Direction"
       ],
       "caseStudyUrl": "#"
     },
     {
       "id": "work-3",
-      "title": "Brand + Social Media Suite",
-      "subtitle": "Visual Storytelling for Business Growth",
+      "title": "ZyrOps & NomadsCipher Enterprise Cloud Ecosystem",
+      "subtitle": "B2B SaaS Dashboard Interfaces & Visual Identity",
       "mediaKind": "image",
-      "mediaUrl": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1800&q=80",
-      "challenge": "The client had inconsistent visual assets and needed a recognizable voice across platforms.",
-      "research": "Analyzed audience behavior and campaign conversion patterns for tone, format, and visual timing.",
-      "design": "Created a scalable brand toolkit with ad templates, post systems, and campaign-ready layouts.",
-      "result": "Improved brand consistency and faster campaign turnaround with reusable, high-impact assets.",
+      "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/zyrops/1794206161569-zyrops-unified-ecosystem-1-.png",
+      "challenge": "Transforming complex multi-tenant B2B operations (CRM, HRMS, LMS, Point-of-Sale) into intuitive, high-clarity user interfaces and cohesive brand communications.",
+      "research": "Benchmarked SaaS workflows, information hierarchy, data telemetry, and responsive dashboard constraints for rapid developer execution.",
+      "design": "Created clean component architectures, high-contrast dashboards with dark/light mode audits, and unified marketing materials that demystified technical capabilities.",
+      "result": "Enabled clear visual governance across products and produced marketing creatives that boosted enterprise client conversion.",
       "tools": [
+        "Figma",
+        "Tailwind CSS",
+        "HTML5",
+        "JavaScript",
+        "Adobe Illustrator"
+      ],
+      "caseStudyUrl": "#"
+    },
+    {
+      "id": "work-4",
+      "title": "Cine.Arc Productions Brand Identity & Corporate Collateral",
+      "subtitle": "Film Production Studio Visual System & Print Suite",
+      "mediaKind": "image",
+      "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/clients/1794206065745-business-card-mockup-4-copy.png",
+      "challenge": "Building a prestigious, timeless brand identity and tangible print collateral for an independent cinema and media production house.",
+      "research": "Explored cinematic monochrome palettes, minimalist typography, and luxury print production techniques (embossing, matte finish, foil stamp).",
+      "design": "Developed the minimalist Cine.Arc brand mark in high-contrast black and white editions, paired with a modern business card and collateral system.",
+      "result": "Established an authoritative, high-trust identity that resonates with creative directors, clients, and film industry partners.",
+      "tools": [
+        "Adobe Illustrator",
         "Adobe Photoshop",
-        "Canva",
-        "Adobe XD"
+        "Print Production",
+        "Brand Identity"
       ],
       "caseStudyUrl": "#"
     }
