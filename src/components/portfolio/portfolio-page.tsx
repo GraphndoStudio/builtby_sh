@@ -164,6 +164,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [hasFinePointer, setHasFinePointer] = useState(false);
   const [experienceActiveTab, setExperienceActiveTab] = useState<"work" | "education">("work");
   const [activeCertificateId, setActiveCertificateId] = useState<string | null>(null);
+  const [activeFullImage, setActiveFullImage] = useState<{
+    url: string;
+    alt: string;
+    title: string;
+    subtitle?: string;
+    mediaKind?: "image" | "video";
+  } | null>(null);
 
   const lenisRef = useRef<Lenis | null>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -296,7 +303,12 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     [content.certifications, activeCertificateId],
   );
 
-  const isAnyModalOpen = Boolean(activeExperience || activeFeaturedWork || activeCertificate);
+  const isAnyModalOpen = Boolean(
+    activeExperience ||
+    activeFeaturedWork ||
+    activeCertificate ||
+    activeFullImage,
+  );
 
   // Freeze Lenis, lock body scroll, and listen to Escape key when any modal is open
   useEffect(() => {
@@ -310,9 +322,13 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isAnyModalOpen) {
-        setActiveExperienceId(null);
-        setActiveFeaturedWork(null);
-        setActiveCertificateId(null);
+        if (activeFullImage) {
+          setActiveFullImage(null);
+        } else {
+          setActiveExperienceId(null);
+          setActiveFeaturedWork(null);
+          setActiveCertificateId(null);
+        }
       }
     };
 
@@ -322,7 +338,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       lenisRef.current?.start();
       document.body.style.overflow = "";
     };
-  }, [isAnyModalOpen]);
+  }, [isAnyModalOpen, activeFullImage]);
 
   function openExperienceGallery(experienceId: string) {
     setActiveExperienceId(experienceId);
@@ -989,14 +1005,44 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                 </button>
               </div>
 
-              <div className="mt-5 sm:mt-6 overflow-hidden rounded-2xl border border-brand-border bg-black/75 flex items-center justify-center p-2 sm:p-4">
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() =>
+                  setActiveFullImage({
+                    url: activeFeaturedWork.mediaUrl,
+                    alt: activeFeaturedWork.title,
+                    title: activeFeaturedWork.title,
+                    subtitle: activeFeaturedWork.subtitle,
+                    mediaKind: activeFeaturedWork.mediaKind,
+                  })
+                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveFullImage({
+                      url: activeFeaturedWork.mediaUrl,
+                      alt: activeFeaturedWork.title,
+                      title: activeFeaturedWork.title,
+                      subtitle: activeFeaturedWork.subtitle,
+                      mediaKind: activeFeaturedWork.mediaKind,
+                    });
+                  }
+                }}
+                data-cursor="interactive"
+                aria-label={`Click to view full image of ${activeFeaturedWork.title}`}
+                className="group/studyimg mt-5 sm:mt-6 cursor-zoom-in relative overflow-hidden rounded-2xl border border-brand-border bg-black/75 flex items-center justify-center p-2 sm:p-4 hover:border-[#FF77B8]/60 transition"
+              >
                 <MediaThumb
                   kind={activeFeaturedWork.mediaKind}
                   url={activeFeaturedWork.mediaUrl}
                   alt={activeFeaturedWork.title}
-                  className="max-h-[340px] sm:max-h-[500px] w-full object-contain mx-auto"
+                  className="max-h-[340px] sm:max-h-[500px] w-full object-contain mx-auto transition-transform duration-500 group-hover/studyimg:scale-[1.02]"
                   sizes="(max-width: 1024px) 94vw, 896px"
                 />
+                <div className="pointer-events-none absolute bottom-3 right-3 opacity-0 group-hover/studyimg:opacity-100 transition-opacity rounded-full border border-white/20 bg-black/85 px-3 py-1 font-mono text-[10px] text-white backdrop-blur shadow-lg flex items-center gap-1.5">
+                  <span className="text-[#FF77B8]">🔍</span> Click to Expand Full Screen
+                </div>
               </div>
 
               <div className="mt-5 sm:mt-6 grid gap-4 rounded-2xl border border-brand-border bg-black/40 p-4 sm:p-5 text-xs sm:text-sm leading-6 sm:leading-7 text-brand-muted">
@@ -1167,6 +1213,100 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   </button>
                 </div>
               </motion.div>
+            </div>
+          </div>
+        ) : null}
+      </AnimatePresence>
+
+      {/* Full-Screen Image Lightbox Modal */}
+      <AnimatePresence>
+        {activeFullImage ? (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Full image: ${activeFullImage.title}`}
+            data-lenis-prevent
+            className="fixed inset-0 z-[100] flex flex-col justify-between overflow-y-auto overscroll-contain bg-black/95 p-3 sm:p-6 backdrop-blur-xl"
+            onClick={() => setActiveFullImage(null)}
+          >
+            {/* Top Bar with Title, Subtitle, Full Size link, and Close Button */}
+            <div
+              className="relative z-10 flex items-center justify-between gap-4 border-b border-white/10 pb-3 sm:pb-4 max-w-7xl mx-auto w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="min-w-0 pr-3">
+                {activeFullImage.subtitle && (
+                  <p className="font-mono text-[10px] sm:text-xs uppercase tracking-widest text-[#FF77B8] font-bold">
+                    {activeFullImage.subtitle}
+                  </p>
+                )}
+                <h3 className="font-display text-lg sm:text-2xl font-bold text-white truncate">
+                  {activeFullImage.title}
+                </h3>
+              </div>
+
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a
+                  href={activeFullImage.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-4 py-2 font-mono text-xs text-white transition hover:border-[#FF77B8] hover:bg-white/10"
+                  aria-label="Open original image in new tab"
+                >
+                  <span>Open Full Size</span>
+                  <span>↗</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActiveFullImage(null)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/20 hover:text-[#FF77B8] shadow-lg active:scale-95"
+                  aria-label="Close image popup"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Central Stage: Full Uncropped Image */}
+            <div
+              className="relative my-auto flex items-center justify-center w-full max-w-7xl mx-auto py-3 sm:py-5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="relative max-h-[75vh] sm:max-h-[82vh] w-full flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[#0B0610]/80 shadow-[0_30px_90px_rgba(0,0,0,0.95)] p-2 sm:p-4"
+              >
+                <MediaThumb
+                  kind={activeFullImage.mediaKind || "image"}
+                  url={activeFullImage.url}
+                  alt={activeFullImage.alt || activeFullImage.title}
+                  className="max-h-[72vh] sm:max-h-[78vh] w-auto max-w-full object-contain mx-auto rounded-xl"
+                  sizes="(max-width: 1280px) 100vw, 1920px"
+                  quality={95}
+                  priority
+                />
+              </motion.div>
+            </div>
+
+            {/* Bottom Bar: Quick close helper & mobile action */}
+            <div
+              className="relative z-10 flex items-center justify-between text-xs text-[#D8CCE0]/70 border-t border-white/10 pt-3 max-w-7xl mx-auto w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="font-mono text-[11px]">
+                Click outside or press <kbd className="rounded border border-white/20 bg-white/10 px-1 py-0.5 text-[10px] text-white">ESC</kbd> to close
+              </span>
+              <a
+                href={activeFullImage.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sm:hidden inline-flex items-center gap-1 font-mono text-[11px] text-[#FF77B8]"
+              >
+                <span>Full Size ↗</span>
+              </a>
             </div>
           </div>
         ) : null}
@@ -2020,18 +2160,52 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
               key={work.id}
               className="reveal-up group grid gap-4 rounded-[2rem] border border-brand-border bg-brand-bg-secondary/70 p-4 md:gap-6 md:p-5 lg:min-h-[82vh] lg:grid-cols-[1.2fr_0.8fr]"
             >
-              <div className="relative overflow-hidden rounded-[1.45rem] border border-brand-border">
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() =>
+                  setActiveFullImage({
+                    url: work.mediaUrl,
+                    alt: work.title,
+                    title: work.title,
+                    subtitle: work.subtitle,
+                    mediaKind: work.mediaKind,
+                  })
+                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveFullImage({
+                      url: work.mediaUrl,
+                      alt: work.title,
+                      title: work.title,
+                      subtitle: work.subtitle,
+                      mediaKind: work.mediaKind,
+                    });
+                  }
+                }}
+                data-cursor="interactive"
+                aria-label={`Click to view full image of ${work.title}`}
+                className="group/img relative cursor-zoom-in overflow-hidden rounded-[1.45rem] border border-brand-border focus:outline-none focus:ring-2 focus:ring-[#FF77B8]"
+              >
                 <MediaThumb
                   kind={work.mediaKind}
                   url={work.mediaUrl}
                   alt={work.title}
-                  className="h-[290px] w-full object-cover transition duration-700 group-hover:scale-105 sm:h-[360px] md:h-[420px] lg:h-full lg:min-h-[420px]"
+                  className="h-[290px] w-full object-cover transition duration-700 group-hover/img:scale-105 sm:h-[360px] md:h-[420px] lg:h-full lg:min-h-[420px]"
                   sizes="(max-width: 768px) 94vw, (max-width: 1280px) 80vw, 58vw"
-                  quality={78}
+                  quality={82}
                   priority={workIndex === 0}
                   loading={workIndex === 0 ? undefined : "lazy"}
                 />
-                <div className="absolute inset-0 bg-black/35 opacity-0 transition duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-black/45 opacity-0 backdrop-blur-[2px] transition duration-300 group-hover/img:opacity-100 flex items-center justify-center p-4">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/80 px-4 py-2 font-mono text-xs font-semibold text-white shadow-2xl backdrop-blur-md transition-transform duration-300 group-hover/img:scale-105">
+                    <svg className="h-4 w-4 text-[#FF77B8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                    </svg>
+                    <span>Click to View Full Image</span>
+                  </span>
+                </div>
               </div>
               <div className="flex flex-col justify-between rounded-[1.45rem] border border-brand-border bg-black/35 p-6">
                 <div>
