@@ -33,6 +33,11 @@ body {
   touch-action: pan-y;
 }
 
+/* Optimize rendering and compositing performance for off-screen assets */
+img {
+  content-visibility: auto;
+}
+
 /* Lenis smooth scrolling integration */
 html.lenis,
 html.lenis body {

@@ -26,8 +26,8 @@ function MediaThumb({
   url,
   alt,
   className,
-  sizes = "100vw",
-  quality = 80,
+  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 1200px",
+  quality = 78,
   loading,
   priority = false,
 }: {
@@ -87,8 +87,8 @@ function MediaThumb({
       className={className}
       src={url}
       alt={alt || "Media thumbnail"}
-      width={1800}
-      height={1200}
+      width={1400}
+      height={900}
       sizes={sizes}
       quality={quality}
       loading={resolvedLoading}
@@ -348,24 +348,24 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       })),
     );
 
-    if (fromExperience.length > 0) {
-      return fromExperience;
-    }
+    // Curate top 8 highlight works to avoid rendering 200+ images in an infinite marquee loop
+    const items = fromExperience.length > 0
+      ? fromExperience.slice(0, 8)
+      : content.featuredWorks.map((work) => ({
+          key: work.id,
+          title: work.title,
+          subtitle: work.subtitle,
+          mediaKind: work.mediaKind,
+          mediaUrl: work.mediaUrl,
+        }));
 
-    return content.featuredWorks.map((work) => ({
-      key: work.id,
-      title: work.title,
-      subtitle: work.subtitle,
-      mediaKind: work.mediaKind,
-      mediaUrl: work.mediaUrl,
-    }));
+    return items;
   }, [content.experience, content.featuredWorks]);
 
-  // Ensure marquee items repeat enough times to fill any screen size smoothly
+  // Seamless 2x repetition (16 items total) for butter-smooth 60fps infinite marquee
   const marqueeItems = useMemo(() => {
     if (bottomShowcaseItems.length === 0) return [];
-    const multiplier = Math.max(3, Math.ceil(12 / bottomShowcaseItems.length));
-    return Array.from({ length: multiplier }).flatMap(() => bottomShowcaseItems);
+    return [...bottomShowcaseItems, ...bottomShowcaseItems];
   }, [bottomShowcaseItems]);
 
   const scrollToAnchor = useCallback((href: string) => {
@@ -498,18 +498,10 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
     });
 
-    const isTouch =
-      typeof window !== "undefined" &&
-      ("ontouchstart" in window ||
-        navigator.maxTouchPoints > 0 ||
-        window.matchMedia("(pointer: coarse)").matches);
-
     const lenis = new Lenis({
-      duration: isTouch ? 0.75 : 1.1,
+      duration: 1.0,
       smoothWheel: true,
-      syncTouch: true,
-      syncTouchLerp: 0.09,
-      touchMultiplier: 1.15,
+      syncTouch: false, // Keep native 120Hz/60Hz touch momentum on mobile screens
       gestureOrientation: "vertical",
     });
     lenisRef.current = lenis;
@@ -521,8 +513,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     };
 
     gsap.ticker.add(tickerCallback);
-    // Smooth frame interpolations on mobile to eliminate jerkiness
-    gsap.ticker.lagSmoothing(500, 33);
+    gsap.ticker.lagSmoothing(0);
 
     const ctx = gsap.context(() => {
       const blocks = gsap.utils.toArray<HTMLElement>(".reveal-up");
@@ -569,9 +560,11 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
       mouseX.set(event.clientX / window.innerWidth);
       mouseY.set(event.clientY / window.innerHeight);
 
-      const target = event.target as HTMLElement;
-      const interactive = target.closest("a,button,[data-cursor='interactive'],input,textarea");
-      setCursorActive(Boolean(interactive));
+      const target = event.target as HTMLElement | null;
+      if (target) {
+        const interactive = Boolean(target.closest("a,button,[data-cursor='interactive'],input,textarea"));
+        setCursorActive((prev) => (prev !== interactive ? interactive : prev));
+      }
     };
 
     window.addEventListener("mousemove", onMouseMove);
@@ -1918,8 +1911,9 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                   alt={work.title}
                   className="h-[290px] w-full object-cover transition duration-700 group-hover:scale-105 sm:h-[360px] md:h-[420px] lg:h-full lg:min-h-[420px]"
                   sizes="(max-width: 768px) 94vw, (max-width: 1280px) 80vw, 58vw"
-                  quality={90}
+                  quality={78}
                   priority={workIndex === 0}
+                  loading={workIndex === 0 ? undefined : "lazy"}
                 />
                 <div className="absolute inset-0 bg-black/35 opacity-0 transition duration-300 group-hover:opacity-100" />
               </div>
@@ -2120,14 +2114,15 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
             <h2 className="font-display text-3xl md:text-4xl">Quick Showcase</h2>
             <p className="text-sm text-brand-muted">Visual snapshots across recent projects</p>
           </div>
-          <div className="overflow-hidden rounded-3xl border border-brand-border bg-brand-bg-secondary/65 py-5">
+          <div className="overflow-hidden rounded-3xl border border-brand-border bg-brand-bg-secondary/65 py-5 [contain:paint]">
             <motion.div
-              className="flex w-max gap-4 px-4 md:px-6"
+              className="flex w-max gap-4 px-4 md:px-6 will-change-transform"
+              style={{ transform: "translateZ(0)" }}
               animate={prefersReducedMotion ? { x: "0%" } : { x: ["0%", "-50%"] }}
               transition={
                 prefersReducedMotion
                   ? { duration: 0 }
-                  : { duration: 28, repeat: Infinity, ease: "linear" }
+                  : { duration: 32, repeat: Infinity, ease: "linear" }
               }
             >
               {marqueeItems.map((item, index) => (
@@ -2141,6 +2136,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
                     alt={item.title}
                     className="h-44 w-full object-cover"
                     sizes="(max-width: 768px) 260px, 320px"
+                    quality={70}
                   />
                   <div className="space-y-1 p-3">
                     <h3 className="line-clamp-1 text-sm font-semibold text-brand-text">{item.title}</h3>
