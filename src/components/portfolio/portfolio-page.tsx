@@ -150,6 +150,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingDone, setLoadingDone] = useState(false);
   const [mockupIndex, setMockupIndex] = useState(0);
+  const [isMockupHovered, setIsMockupHovered] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
   const [copiedEmail, setCopiedEmail] = useState(false);
 
@@ -458,7 +459,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
   // Smooth carousel auto-cycle
   useEffect(() => {
-    if (prefersReducedMotion || content.hero.mockupMedia.length <= 1) {
+    if (prefersReducedMotion || content.hero.mockupMedia.length <= 1 || isMockupHovered) {
       return;
     }
 
@@ -467,7 +468,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     }, 4500);
 
     return () => clearInterval(timer);
-  }, [content.hero.mockupMedia.length, prefersReducedMotion]);
+  }, [content.hero.mockupMedia.length, prefersReducedMotion, isMockupHovered]);
 
   // Preload hero mockup images
   useEffect(() => {
@@ -571,7 +572,7 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
     return () => window.removeEventListener("mousemove", onMouseMove);
   }, [cursorX, cursorY, mouseX, mouseY, hasFinePointer, prefersReducedMotion, cursorVisible]);
 
-  // Modal keyboard handling (Experience)
+  // Modal keyboard & scroll lock handling (Experience)
   useEffect(() => {
     if (!activeExperience || filteredExperienceGallery.length === 0) {
       return;
@@ -593,15 +594,17 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    lenisRef.current?.stop();
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      lenisRef.current?.start();
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [activeExperience, filteredExperienceGallery.length]);
 
-  // Modal keyboard handling (Featured Work)
+  // Modal keyboard & scroll lock handling (Featured Work)
   useEffect(() => {
     if (!activeFeaturedWork) {
       return;
@@ -615,13 +618,39 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    lenisRef.current?.stop();
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      lenisRef.current?.start();
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [activeFeaturedWork]);
+
+  // Modal keyboard & scroll lock handling (Certificate)
+  useEffect(() => {
+    if (!activeCertificateId) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActiveCertificateId(null);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    lenisRef.current?.stop();
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      lenisRef.current?.start();
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [activeCertificateId]);
 
   // Mobile nav overflow lock
   useEffect(() => {
@@ -1374,25 +1403,36 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
 
               {/* Floating Card 1: Top-Right Visual Showcase (Michael reference "ZENTIX /Design" style) */}
               <a
-                href="#featured-works"
-                onClick={(e) => handleNavClick(e, "#featured-works")}
+                href="#about"
+                onClick={(e) => handleNavClick(e, "#about")}
                 className="group absolute -right-2 sm:-right-8 top-6 sm:top-10 z-20 flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-white/20 bg-[#16081A]/95 p-2 sm:p-3 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-[#FF77B8] hover:scale-105"
               >
-                <div className="h-9 w-9 sm:h-12 sm:w-12 overflow-hidden rounded-xl border border-white/10 bg-black/60">
-                  <Image
-                    src={content.hero.archiveThumbnailUrl || content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
-                    alt="Studio Archive Work"
-                    width={48}
-                    height={48}
-                    className="h-full w-full object-cover"
-                  />
+                <div className="relative h-9 w-9 sm:h-12 sm:w-12 overflow-hidden rounded-xl border border-white/10 bg-black/60">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeMockup.id || mockupIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.35 }}
+                      className="relative h-full w-full"
+                    >
+                      <Image
+                        src={activeMockup.mediaUrl || content.hero.archiveThumbnailUrl || content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
+                        alt={activeMockup.caption || "Studio Archive Work"}
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
                 <div className="text-left pr-1">
                   <p className="font-mono text-[9px] uppercase tracking-wider text-[#FF77B8] font-semibold">
                     Studio Archive
                   </p>
-                  <p className="font-display text-xs sm:text-sm font-bold text-white group-hover:text-[#FF77B8] transition-colors">
-                    {content.about.posterCredit || "Graphndo"} ↗
+                  <p className="max-w-[120px] truncate font-display text-xs sm:text-sm font-bold text-white group-hover:text-[#FF77B8] transition-colors">
+                    {activeMockup.category || content.about.posterCredit || "Graphndo"} ↗
                   </p>
                 </div>
               </a>
@@ -1512,25 +1552,101 @@ export function PortfolioPage({ content }: PortfolioPageProps) {
           id="about"
           className="reveal-up mt-24 grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]"
         >
-          {/* Visual Showcase Card: Sharukh's Graphndo Studio Artboard */}
-          <div className="group relative mx-auto w-full max-w-[480px] overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b from-[#220926]/80 to-[#120516]/90 p-3 sm:p-4 shadow-2xl backdrop-blur-xl">
+          {/* Visual Showcase Card: Sharukh's Graphndo Studio Artboard & Carousel */}
+          <div
+            ref={cardRef}
+            onMouseMove={handleCardMouseMove}
+            onMouseLeave={() => {
+              handleCardMouseLeave();
+              setIsMockupHovered(false);
+            }}
+            onMouseEnter={() => setIsMockupHovered(true)}
+            className="group relative mx-auto w-full max-w-[480px] overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b from-[#220926]/80 to-[#120516]/90 p-3 sm:p-4 shadow-2xl backdrop-blur-xl"
+          >
             <div className="relative h-[380px] sm:h-[460px] w-full overflow-hidden rounded-2xl bg-[#0B0610]">
-              <Image
-                src={content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
-                alt={content.about.posterTag || "Graphndo Studio Design Poster"}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 768px) 94vw, 480px"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#110C17] via-transparent to-transparent opacity-60" />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMockup.id || mockupIndex}
+                  initial={{ opacity: 0, scale: 1.03 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="relative h-full w-full"
+                >
+                  <Image
+                    src={activeMockup.mediaUrl || content.about.posterImageUrl || "/uploads/1781775293542-artboard-1-300x.png"}
+                    alt={activeMockup.caption || content.about.posterTag || "Visual Archive"}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 94vw, 480px"
+                    priority={mockupIndex === 0}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#110C17] via-transparent to-transparent opacity-60" />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Prev / Next controls on hover */}
+              {content.hero.mockupMedia.length > 1 && (
+                <div className="pointer-events-none absolute inset-x-2.5 top-1/2 -translate-y-1/2 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                  <button
+                    type="button"
+                    aria-label="Previous showcase work"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePrevMockup();
+                    }}
+                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/75 text-white backdrop-blur transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/20 hover:text-[#FF77B8] shadow-lg active:scale-95"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next showcase work"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNextMockup();
+                    }}
+                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/75 text-white backdrop-blur transition hover:border-[#FF77B8] hover:bg-[#FF77B8]/20 hover:text-[#FF77B8] shadow-lg active:scale-95"
+                  >
+                    ›
+                  </button>
+                </div>
+              )}
+
+              {/* Progress Indicator Dots inside image */}
+              {content.hero.mockupMedia.length > 1 && (
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/60 px-2.5 py-1 backdrop-blur-md">
+                  {content.hero.mockupMedia.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      aria-label={`Jump to slide ${idx + 1}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMockupIndex(idx);
+                      }}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        idx === mockupIndex
+                          ? "w-4 bg-[#FF77B8]"
+                          : "w-1.5 bg-white/40 hover:bg-white/80"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="mt-3 flex items-center justify-between px-2 pt-1 text-xs">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#FF77B8] font-semibold">
-                {content.about.posterTag || "Visual Archive 01 / Graphic Poster System"}
-              </span>
-              <span className="font-mono text-[10px] text-[#D8CCE0]">
-                {content.about.posterCredit || "Graphndo Studio"}
+              <div className="flex flex-col pr-2 min-w-0">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#FF77B8] font-semibold truncate">
+                  {activeMockup.category || content.about.posterTag || "Visual Archive"}
+                </span>
+                <span className="font-display text-xs text-white font-medium truncate mt-0.5">
+                  {activeMockup.caption || content.about.posterCredit || "Studio Project"}
+                </span>
+              </div>
+              <span className="shrink-0 font-mono text-[10px] text-[#D8CCE0]/80">
+                {String(mockupIndex + 1).padStart(2, "0")} / {String(content.hero.mockupMedia.length).padStart(2, "0")}
               </span>
             </div>
           </div>

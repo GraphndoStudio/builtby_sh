@@ -61,16 +61,16 @@
       {
         "id": "mockup-1",
         "mediaKind": "image",
-        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/opt-1794207562266-web-1920-1.webp",
-        "caption": "Apple iPhone Experience - Concept Landing Page",
-        "category": "UI & Web Redesign"
+        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/opt-1794207553657-high-abouve.webp",
+        "caption": "High Above - Mountain Minimalist Poster",
+        "category": "Graphic Poster"
       },
       {
         "id": "mockup-2",
         "mediaKind": "image",
-        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/opt-1794207553657-high-abouve.webp",
-        "caption": "High Above - Mountain Minimalist Poster",
-        "category": "Graphic Design"
+        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/apple/opt-1794207562266-web-1920-1.webp",
+        "caption": "Apple iPhone Experience - Concept Landing Page",
+        "category": "UI & Web Redesign"
       },
       {
         "id": "mockup-3",
@@ -78,6 +78,20 @@
         "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/ather/opt-1794207575265-neon-atherr.webp",
         "caption": "Ather Energy - Neon Night Edition Campaign",
         "category": "Brand Campaign"
+      },
+      {
+        "id": "mockup-4",
+        "mediaKind": "image",
+        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/opt-1794207554559-escape.webp",
+        "caption": "Escape The Ordinary - Wilderness Mood Poster",
+        "category": "Graphic Art"
+      },
+      {
+        "id": "mockup-5",
+        "mediaKind": "image",
+        "mediaUrl": "https://jtkhyu4xksszeonu.public.blob.vercel-storage.com/portfolio/posters/opt-1794207556108-into-the-wild-v4.webp",
+        "caption": "Into The Wild - Atmospheric Wilderness Poster",
+        "category": "Poster Design"
       }
     ]
   },
